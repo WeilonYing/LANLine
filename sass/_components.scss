@@ -1,0 +1,119 @@
+////////////////////////////////////////
+// USER NAVIGATION
+
+.user-nav {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+
+    & > * {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        color: white;
+    }
+
+    &__you {
+        margin-left: 2rem;
+        font-size: 1.6rem;
+    }
+
+    &__active-chat {
+        margin-left: 22rem;
+    }
+
+}
+
+
+////////////////////////////////////////
+// SIDE NAVIGATION
+.side-nav {
+    font-size: 1.4rem;
+    list-style: none;
+    margin-top: 3.5rem;
+
+    @media only screen and (max-width: $bp-medium) {
+        display: flex;
+        margin: 0;
+    }
+
+    .btn-primary {
+        color: $color-grey-light-1;
+        background-color: $color-primary;
+        border: none;
+        text-decoration: none;
+        text-transform: uppercase;
+        padding: 1.5rem 3rem;
+        position: relative;
+        z-index: 10;
+        font-size: 1.6rem;
+        display: flex;
+        width: 80%;
+        margin: 0 auto;
+
+        align-items: center;
+
+        @media only screen and (max-width: $bp-medium) {
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        @media only screen and (max-width: $bp-small) {
+            flex-direction: column;
+            padding: 1.5rem .5rem;
+        }
+
+        &:hover {
+            background-color: white;
+            border: 1px solid $color-primary;
+            color: $color-primary;
+        }
+    }
+
+    &__container {
+        width: 80%;
+        margin: 0 auto;
+
+    }
+
+    &__link {
+        color: $color-grey-dark-1;
+
+        &:hover {
+            text-decoration: none;
+            font-weight:400;
+            color: $color-primary;
+        }
+    }
+
+    &__item {
+        position: relative;
+        padding: 2rem 0;
+        border-bottom: 0.5px solid $color-grey-dark-1;
+
+        &--active {
+            font-weight: 600;
+        }
+
+        &:not(:last-child) {
+            margin-bottom: .5rem;
+            
+            @media only screen and (max-width: $bp-medium) {
+                margin: 0;
+            }
+        }
+
+        @media only screen and (max-width: $bp-medium) {
+            flex: 1;
+        }
+    }
+}
+
+
+////////////////////////////////////////
+// LOGO
+.logo {
+    margin: 0 auto;
+    width: 60%;
+    margin-bottom: 2rem;
+}
