@@ -27,5 +27,8 @@
     "electron-packager": "^12.1.1",
     "tslint": "^5.10.0",
     "typescript": "^2.9.2"
+  },
+  "dependencies": {
+    "ip": "^1.1.5"
   }
 }

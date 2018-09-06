@@ -6,19 +6,28 @@ class NetworkManager {
   client: dgram.Socket = dgram.createSocket('udp4');
   server: dgram.Socket = dgram.createSocket('udp4');
   constructor() {
-    this.server.on('listening', () => {
+    this.server.on("listening", function() {
       console.log("Server is listening...");
     });
     this.server.on('message', (msg: string, rinfo: any) => {
       console.log("Received message " + msg);
     });
-    this.server.bind(40000);
+
+    // this.server.bind(8000);
+
+    this.server.bind(8000, ()  => {
+      this.server.setBroadcast(true);
+    });
   }
+
   heartbeat(): void {
     let message: string = "test message";
-    this.client.send(
-      message, 0, message.length, 40000, '192.168.43.255');
 
+    let ip = require('ip');
+    let broadcastAddr = ip.or(ip.address(), ip.not(ip.fromPrefixLen(24)));
+
+    this.server.send(
+      message, 0, message.length, 8000, broadcastAddr);
   }
 }
 
