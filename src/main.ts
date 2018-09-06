@@ -13,9 +13,7 @@ class NetworkManager {
       console.log("Received message " + msg);
     });
 
-    // this.server.bind(8000);
-
-    this.server.bind(8000, ()  => {
+    this.server.bind(40000, ()  => {
       this.server.setBroadcast(true);
     });
   }
@@ -27,7 +25,7 @@ class NetworkManager {
     let broadcastAddr = ip.or(ip.address(), ip.not(ip.fromPrefixLen(24)));
 
     this.server.send(
-      message, 0, message.length, 8000, broadcastAddr);
+      message, 0, message.length, 40000, broadcastAddr);
   }
 }
 
