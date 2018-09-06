@@ -1,22 +1,31 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
-  "main": "main.js",
+  "name": "LANLine",
+  "version": "0.1",
+  "description": "A minimal Electron application written with Typescript",
+  "main": "./dist/main.js",
   "scripts": {
-    "start": "electron ."
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js",
+    "package": "npm run build && electron-packager . --out out/ --overwrite",
+    "packageall": "npm run build && electron-packager . --out out/ --overwrite --all"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/electron/electron-quick-start-typescript",
   "keywords": [
     "Electron",
     "quick",
     "start",
     "tutorial",
-    "demo"
+    "demo",
+    "typescript"
   ],
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^2.0.0"
+    "electron": "^2.0.8",
+    "electron-packager": "^12.1.1",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.2"
   }
 }
