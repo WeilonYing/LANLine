@@ -28,10 +28,12 @@
         </header>
 
         <div class="content">
+
+            <!-- sidebar -->
             <nav class="sidebar">
                 <ul class="side-nav">
 
-                        <a class="btn btn-primary" href="#" role="button">Send Broadcast</a>
+                        <a id="send-broadcast" class="btn btn-primary" href="#" role="button">Send Broadcast</a>
                 
                         <li class="side-nav__item side-nav__item--active">
                             <a href="#" class="side-nav__link">
@@ -50,6 +52,18 @@
                     
                 </div>
             </nav>
+
+            <!-- modal -->
+            <div id="broadcast-modal" class="modal">
+                <div class="modal-content">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Broadcast</label>
+                        <input type="broadcast" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Message">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Broadcast</button>
+                </div>       
+            </div>
+
         </div>
 
     <script>
