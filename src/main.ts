@@ -1,33 +1,6 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import * as path from "path";
-import * as dgram from "dgram";
-
-class NetworkManager {
-  client: dgram.Socket = dgram.createSocket('udp4');
-  server: dgram.Socket = dgram.createSocket('udp4');
-  constructor() {
-    this.server.on("listening", function() {
-      console.log("Server is listening...");
-    });
-    this.server.on('message', (msg: string, rinfo: any) => {
-      console.log("Received message " + msg);
-    });
-
-    this.server.bind(40000, ()  => {
-      this.server.setBroadcast(true);
-    });
-  }
-
-  heartbeat(): void {
-    let message: string = "test message";
-
-    let ip = require('ip');
-    let broadcastAddr = ip.or(ip.address(), ip.not(ip.fromPrefixLen(24)));
-
-    this.server.send(
-      message, 0, message.length, 40000, broadcastAddr);
-  }
-}
+import { app, BrowserWindow, ipcMain } from 'electron';
+import * as path from 'path';
+import { NetworkManager } from "./NetworkManager";
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager = new NetworkManager();
