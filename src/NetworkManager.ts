@@ -1,16 +1,26 @@
 import * as dgram from 'dgram';
 import * as ip from 'ip';
 import { Settings } from './Settings';
+import { DataService } from './DataService';
+import { Payload, PayloadJSON, PayloadUtils } from './Payload';
+
 
 export class NetworkManager {
   client: dgram.Socket = dgram.createSocket('udp4');
   server: dgram.Socket = dgram.createSocket('udp4');
-  broadcastAddr: string;
   isHeartbeating: boolean = false;
 
-  constructor() {
+  broadcastAddr: string;
+  dataService: DataService;
+
+  constructor(dataService: DataService) {
     //let ip = require('ip');
     this.broadcastAddr = ip.or(ip.address(), ip.not(ip.fromPrefixLen(24)));
+
+    if (dataService === null) {
+      throw new ReferenceError("dataService cannot be null");
+    }
+    this.dataService = dataService;
 
     this.server.on("listening", function() {
       console.log("Server is listening...");
@@ -19,21 +29,31 @@ export class NetworkManager {
       console.log("Received message " + msg);
     });
 
-    this.server.bind(Settings.PORT, ()  => {
+    this.server.bind(Settings.PORT, () => {
       this.server.setBroadcast(true);
     });
   }
 
   public heartbeat(): void { //TODO: set this to private once startHeartbeat is implemented
-    let message: string = "test message";
+    let payload: Payload = {
+      uuid: this.dataService.getId(),
+      type: 'payload',
+      timestamp: new Date(),
+      nickname: this.dataService.getNickname()
+    };
+    let payloadJsonStr: string = JSON.stringify(PayloadUtils.payloadToJson(payload));
     this.server.send(
-      message, 0, message.length, Settings.PORT, this.broadcastAddr);
+      payloadJsonStr, 0, payloadJsonStr.length, Settings.PORT, this.broadcastAddr);
+
+    console.log("Sending heartbeat with content: " + payloadJsonStr); // DEBUG
   }
 
   public startHeartbeat(): void {
-    if (this.isHeartbeating) { return; }
+    if (this.isHeartbeating) {
+      return;
+    }
     this.isHeartbeating = true;
 
-    // implement this
+    setInterval(() => this.heartbeat(), Settings.HEARTBEAT_INTERVAL);
   }
 }

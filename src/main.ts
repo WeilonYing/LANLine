@@ -1,11 +1,14 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import { NetworkManager } from "./NetworkManager";
+import { NetworkManager } from './NetworkManager';
+import { DataService } from './DataService';
 
 let mainWindow: Electron.BrowserWindow;
-let networkManager: NetworkManager = new NetworkManager();
+let networkManager: NetworkManager;
+let dataService: DataService = new DataService();
 
 function createWindow() {
+  networkManager = new NetworkManager(dataService);
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 600,
@@ -53,5 +56,5 @@ app.on("activate", () => {
 // code. You can also put them in separate files and require them here.
 ipcMain.on('start_scan', () => {
   console.log("Beginning scan...");
-  networkManager.heartbeat();
+  networkManager.startHeartbeat();
 });
