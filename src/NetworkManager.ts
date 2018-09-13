@@ -14,8 +14,9 @@ export class NetworkManager {
   dataService: DataService;
 
   constructor(dataService: DataService) {
-    //let ip = require('ip');
+    // TODO: Add an option to choose a network interface to broadcast to.
     this.broadcastAddr = ip.or(ip.address(), ip.not(ip.fromPrefixLen(24)));
+    console.log("Broadcast address: " + this.broadcastAddr);
 
     if (dataService === null) {
       throw new ReferenceError("dataService cannot be null");
