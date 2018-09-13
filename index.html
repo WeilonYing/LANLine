@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+
     <title>LANLine</title>
   </head>
   <body>
@@ -33,7 +36,7 @@
             <nav class="sidebar">
                 <ul class="side-nav">
 
-                        <a id="send-broadcast" class="btn btn-primary" href="#" role="button">Send Broadcast</a>
+                        <button id="send-broadcast" class="btn btn-primary">Send Broadcast</button>
                 
                         <li class="side-nav__item side-nav__item--active">
                             <a href="#" class="side-nav__link">
@@ -48,27 +51,40 @@
                         </li>
                 </ul>
 
-                <img src="img/lanline.svg" alt="LANLine logo" class="logo">
-                    
-                </div>
+                <img src="img/lanline.svg" alt="LANLine logo" class="logo">       
             </nav>
+
+            <div class="chat-window">
+                <div class="chat-bubble chat-bubble__left">
+                    <p>Hello! This is message 1.<span class="chat-name">10.0.0.2</span></p>
+                </div>
+
+                <div class="chat-bubble chat-bubble__right">
+                    <p>Hello! This is message 2.</p>
+                </div>
+
+                <div class="chat-input">
+                    <form class="form-group">
+                        <label class="sr-only">Message</label>
+                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0 input input__chat" placeholder="Message">
+                                                
+                        <button type="submit" class="chat-input__submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
 
             <!-- modal -->
             <div id="broadcast-modal" class="modal">
                 <div class="modal-content">
+                    <span class="close">&times;</span>
                     <div class="form-group">
-                        <label for="exampleInputEmail1">Broadcast</label>
-                        <input type="broadcast" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Message">
+                        <input type="broadcast" class="form-control input" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Message">
                     </div>
-                    <button type="submit" class="btn btn-primary">Send Broadcast</button>
+                    <button type="submit" class="btn btn-primary btn-primary__small">Send Broadcast</button>
                 </div>       
             </div>
-
         </div>
-
-    <script>
-      // You can also require other files to run in this process
-      require('./renderer.js')
-    </script>
+    <script src="./js/modal.js"></script>
+    <script>require('./renderer.js')</script>
   </body>
 </html>

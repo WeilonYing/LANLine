@@ -30,3 +30,9 @@
     border-right: 0.5px solid $color-grey-dark-1;
     height: 90vh;
 }
+
+.chat-window {
+    -webkit-box-flex: 1;
+    flex: 1;
+    float: left;
+}
