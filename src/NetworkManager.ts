@@ -1,5 +1,7 @@
 import * as dgram from 'dgram';
+import { dialog } from 'electron';
 import * as ip from 'ip';
+import * as os from 'os';
 import { Settings } from './Settings';
 import { DataService } from './DataService';
 import { Payload, PayloadJSON, PayloadUtils } from './Payload';
@@ -13,15 +15,15 @@ export class NetworkManager {
   broadcastAddr: string;
   dataService: DataService;
 
-  constructor(dataService: DataService) {
-    // TODO: Add an option to choose a network interface to broadcast to.
-    this.broadcastAddr = ip.or(ip.address(), ip.not(ip.fromPrefixLen(24)));
-    console.log("Broadcast address: " + this.broadcastAddr);
 
+  constructor(dataService: DataService) {
+    this.broadcastAddr = ip.or(this.getIPAddress(), ip.not(ip.fromPrefixLen(24)));
     if (dataService === null) {
       throw new ReferenceError("dataService cannot be null");
     }
     this.dataService = dataService;
+
+    console.log("Broadcast address: " + this.broadcastAddr);
 
     this.server.on("listening", function() {
       console.log("Server is listening...");
@@ -35,6 +37,9 @@ export class NetworkManager {
     });
   }
 
+  /**
+    Broadcasts a heartbeat signal to the entire local area network.
+  */
   public heartbeat(): void { //TODO: set this to private once startHeartbeat is implemented
     let payload: Payload = {
       uuid: this.dataService.getId(),
@@ -49,6 +54,9 @@ export class NetworkManager {
     console.log("Sending heartbeat with content: " + payloadJsonStr); // DEBUG
   }
 
+  /**
+    Schedules sending of heartbeat signals in regular intervals
+  */
   public startHeartbeat(): void {
     if (this.isHeartbeating) {
       return;
@@ -56,5 +64,29 @@ export class NetworkManager {
     this.isHeartbeating = true;
 
     setInterval(() => this.heartbeat(), Settings.HEARTBEAT_INTERVAL);
+  }
+
+
+  /**
+    Gets the host's local IP address. If the user has more than one network interface, thie function
+    opens a dialog box to select which interface's IP address to use.
+    @return IP address
+  */
+  private getIPAddress(): string {
+    let interfaces: { [index: string]: os.NetworkInterfaceInfo[] } = os.networkInterfaces();
+    let interfaceNames: string[] = Object.keys(interfaces);
+    if (interfaceNames.length <= 1) {
+      return ip.address(); // no need to show interface menu if only one interface available
+    }
+
+    let choice: number = dialog.showMessageBox(
+      {
+        type: 'question',
+        title: Settings.APPNAME,
+        message: 'Select a network interface to use',
+        buttons: interfaceNames
+      }
+    );
+    return ip.address(interfaceNames[choice]);
   }
 }

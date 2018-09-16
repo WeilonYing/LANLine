@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import { NetworkManager } from './NetworkManager';
 import { DataService } from './DataService';
+import { Settings } from './Settings';
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;
@@ -9,10 +10,12 @@ let dataService: DataService = new DataService();
 
 function createWindow() {
   networkManager = new NetworkManager(dataService);
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    title: Settings.APPNAME
   });
 
   // and load the index.html of the app.
