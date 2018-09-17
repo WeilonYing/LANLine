@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="user-nav__active-chat">
-                    Broadcasts
+                    Lobby
                 </div>
             </nav>
         </header>
@@ -35,12 +35,10 @@
             <!-- sidebar -->
             <nav class="sidebar">
                 <ul class="side-nav">
-
-                        <button id="send-broadcast" class="btn btn-primary">Send Broadcast</button>
                 
-                        <li class="side-nav__item side-nav__item--active">
+                        <li class="side-nav__item side-nav__item--active side-nav__lobby">
                             <a href="#" class="side-nav__link">
-                                <div class="side-nav__container"><span>Broadcasts</span></div>
+                                <div class="side-nav__container side-nav__lobby--text"><span>Lobby <i class="fas fa-users"></i></span></div>
                             </a>
                         </li>
 
@@ -49,6 +47,12 @@
                                 <div class="side-nav__container"><span>10.0.0.2</span></div>
                             </a>
                         </li>
+
+                        <!-- <li class="side-nav__item side-nav__offline">
+                            <a href="#" class="side-nav__link">
+                                <div class="side-nav__container side-nav__offline--text"><span>Offline <i class="fas fa-angle-down"></i></span></div>
+                            </a>
+                        </li> -->
                 </ul>
 
                 <img src="img/lanline.svg" alt="LANLine logo" class="logo">       
@@ -71,17 +75,6 @@
                         <button type="submit" class="chat-input__submit"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
-            </div>
-
-            <!-- modal -->
-            <div id="broadcast-modal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <div class="form-group">
-                        <input type="broadcast" class="form-control input" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Message">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-primary__small">Send Broadcast</button>
-                </div>       
             </div>
         </div>
     <script src="./js/modal.js"></script>

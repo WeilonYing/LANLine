@@ -92,8 +92,7 @@ p {
 
 .side-nav {
   font-size: 1.4rem;
-  list-style: none;
-  margin-top: 3.5rem; }
+  list-style: none; }
   @media only screen and (max-width: 56.25em) {
     .side-nav {
       display: flex;
@@ -101,17 +100,24 @@ p {
   .side-nav__container {
     width: 80%;
     margin: 0 auto; }
+  .side-nav__lobby {
+    background-color: rgba(255, 67, 81, 0.2); }
+    .side-nav__lobby--text {
+      color: #ff4351; }
+  .side-nav__offline--text {
+    color: #777;
+    font-weight: bold; }
   .side-nav__link {
     color: #333; }
     .side-nav__link:hover {
       text-decoration: none;
-      font-weight: 400;
+      font-weight: 600;
       color: #ff4351;
       cursor: pointer; }
   .side-nav__item {
     position: relative;
-    padding: 2rem 0;
-    border-bottom: 0.5px solid #333; }
+    padding: 1rem 0;
+    border-bottom: 0.5px solid #777; }
     .side-nav__item--active {
       font-weight: 600; }
     .side-nav__item:not(:last-child) {
@@ -267,10 +273,11 @@ p {
   font-size: 2rem;
   color: #777;
   border: none;
-  padding: 1rem; }
+  padding: 1rem;
+  cursor: pointer; }
 
 .chat-name {
   font-size: 1.4rem;
   display: block;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   font-weight: 600; }

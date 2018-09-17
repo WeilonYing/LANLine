@@ -30,7 +30,6 @@
 .side-nav {
     font-size: 1.4rem;
     list-style: none;
-    margin-top: 3.5rem;
 
     @media only screen and (max-width: $bp-medium) {
         display: flex;
@@ -43,12 +42,27 @@
 
     }
 
+    &__lobby {
+        background-color: rgba($color-primary, 0.2);
+
+        &--text {
+            color: $color-primary;
+        }
+    }
+
+    &__offline {
+        &--text {
+            color: $color-grey-dark-2;
+            font-weight: bold;
+        }
+    }
+
     &__link {
         color: $color-grey-dark-1;
 
         &:hover {
             text-decoration: none;
-            font-weight:400;
+            font-weight:600;
             color: $color-primary;
             cursor: pointer;
         }
@@ -56,8 +70,8 @@
 
     &__item {
         position: relative;
-        padding: 2rem 0;
-        border-bottom: 0.5px solid $color-grey-dark-1;
+        padding: 1rem 0;
+        border-bottom: 0.5px solid $color-grey-dark-2;
 
         &--active {
             font-weight: 600;
@@ -266,11 +280,12 @@
     color: $color-grey-dark-2;
     border: none;
     padding: 1rem;
+    cursor: pointer;
 }
 
 .chat-name {
     font-size: 1.4rem;
     display: block;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     font-weight: 600;
 }
