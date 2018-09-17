@@ -4,6 +4,7 @@ import * as ip from 'ip';
 import * as os from 'os';
 import { Settings } from './Settings';
 import { DataService } from './DataService';
+import { UIManager } from './UIManager';
 import { Payload, PayloadJSON, PayloadUtils } from './Payload';
 
 
@@ -14,14 +15,20 @@ export class NetworkManager {
 
   broadcastAddr: string;
   dataService: DataService;
+  uiManager: UIManager;
 
 
-  constructor(dataService: DataService) {
+  constructor(dataService: DataService, uiManager: UIManager) {
     this.broadcastAddr = ip.or(this.getIPAddress(), ip.not(ip.fromPrefixLen(24)));
     if (dataService === null) {
       throw new ReferenceError("dataService cannot be null");
     }
     this.dataService = dataService;
+
+    if (uiManager === null) {
+      throw new ReferenceError("uiManager cannot be null");
+    }
+    this.uiManager = uiManager;
 
     console.log("Broadcast address: " + this.broadcastAddr);
 
@@ -29,7 +36,15 @@ export class NetworkManager {
       console.log("Server is listening...");
     });
     this.server.on('message', (msg: string, rinfo: any) => {
-      console.log("Received message " + msg);
+      let msgJSON: PayloadJSON = JSON.parse(msg);
+      let msgPayload: Payload = PayloadUtils.jsonToPayload(msgJSON);
+      if (msgJSON.type == 'heartbeat') {
+        // received heartbeat
+        console.log("Received heartbeat " + msg);
+      } else if (msgJSON.type = 'broadcast') {
+        // received broadcast
+        console.log(msgPayload.nickname + ": " + msgPayload.message);
+      }
     });
 
     this.server.bind(Settings.PORT, () => {
@@ -43,7 +58,7 @@ export class NetworkManager {
   public heartbeat(): void { //TODO: set this to private once startHeartbeat is implemented
     let payload: Payload = {
       uuid: this.dataService.getId(),
-      type: 'payload',
+      type: 'heartbeat',
       timestamp: new Date(),
       nickname: this.dataService.getNickname()
     };
@@ -66,6 +81,24 @@ export class NetworkManager {
     setInterval(() => this.heartbeat(), Settings.HEARTBEAT_INTERVAL);
   }
 
+  /**
+    Create broadcast message package and send as a JSON string.
+  */
+  public sendBroadcastMessage(): void {
+    // Create the broadcast package
+    let broadcastPayload: Payload = {
+      uuid: this.dataService.getId(),
+      type: 'broadcast',
+      timestamp: new Date(),
+      nickname: this.dataService.getNickname(),
+      message: this.uiManager.getMessage()
+    }
+    // Convert to a JSON string and send it to the broadcast address
+    let broadcastPayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(broadcastPayload);
+    let broadcastPayloadString: string = JSON.stringify(broadcastPayloadJSON);
+    this.server.send(
+      broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
+  }
 
   /**
     Gets the host's local IP address. If the user has more than one network interface, thie function

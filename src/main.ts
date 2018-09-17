@@ -2,14 +2,16 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import { NetworkManager } from './NetworkManager';
 import { DataService } from './DataService';
+import { UIManager } from './UIManager';
 import { Settings } from './Settings';
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;
 let dataService: DataService = new DataService();
+let uiManager: UIManager = new UIManager();
 
 function createWindow() {
-  networkManager = new NetworkManager(dataService);
+  networkManager = new NetworkManager(dataService, uiManager);
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -60,4 +62,10 @@ app.on("activate", () => {
 ipcMain.on('start_scan', () => {
   console.log("Beginning scan...");
   networkManager.startHeartbeat();
+});
+
+// 
+ipcMain.on('broadcast_message', function(e: any, broadcastMessage: string) {
+  uiManager.getBroadcastMessage(broadcastMessage);
+  networkManager.sendBroadcastMessage();
 });
