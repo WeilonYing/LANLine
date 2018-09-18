@@ -1,35 +1,23 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import * as path from "path";
-import * as dgram from "dgram";
-
-class NetworkManager {
-  client: dgram.Socket = dgram.createSocket('udp4');
-  server: dgram.Socket = dgram.createSocket('udp4');
-  constructor() {
-    this.server.on('listening', () => {
-      console.log("Server is listening...");
-    });
-    this.server.on('message', (msg: string, rinfo: any) => {
-      console.log("Received message " + msg);
-    });
-    this.server.bind(40000);
-  }
-  heartbeat(): void {
-    let message: string = "test message";
-    this.client.send(
-      message, 0, message.length, 40000, '192.168.43.255');
-
-  }
-}
+import { app, BrowserWindow, ipcMain } from 'electron';
+import * as path from 'path';
+import { NetworkManager } from './NetworkManager';
+import { DataService } from './DataService';
+import { UIManager } from './UIManager';
+import { Settings } from './Settings';
 
 let mainWindow: Electron.BrowserWindow;
-let networkManager: NetworkManager = new NetworkManager();
+let networkManager: NetworkManager;
+let dataService: DataService = new DataService();
+let uiManager: UIManager = new UIManager();
 
 function createWindow() {
+  networkManager = new NetworkManager(dataService, uiManager);
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    title: Settings.APPNAME
   });
 
   // and load the index.html of the app.
@@ -73,5 +61,11 @@ app.on("activate", () => {
 // code. You can also put them in separate files and require them here.
 ipcMain.on('start_scan', () => {
   console.log("Beginning scan...");
-  networkManager.heartbeat();
+  networkManager.startHeartbeat();
+});
+
+// 
+ipcMain.on('broadcast_message', function(e: any, broadcastMessage: string) {
+  uiManager.getBroadcastMessage(broadcastMessage);
+  networkManager.sendBroadcastMessage();
 });

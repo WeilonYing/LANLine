@@ -68,11 +68,11 @@
                 </div>
 
                 <div class="chat-input">
-                    <form class="form-group">
+                    <form class="form-group" id="broadcastForm">
                         <label class="sr-only">Message</label>
-                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0 input input__chat" placeholder="Message">
+                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0 input input__chat" placeholder="Message" id="broadcastMessage">
                                                 
-                        <button type="submit" class="chat-input__submit"><i class="fas fa-paper-plane"></i></button>
+                        <button type="submit" class="chat-input__submit" id="send_broadcast"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
             </div>
@@ -81,4 +81,3 @@
     <script>require('./renderer.js')</script>
   </body>
 </html>
-

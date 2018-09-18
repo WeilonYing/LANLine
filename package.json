@@ -23,7 +23,12 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^2.0.0"
+    "electron": "^2.0.8",
+    "@types/ip": "0.0.31",
+    "electron-packager": "^12.1.1",
+    "ip": "^1.1.5",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.2"
   },
   "dependencies": {
     "live-server": "^1.2.0",
