@@ -5,6 +5,7 @@ import * as os from 'os';
 import { Settings } from './Settings';
 import { DataService } from './DataService';
 import { UIManager } from './UIManager';
+import { UserManager } from './UserManager';
 import { Payload, PayloadJSON, PayloadUtils } from './Payload';
 
 
@@ -16,9 +17,10 @@ export class NetworkManager {
   broadcastAddr: string;
   dataService: DataService;
   uiManager: UIManager;
+  userManager: UserManager;
 
 
-  constructor(dataService: DataService, uiManager: UIManager) {
+  constructor(dataService: DataService, uiManager: UIManager, userManager: UserManager) {
     this.broadcastAddr = ip.or(this.getIPAddress(), ip.not(ip.fromPrefixLen(24)));
     if (dataService === null) {
       throw new ReferenceError("dataService cannot be null");
@@ -30,18 +32,26 @@ export class NetworkManager {
     }
     this.uiManager = uiManager;
 
+    if (userManager === null) {
+      throw new ReferenceError("userManager cannot be null");
+    }
+    this.userManager = userManager;
+
     console.log("Broadcast address: " + this.broadcastAddr);
 
     this.server.on("listening", function() {
       console.log("Server is listening...");
     });
-    this.server.on('message', (msg: string, rinfo: any) => {
+
+    this.server.on('message', (msg: string, rinfo: JSON) => {
       let msgJSON: PayloadJSON = JSON.parse(msg);
       let msgPayload: Payload = PayloadUtils.jsonToPayload(msgJSON);
-      if (msgJSON.type == 'heartbeat') {
+      if (msgPayload.type == 'heartbeat') {
         // received heartbeat
+        this.userManager.registerHeartbeat(msgPayload, rinfo);
+        console.log(rinfo);
         console.log("Received heartbeat " + msg);
-      } else if (msgJSON.type = 'broadcast') {
+      } else if (msgPayload.type = 'broadcast') {
         // received broadcast
         console.log(msgPayload.nickname + ": " + msgPayload.message);
       }
