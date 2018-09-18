@@ -33,6 +33,8 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  uiManager.setMainWindow(mainWindow);
 }
 
 // This method will be called when Electron has finished
@@ -64,8 +66,8 @@ ipcMain.on('start_scan', () => {
   networkManager.startHeartbeat();
 });
 
-// 
-ipcMain.on('broadcast_message', function(e: any, broadcastMessage: string) {
-  uiManager.getBroadcastMessage(broadcastMessage);
+// send broadcast message
+ipcMain.on('send_broadcast', function(e: any, broadcastMessage: string) {
+  uiManager.setBroadcastMessage(broadcastMessage);
   networkManager.sendBroadcastMessage();
 });

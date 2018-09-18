@@ -10,18 +10,18 @@ function start_scan(): void {
   ipcRenderer.send('start_scan');
 }
 
-function get_broadcast_message(): void {
+function send_broadcast_message(): void {
 	var broadcastMessage = (<HTMLInputElement>document.getElementById('broadcastMessage')).value;
-	ipcRenderer.send('broadcast_message', broadcastMessage);
+	ipcRenderer.send('send_broadcast', broadcastMessage);
 }
+
+ipcRenderer.on('received_broadcast', function(e: any, broadcastJSON: string) {
+	document.getElementById('received').innerHTML = broadcastJSON;
+});
 
 const scan_btn: HTMLElement = document.querySelector('#btn_scan')
 scan_btn.addEventListener('click', start_scan);
 
 const broadcast_form: HTMLElement = document.querySelector('#send_broadcast')
-broadcast_form.addEventListener('click', get_broadcast_message);
-document.querySelector('form').addEventListener('submit', get_broadcast_message);
-
-ipcRenderer.on('displayBroadcastMessage', function(){
-  document.getElementById('potato').innerHTML = "parkjimin";
-});
+broadcast_form.addEventListener('click', send_broadcast_message);
+// document.querySelector('form').addEventListener('submit', send_broadcast_message);

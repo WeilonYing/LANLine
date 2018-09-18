@@ -43,7 +43,8 @@ export class NetworkManager {
         console.log("Received heartbeat " + msg);
       } else if (msgJSON.type = 'broadcast') {
         // received broadcast
-        console.log(msgPayload.nickname + ": " + msgPayload.message);
+        uiManager.receiveBroadcast(msg);
+        console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
 
@@ -98,6 +99,7 @@ export class NetworkManager {
     let broadcastPayloadString: string = JSON.stringify(broadcastPayloadJSON);
     this.server.send(
       broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
+    console.log("sent broadcast: " + broadcastPayload.message); // DEBUG
   }
 
   /**
