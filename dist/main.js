@@ -2,32 +2,21 @@
 exports.__esModule = true;
 var electron_1 = require("electron");
 var path = require("path");
-var dgram = require("dgram");
-var NetworkManager = /** @class */ (function () {
-    function NetworkManager() {
-        this.client = dgram.createSocket('udp4');
-        this.server = dgram.createSocket('udp4');
-        this.server.on('listening', function () {
-            console.log("Server is listening...");
-        });
-        this.server.on('message', function (msg, rinfo) {
-            console.log("Received message " + msg);
-        });
-        this.server.bind(40000);
-    }
-    NetworkManager.prototype.heartbeat = function () {
-        var message = "test message";
-        this.client.send(message, 0, message.length, 40000, '192.168.43.255');
-    };
-    return NetworkManager;
-}());
+var NetworkManager_1 = require("./NetworkManager");
+var DataService_1 = require("./DataService");
+var UIManager_1 = require("./UIManager");
+var Settings_1 = require("./Settings");
 var mainWindow;
-var networkManager = new NetworkManager();
+var networkManager;
+var dataService = new DataService_1.DataService();
+var uiManager = new UIManager_1.UIManager();
 function createWindow() {
+    networkManager = new NetworkManager_1.NetworkManager(dataService, uiManager);
     // Create the browser window.
     mainWindow = new electron_1.BrowserWindow({
         height: 600,
-        width: 800
+        width: 800,
+        title: Settings_1.Settings.APPNAME
     });
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, "../index.html"));
@@ -64,6 +53,11 @@ electron_1.app.on("activate", function () {
 // code. You can also put them in separate files and require them here.
 electron_1.ipcMain.on('start_scan', function () {
     console.log("Beginning scan...");
-    networkManager.heartbeat();
+    networkManager.startHeartbeat();
+});
+// 
+electron_1.ipcMain.on('broadcast_message', function (e, broadcastMessage) {
+    uiManager.getBroadcastMessage(broadcastMessage);
+    networkManager.sendBroadcastMessage();
 });
 //# sourceMappingURL=main.js.map

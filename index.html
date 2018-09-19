@@ -48,11 +48,22 @@
                             </a>
                         </li>
 
-                        <!-- <li class="side-nav__item side-nav__offline">
-                            <a href="#" class="side-nav__link">
-                                <div class="side-nav__container side-nav__offline--text"><span>Offline <i class="fas fa-angle-down"></i></span></div>
-                            </a>
-                        </li> -->
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <li class="side-nav__item side-nav__offline">
+                                    <a href="#" class="side-nav__link">
+                                        <div data-toggle="collapse" class="side-nav__container side-nav__offline--text" href="#collapse1"><span>Offline <i class="fas fa-angle-down"></i></span></div>
+                                        <div id="collapse1" class="panel-collapse collapse">
+                                            <ul class="list-group">
+                                                <li class="list-group-item">One</li>
+                                                <li class="list-group-item">Two</li>
+                                                <li class="list-group-item">Three</li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                </li>
+                            </div>
+                        </div>
                 </ul>
 
                 <img src="img/lanline.svg" alt="LANLine logo" class="logo">       
@@ -77,7 +88,6 @@
                 </div>
             </div>
         </div>
-    <script src="./js/modal.js"></script>
-    <script>require('./renderer.js')</script>
+    <script>require('./dist/renderer.js')</script>
   </body>
 </html>
