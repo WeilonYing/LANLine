@@ -1,10 +1,16 @@
 import { Payload } from './Payload';
+import { Settings } from './Settings';
 import { User } from './User';
 
 
 export class UserManager {
   //hashmap of online users. Key is string, value is User
   private onlineUsers: { [uuid: string] : User } = {};
+
+  constructor() {
+    // schedule checking of online users for a regular interval
+    setInterval(() => this.checkOnlineUsers(), Settings.ONLINE_USER_TIMEOUT);
+  }
 
   public addOnlineUser(user: User): void {
     this.onlineUsers[user.uuid] = user;
@@ -14,16 +20,30 @@ export class UserManager {
     delete this.onlineUsers[user.uuid];
   }
 
-  public checkOnlineUsers(user: User): void {
-    // TODO: automatically remove users not heard from for more than 30 seconds.
-    return;
+  /**
+  Checks all online users if they have timed out. Removes a user from list of online users if they
+  have timed out
+  */
+  public checkOnlineUsers(): void {
+    let keys: string[] = Object.keys(this.onlineUsers);;
+    for (let i = 0; i < keys.length; i++) {
+      let user: User = this.onlineUsers[keys[i]];
+      let lastHeardDiff: number = (new Date().valueOf()) - user.lastHeard.valueOf(); // diff in milliseconds
+      if (lastHeardDiff > Settings.ONLINE_USER_TIMEOUT) {
+        this.removeOnlineUser(user);
+      }
+    }
   }
 
   /**
-  Gets a object containing all currently online users.
+  Gets an array containing all currently online users.
   */
   public getOnlineUsers(): User[] {
-    return this.onlineUsers;
+    let users: User[] = [];
+    for (let key in this.onlineUsers) {
+      users.push(this.onlineUsers[key]);
+    }
+    return users;
   }
 
   /**
@@ -36,7 +56,10 @@ export class UserManager {
     return this.onlineUsers[uuid];
   }
 
-  public registerHeartbeat(payload: Payload, rinfo: JSON): void {
+  /**
+  Updates online user list with information from the heartbeat.
+  */
+  public registerHeartbeat(payload: Payload, rinfo: any): void {
     if (!this.onlineUsers[payload.uuid]) {
       let newUser: User = {
         uuid: payload.uuid,
