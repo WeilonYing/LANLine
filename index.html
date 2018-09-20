@@ -17,7 +17,7 @@
     Chromium <script>document.write(process.versions.chrome)</script>,
     and Electron <script>document.write(process.versions.electron)</script>. -->
 
-        <header class="header">
+    <header class="header">
 
             <nav class="user-nav">
                 <div class="user-nav__you">
@@ -70,24 +70,26 @@
             </nav>
 
             <div class="chat-window">
-                <div class="chat-bubble chat-bubble__left">
-                    <p>Hello! This is message 1.<span class="chat-name">10.0.0.2</span></p>
-                </div>
-
-                <div class="chat-bubble chat-bubble__right">
-                    <p>Hello! This is message 2.</p>
-                </div>
 
                 <div class="chat-input">
                     <form class="form-group" id="broadcastForm">
                         <label class="sr-only">Message</label>
                         <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0 input input__chat" placeholder="Message" id="broadcastMessage">
                                                 
-                        <button type="submit" class="chat-input__submit" id="send_broadcast"><i class="fas fa-paper-plane"></i></button>
+                        <button type="button" class="chat-input__submit" id="send_broadcast"><i class="fas fa-paper-plane"></i></button>
                     </form>
+                </div>
+
+                <div class="chat-bubble chat-bubble__left">
+                    <p id="received"></p>
+                </div>
+
+                <div class="chat-bubble chat-bubble__right">
+                    <p>Hello! This is message 2.</p>
                 </div>
             </div>
         </div>
     <script>require('./dist/renderer.js')</script>
   </body>
 </html>
+

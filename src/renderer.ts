@@ -4,15 +4,25 @@
 
 import { ipcRenderer } from 'electron';
 
-function get_broadcast_message(): void {
-	var broadcastMessage = (<HTMLInputElement>document.getElementById('broadcastMessage')).value;
-	ipcRenderer.send('broadcast_message', broadcastMessage);
+function start_scan(): void {
+  console.log("scanning");
+  document.getElementById('potato').innerHTML = "potato";
+  ipcRenderer.send('start_scan');
 }
 
-const broadcast_form: HTMLElement = document.querySelector('#send_broadcast')
-broadcast_form.addEventListener('click', get_broadcast_message);
-//document.querySelector('form').addEventListener('submit', get_broadcast_message);
+function send_broadcast_message(): void {
+	var broadcastMessage = (<HTMLInputElement>document.getElementById('broadcastMessage')).value;
+	ipcRenderer.send('send_broadcast', broadcastMessage);
+}
 
-// ipcRenderer.on('displayBroadcastMessage', function(){
-//   document.getElementById('potato').innerHTML = "parkjimin";
-// });
+ipcRenderer.on('received_broadcast', function(e: any, broadcastJSON: string) {
+	var bc = JSON.parse(broadcastJSON);
+	document.getElementById('received').innerHTML = bc.message + "<span class=\"chat-name\">" + bc.nickname + "</span>";
+});
+
+// const scan_btn: HTMLElement = document.querySelector('#btn_scan')
+// scan_btn.addEventListener('click', start_scan);
+
+const broadcast_form: HTMLElement = document.querySelector('#send_broadcast')
+broadcast_form.addEventListener('click', send_broadcast_message);
+document.querySelector('form').addEventListener('submit', send_broadcast_message);

@@ -3,15 +3,17 @@ import * as path from 'path';
 import { NetworkManager } from './NetworkManager';
 import { DataService } from './DataService';
 import { UIManager } from './UIManager';
+import { UserManager } from './UserManager';
 import { Settings } from './Settings';
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;
 let dataService: DataService = new DataService();
 let uiManager: UIManager = new UIManager();
+let userManager: UserManager = new UserManager();
 
 function createWindow() {
-  networkManager = new NetworkManager(dataService, uiManager);
+  networkManager = new NetworkManager(dataService, uiManager, userManager);
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -33,6 +35,8 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  uiManager.setMainWindow(mainWindow);
 }
 
 // This method will be called when Electron has finished
@@ -64,8 +68,8 @@ ipcMain.on('start_scan', () => {
   networkManager.startHeartbeat();
 });
 
-// 
-ipcMain.on('broadcast_message', function(e: any, broadcastMessage: string) {
-  uiManager.getBroadcastMessage(broadcastMessage);
+// send broadcast message
+ipcMain.on('send_broadcast', function(e: any, broadcastMessage: string) {
+  uiManager.setBroadcastMessage(broadcastMessage);
   networkManager.sendBroadcastMessage();
 });

@@ -5,13 +5,15 @@ var path = require("path");
 var NetworkManager_1 = require("./NetworkManager");
 var DataService_1 = require("./DataService");
 var UIManager_1 = require("./UIManager");
+var UserManager_1 = require("./UserManager");
 var Settings_1 = require("./Settings");
 var mainWindow;
 var networkManager;
 var dataService = new DataService_1.DataService();
 var uiManager = new UIManager_1.UIManager();
+var userManager = new UserManager_1.UserManager();
 function createWindow() {
-    networkManager = new NetworkManager_1.NetworkManager(dataService, uiManager);
+    networkManager = new NetworkManager_1.NetworkManager(dataService, uiManager, userManager);
     // Create the browser window.
     mainWindow = new electron_1.BrowserWindow({
         height: 600,
@@ -29,6 +31,7 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null;
     });
+    uiManager.setMainWindow(mainWindow);
 }
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -55,9 +58,9 @@ electron_1.ipcMain.on('start_scan', function () {
     console.log("Beginning scan...");
     networkManager.startHeartbeat();
 });
-// 
-electron_1.ipcMain.on('broadcast_message', function (e, broadcastMessage) {
-    uiManager.getBroadcastMessage(broadcastMessage);
+// send broadcast message
+electron_1.ipcMain.on('send_broadcast', function (e, broadcastMessage) {
+    uiManager.setBroadcastMessage(broadcastMessage);
     networkManager.sendBroadcastMessage();
 });
 //# sourceMappingURL=main.js.map
