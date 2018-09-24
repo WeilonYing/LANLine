@@ -35,7 +35,7 @@
             <!-- sidebar -->
             <nav class="sidebar">
                 <ul class="side-nav">
-                
+
                         <li class="side-nav__item side-nav__item--active side-nav__lobby">
                             <a href="#" class="side-nav__link">
                                 <div class="side-nav__container side-nav__lobby--text"><span>Lobby <i class="fas fa-users"></i></span></div>
@@ -66,30 +66,29 @@
                         </div>
                 </ul>
 
-                <img src="img/lanline.svg" alt="LANLine logo" class="logo">       
+                <img src="img/lanline.svg" alt="LANLine logo" class="logo">
             </nav>
 
-            <div class="chat-window">
+            <div class="chat-window" id="chatwindow">
 
                 <div class="chat-input">
                     <form class="form-group" id="broadcastForm">
                         <label class="sr-only">Message</label>
                         <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0 input input__chat" placeholder="Message" id="broadcastMessage">
-                                                
+
                         <button type="button" class="chat-input__submit" id="send_broadcast"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
 
-                <div class="chat-bubble chat-bubble__left">
+                <!-- <div class="chat-bubble chat-bubble__left">
                     <p id="received"></p>
                 </div>
 
                 <div class="chat-bubble chat-bubble__right">
                     <p>Hello! This is message 2.</p>
-                </div>
+                </div> -->
             </div>
         </div>
     <script>require('./dist/renderer.js')</script>
   </body>
 </html>
-

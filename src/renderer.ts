@@ -3,6 +3,7 @@
 // All of the Node.js APIs are available in this process.
 
 import { ipcRenderer } from 'electron';
+import { Payload } from './Payload';
 
 function start_scan(): void {
   console.log("scanning");
@@ -15,9 +16,13 @@ function send_broadcast_message(): void {
 	ipcRenderer.send('send_broadcast', broadcastMessage);
 }
 
-ipcRenderer.on('received_broadcast', function(e: any, broadcastJSON: string) {
-	var bc = JSON.parse(broadcastJSON);
-	document.getElementById('received').innerHTML = bc.message + "<span class=\"chat-name\">" + bc.nickname + "</span>";
+ipcRenderer.on('received_broadcast', function(e: any, payload: string) {
+  let bc = JSON.parse(payload);
+	//document.getElementById('received').innerHTML = payload.message + "<span class=\"chat-name\">" + payload.nickname + "</span>";
+  var newMessage = document.createElement('div');
+  newMessage.className = "chat-bubble chat-bubble__left";
+  newMessage.innerHTML = bc.nickname + "<span class=\"chat-name\">" + bc.message + "</span>";
+  document.getElementById('chatwindow').appendChild(newMessage);
 });
 
 // const scan_btn: HTMLElement = document.querySelector('#btn_scan')
