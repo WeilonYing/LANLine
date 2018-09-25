@@ -29,16 +29,22 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^2.0.8",
     "@types/ip": "0.0.31",
+    "awesome-typescript-loader": "^5.2.1",
+    "electron": "^2.0.8",
     "electron-packager": "^12.1.1",
+    "electron-prebuilt-compile": "^3.0.0",
     "ip": "^1.1.5",
+    "source-map-loader": "^0.2.4",
     "tslint": "^5.10.0",
-    "typescript": "^2.9.2"
+    "typescript": "^2.9.2",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.0"
   },
   "dependencies": {
     "@types/react": "^16.4.14",
     "@types/react-dom": "^16.0.7",
+    "ajv": "^6.5.3",
     "autoprefixer": "^7.1.4",
     "concat": "^1.0.3",
     "live-server": "^1.2.0",
@@ -46,6 +52,7 @@
     "npm-run-all": "^4.1.1",
     "postcss-cli": "^4.1.1",
     "react": "^16.5.2",
-    "react-dom": "^16.5.2"
+    "react-dom": "^16.5.2",
+    "react-hot-loader": "^4.0.0"
   }
 }

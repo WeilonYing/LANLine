@@ -1,10 +1,12 @@
 import { Payload } from './Payload';
+import { DataService } from './DataService';
 
 export class UIManager {
 
 	message: string;
 	receivedBroadcast: string
-	mainWindow: Electron.BrowserWindow
+  mainWindow: Electron.BrowserWindow
+  dataService: DataService;
 
 	// Used by NetworkManager
   public getMessage(): string {
@@ -32,5 +34,9 @@ export class UIManager {
   public receiveBroadcast(broadcast: Payload, isSelf: boolean): void {
   	this.mainWindow.webContents.send('received_broadcast', broadcast, isSelf);
   	// console.log("broadcastJSON: " + broadcastJSON);
+  }
+
+  public getMyNickname() {
+    return this.dataService.getNickname();
   }
 }
