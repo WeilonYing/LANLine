@@ -7,7 +7,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "start": "npm run build && electron ./dist/main.js",
+    "start": "npm run build && electron ./dist/main.js --disable-gpu",
     "package": "npm run build && electron-packager . --out out/ --overwrite",
     "packageall": "npm run build && electron-packager . --out out/ --overwrite --all",
     "watch:sass": "node-sass sass/main.scss css/style.css -w",
