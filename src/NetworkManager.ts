@@ -52,8 +52,8 @@ export class NetworkManager {
         console.log(rinfo);
         console.log("Received heartbeat " + msgPayload);
       } else if (msgPayload.type = 'broadcast') {
-        // received broadcast
-        uiManager.receiveBroadcast(msg);
+        // pass broadcast message to the UI
+        uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
         console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });

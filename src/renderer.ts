@@ -3,31 +3,43 @@
 // All of the Node.js APIs are available in this process.
 
 import { ipcRenderer } from 'electron';
-import { Payload } from './Payload';
+import { DataService } from './DataService';
+import { Payload, PayloadJSON, PayloadUtils } from './Payload';
 
+/* Start sending of heartbeat messages */
 function start_scan(): void {
   console.log("scanning");
-  document.getElementById('potato').innerHTML = "potato";
   ipcRenderer.send('start_scan');
 }
 
-function send_broadcast_message(): void {
-	var broadcastMessage = (<HTMLInputElement>document.getElementById('broadcastMessage')).value;
-	ipcRenderer.send('send_broadcast', broadcastMessage);
+/* Handle sending of broadcast message from the GUI to the main process */
+function send_broadcast_message(e: any): void {
+  if (e) {
+    e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
+  }
+  let messageElement: HTMLInputElement = <HTMLInputElement> document.getElementById('broadcastMessage');
+	let broadcastMessage: string = messageElement.value;
+  if (broadcastMessage.length > 0) {
+    ipcRenderer.send('send_broadcast', broadcastMessage);
+    messageElement.value = '';
+  }
 }
 
-ipcRenderer.on('received_broadcast', function(e: any, payload: string) {
-  let bc = JSON.parse(payload);
-	//document.getElementById('received').innerHTML = payload.message + "<span class=\"chat-name\">" + payload.nickname + "</span>";
-  var newMessage = document.createElement('div');
-  newMessage.className = "chat-bubble chat-bubble__left";
-  newMessage.innerHTML = bc.nickname + "<span class=\"chat-name\">" + bc.message + "</span>";
+/* Handle display of broadcast message passed in from the main process */
+ipcRenderer.on('received_broadcast', function(e: any, payload: Payload, fromSelf: boolean) {
+  let newMessage: HTMLElement = document.createElement('div');
+  newMessage.className = "chat-bubble ";
+  if (fromSelf) { // display message depending on whether it's from our user or not
+    newMessage.className += "chat-bubble__right";
+  } else {
+    newMessage.className += "chat-bubble__left";
+  }
+  newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + payload.message + "</span>";
   document.getElementById('chatwindow').appendChild(newMessage);
 });
 
-// const scan_btn: HTMLElement = document.querySelector('#btn_scan')
-// scan_btn.addEventListener('click', start_scan);
-
+// Add event listeners for sending broadcast messages
 const broadcast_form: HTMLElement = document.querySelector('#send_broadcast')
+const broadcast_input: HTMLInputElement = document.querySelector('#broadcastMessage');
 broadcast_form.addEventListener('click', send_broadcast_message);
-document.querySelector('form').addEventListener('submit', send_broadcast_message);
+document.querySelector('form').addEventListener('submit', send_broadcast_message, false);

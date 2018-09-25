@@ -1,3 +1,5 @@
+import { Payload } from './Payload';
+
 export class UIManager {
 
 	message: string;
@@ -27,8 +29,8 @@ export class UIManager {
   }
 
   // Send message to screen
-  public receiveBroadcast(broadcastJSON: string): void {
-  	this.mainWindow.webContents.send('received_broadcast', broadcastJSON);
+  public receiveBroadcast(broadcast: Payload, isSelf: boolean): void {
+  	this.mainWindow.webContents.send('received_broadcast', broadcast, isSelf);
   	// console.log("broadcastJSON: " + broadcastJSON);
   }
 }
