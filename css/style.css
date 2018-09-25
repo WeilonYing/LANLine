@@ -227,15 +227,26 @@ p {
       border: 0.5px solid #777;
       border-radius: .4rem; }
 
+.bubbles {
+  overflow: auto;
+  height: 75vh;
+  margin-top: 1rem; }
+
+.message {
+  width: 100%;
+  height: auto;
+  overflow: hidden; }
+
 .chat-bubble {
   margin-top: 2rem;
   display: block;
   position: relative;
   border-radius: .4em;
   width: 45%;
-  padding: 2rem; }
+  padding: 2rem;
+  background-size: 45% auto; }
   .chat-bubble__left {
-    background: #e5e5e5;
+    background-color: #e5e5e5;
     margin-left: 2rem; }
     .chat-bubble__left::after {
       position: absolute;
@@ -249,7 +260,7 @@ p {
       margin-top: -2rem;
       margin-left: -2rem; }
   .chat-bubble__right {
-    background: #ff4351;
+    background-color: #ff4351;
     color: white;
     float: right;
     margin-right: 2rem; }

@@ -34,6 +34,12 @@ function createWindow() {
     uiManager.setMainWindow(mainWindow);
 }
 // This method will be called when Electron has finished
+// basic initialisation
+electron_1.app.on("will-finish-launching", () => {
+    // Electron bug workaround (https://github.com/electron/electron/issues/12820)
+    electron_1.app.disableHardwareAcceleration();
+});
+// This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 electron_1.app.on("ready", createWindow);

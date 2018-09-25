@@ -215,6 +215,18 @@
 ////////////////////////////////////////
 // BUBBLES
 
+.bubbles {
+    overflow: auto;
+    height: 75vh;
+    margin-top: 1rem;
+}
+
+.message {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
 .chat-bubble {
     margin-top: 2rem;
     display: block;
@@ -222,9 +234,10 @@
     border-radius: .4em;
     width: 45%;
     padding: 2rem;
+    background-size: 45% auto;
 
     &__left {
-        background: #e5e5e5;
+        background-color: #e5e5e5;
         margin-left: 2rem;
         
         &::after {
@@ -242,7 +255,7 @@
     }
 
     &__right {
-        background: $color-primary;
+        background-color: $color-primary;
         color: white;
         float: right;
         margin-right: 2rem;
