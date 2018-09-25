@@ -11,85 +11,36 @@
     <title>LANLine</title>
   </head>
   <body>
-    <!-- <h1>Hello World!</h1> -->
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    <!-- We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>. -->
+        <header id="header" class="header"></header>
+        <div id="content" class="content"></div>
+        
+        <!-- Dependencies -->
+        <script src="./node_modules/react/umd/react.development.js"></script>
+        <script src="./node_modules/react-dom/umd/react-dom.development.js"></script>
 
-    <header class="header">
-
-            <nav class="user-nav">
-                <div class="user-nav__you">
-                    10.0.0.3
-                </div>
-
-                <div class="user-nav__active-chat">
-                    Lobby
-                </div>
-            </nav>
-        </header>
-
-        <div class="content">
-
-            <!-- sidebar -->
-            <nav class="sidebar">
-                <ul class="side-nav">
-                
-                        <li class="side-nav__item side-nav__item--active side-nav__lobby">
-                            <a href="#" class="side-nav__link">
-                                <div class="side-nav__container side-nav__lobby--text"><span>Lobby <i class="fas fa-users"></i></span></div>
-                            </a>
-                        </li>
-
-                        <li class="side-nav__item">
-                            <a href="#" class="side-nav__link">
-                                <div class="side-nav__container"><span>10.0.0.2</span></div>
-                            </a>
-                        </li>
-
-                        <div class="panel-group">
-                            <div class="panel panel-default">
-                                <li class="side-nav__item side-nav__offline">
-                                    <a href="#" class="side-nav__link">
-                                        <div data-toggle="collapse" class="side-nav__container side-nav__offline--text" href="#collapse1"><span>Offline <i class="fas fa-angle-down"></i></span></div>
-                                        <div id="collapse1" class="panel-collapse collapse">
-                                            <ul class="list-group">
-                                                <li class="list-group-item">One</li>
-                                                <li class="list-group-item">Two</li>
-                                                <li class="list-group-item">Three</li>
-                                            </ul>
-                                        </div>
-                                    </a>
-                                </li>
-                            </div>
-                        </div>
-                </ul>
-
-                <img src="img/lanline.svg" alt="LANLine logo" class="logo">       
-            </nav>
-
-            <div class="chat-window">
-
-                <div class="chat-input">
-                    <form class="form-group" id="broadcastForm">
-                        <label class="sr-only">Message</label>
-                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0 input input__chat" placeholder="Message" id="broadcastMessage">
-                                                
-                        <button type="button" class="chat-input__submit" id="send_broadcast"><i class="fas fa-paper-plane"></i></button>
-                    </form>
-                </div>
-
-                <div class="chat-bubble chat-bubble__left">
-                    <p id="received"></p>
-                </div>
-
-                <div class="chat-bubble chat-bubble__right">
-                    <p>Hello! This is message 2.</p>
-                </div>
-            </div>
-        </div>
-    <script>require('./dist/renderer.js')</script>
+        <!-- Main -->
+        <script src="./dist/bundle.js"></script>
   </body>
 </html>
 
+<!-- =======
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+  </head>
+  <body>
+    <h1 id="potato">Hello World!</h1>
+    All of the Node.js APIs are available in this renderer process. -->
+    <!-- We are using Node.js <script>document.write(process.versions.node)</script>,
+    Chromium <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>
+    <button id="btn_scan">Scan</button> -->
+  <!-- </body>
+
+  <script> -->
+    <!-- // You can also require other files to run in this process
+    require('./dist/renderer.js')
+  </script>
+</html> -->
