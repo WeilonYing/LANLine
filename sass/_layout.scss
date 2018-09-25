@@ -36,3 +36,14 @@
     flex: 1;
     float: left;
 }
+
+.online-list {
+    height: 40vh;
+    overflow: scroll;
+}
+
+.offline-list {
+    margin-top: 1rem;
+    overflow: scroll;
+    height: 25vh;
+}

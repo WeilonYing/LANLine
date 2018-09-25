@@ -46,6 +46,9 @@ body {
 p {
   font-size: 1.6rem; }
 
+li {
+  list-style: none; }
+
 .header {
   font-size: 1.4rem;
   height: 10vh;
@@ -78,6 +81,15 @@ p {
   flex: 1;
   float: left; }
 
+.online-list {
+  height: 40vh;
+  overflow: scroll; }
+
+.offline-list {
+  margin-top: 1rem;
+  overflow: scroll;
+  height: 25vh; }
+
 .user-nav {
   align-self: stretch;
   display: flex;
@@ -109,7 +121,12 @@ p {
       color: #ff4351; }
   .side-nav__offline--text {
     color: #777;
-    font-weight: bold; }
+    font-weight: bold;
+    cursor: pointer; }
+  .side-nav__offline--item {
+    color: #999;
+    margin-bottom: 1rem;
+    opacity: 70%; }
   .side-nav__link {
     color: #333; }
     .side-nav__link:hover {
