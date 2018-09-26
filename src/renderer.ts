@@ -20,8 +20,19 @@ function send_broadcast_message(e: any): void {
     e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
   }
   let messageElement: HTMLInputElement = <HTMLInputElement> document.getElementById('broadcastMessage');
-	let broadcastMessage: string = messageElement.value;
+  let broadcastMessage: string = messageElement.value;
   if (broadcastMessage.length > 0) {
+  	// This part is currently used to process direct messages
+	  // TODO: delete this part once MVC is created
+	  let broadcastMessageSplit: string[] = broadcastMessage.split(' ');
+	  let ipAddr: string = broadcastMessageSplit[0];
+	  if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipAddr)) {  
+	  	let message: string[] = broadcastMessageSplit.slice(1, broadcastMessageSplit.length + 1);
+	  	ipcRenderer.send('send_private_message', ipAddr, message);
+	  	messageElement.value = '';
+	  	return;
+	  }
+	  // end private message section 
     ipcRenderer.send('send_broadcast', broadcastMessage);
     messageElement.value = '';
   }

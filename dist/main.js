@@ -69,4 +69,9 @@ electron_1.ipcMain.on('send_broadcast', function (e, broadcastMessage) {
     uiManager.setBroadcastMessage(broadcastMessage);
     networkManager.sendBroadcastMessage();
 });
+// send private message
+electron_1.ipcMain.on('send_private_message', function (e, ipAddr, message) {
+    uiManager.setBroadcastMessage(message);
+    networkManager.sendPrivateMessage(ipAddr);
+});
 //# sourceMappingURL=main.js.map
