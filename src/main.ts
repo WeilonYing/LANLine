@@ -79,3 +79,9 @@ ipcMain.on('send_broadcast', function(e: any, broadcastMessage: string) {
   uiManager.setBroadcastMessage(broadcastMessage);
   networkManager.sendBroadcastMessage();
 });
+
+// send private message
+ipcMain.on('send_private_message', function(e: any, ipAddr: string, message: string) {
+  uiManager.setBroadcastMessage(message);
+  networkManager.sendPrivateMessage(ipAddr);
+});

@@ -55,6 +55,10 @@ export class NetworkManager {
         // pass broadcast message to the UI
         uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
         console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
+      } else if (msgPayload.type = 'message') {
+        // received private message
+        uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
+        console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
 
@@ -110,6 +114,27 @@ export class NetworkManager {
     this.server.send(
       broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
     console.log("sent broadcast: " + broadcastPayload.message); // DEBUG
+  }
+
+  /**
+    Create private message package and send it to the given IP address
+  */
+  public sendPrivateMessage(ipAddress: string): void {
+    // Create the message package
+    let messagePayload: Payload = {
+      uuid: this.dataService.getId(),
+      type: 'message',
+      timestamp: new Date(),
+      nickname: this.dataService.getNickname(),
+      message: this.uiManager.getMessage()
+    }
+    let messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
+    let messagePayloadString: string = JSON.stringify(messagePayloadJSON);
+    this.server.send(
+      messagePayloadString, 0, messagePayloadString.length, Settings.PORT, ipAddress);
+    // TODO(angela): send the message to the user sending this message, so that it will 
+    // appear on their own screen as well - need to get the selected IP address 
+    console.log("sent message " + messagePayload.message + " to " + ipAddress); // DEBUG
   }
 
   /**
