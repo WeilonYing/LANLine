@@ -5,6 +5,7 @@ import { DataService } from './DataService';
 import { UIManager } from './UIManager';
 import { UserManager } from './UserManager';
 import { Settings } from './Settings';
+import { User } from './User';
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;
@@ -37,6 +38,7 @@ function createWindow() {
   });
 
   uiManager.setMainWindow(mainWindow);
+  networkManager.startHeartbeat();
 }
 
 // This method will be called when Electron has finished
