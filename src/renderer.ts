@@ -23,6 +23,9 @@ function send_broadcast_message(e: any): void {
   let broadcastMessage: string = messageElement.value;
   if (broadcastMessage.length > 0) {
   	// This part is currently used to process direct messages
+  	// Format: enter the IP address of the user you wish to send it to
+  	// followed by the message
+  	// e.g. '10.0.0.3 Hi!' would send 'Hi!' to 10.0.0.3
 	  // TODO: delete this part once MVC is created
 	  let broadcastMessageSplit: string[] = broadcastMessage.split(' ');
 	  let ipAddr: string = broadcastMessageSplit[0];
