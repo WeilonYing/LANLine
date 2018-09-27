@@ -15,6 +15,7 @@ export class NetworkManager {
   isHeartbeating: boolean = false;
 
   broadcastAddr: string;
+  ipAddress: string;
   dataService: DataService;
   uiManager: UIManager;
   userManager: UserManager;
@@ -119,7 +120,7 @@ export class NetworkManager {
   /**
     Create private message package and send it to the given IP address
   */
-  public sendPrivateMessage(ipAddress: string): void {
+  public sendPrivateMessage(recipientIP: string): void {
     // Create the message package
     let messagePayload: Payload = {
       uuid: this.dataService.getId(),
@@ -131,10 +132,10 @@ export class NetworkManager {
     let messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
     let messagePayloadString: string = JSON.stringify(messagePayloadJSON);
     this.server.send(
-      messagePayloadString, 0, messagePayloadString.length, Settings.PORT, ipAddress);
-    // TODO(angela): send the message to the user sending this message, so that it will 
-    // appear on their own screen as well - need to get the selected IP address 
-    console.log("sent message " + messagePayload.message + " to " + ipAddress); // DEBUG
+      messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
+    this.server.send(
+      messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
+    console.log("sent message " + messagePayload.message + " to " + recipientIP); // DEBUG
   }
 
   /**
@@ -157,6 +158,7 @@ export class NetworkManager {
         buttons: interfaceNames
       }
     );
+    this.ipAddress = ip.address(interfaceNames[choice]);
     return ip.address(interfaceNames[choice]);
   }
 }
