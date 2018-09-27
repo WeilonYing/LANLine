@@ -32,6 +32,7 @@ function createWindow() {
         mainWindow = null;
     });
     uiManager.setMainWindow(mainWindow);
+    networkManager.startHeartbeat();
 }
 // This method will be called when Electron has finished
 // basic initialisation
