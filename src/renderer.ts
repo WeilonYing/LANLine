@@ -5,6 +5,7 @@
 import { ipcRenderer } from 'electron';
 import { DataService } from './DataService';
 import { Payload, PayloadJSON, PayloadUtils } from './Payload';
+import { User } from './User';
 
 var msgCount = -1;
 
@@ -41,8 +42,35 @@ function send_broadcast_message(e: any): void {
   }
 }
 
-/* Handle display of broadcast message passed in from the main process */
+/* Show online users on sidebar by dynamically creating elements based on list */
+ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], nickname: string) {
+	// Every time this function is called, clear the div and regenerate everything
+	// inside it. 
+	document.getElementById("online-list").innerHTML = "";
+	for (var i = 0; i < onlineUsers.length; i++) {
+		if (onlineUsers[i].nickname === nickname) {
+			// if it's yourself, don't display
+			continue;
+		}
+		var online = document.getElementById("online-list");
+		var list = document.createElement("li");
+		list.className = "side-nav__item";
+		var link = document.createElement("a");
+		link.className = "side-nav__link";
+		var innerDiv = document.createElement("div");
+		innerDiv.className = "side-nav__container";
+		var spanName = document.createElement("span");
+		var name = document.createTextNode(onlineUsers[i].nickname);
+		spanName.appendChild(name);
+		innerDiv.appendChild(spanName);
+		link.appendChild(innerDiv);
+		link.href = "#"; // this should eventually link to the correct tab
+		list.appendChild(link);
+		online.appendChild(list);
+	}
+});
 
+/* Handle display of broadcast message passed in from the main process */
 ipcRenderer.on('received_broadcast', function(e: any, payload: Payload, fromSelf: boolean) {
   let newRow: HTMLElement = document.createElement('div');
   newRow.className = "message";

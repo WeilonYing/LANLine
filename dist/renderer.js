@@ -19,6 +19,9 @@ function send_broadcast_message(e) {
     let broadcastMessage = messageElement.value;
     if (broadcastMessage.length > 0) {
         // This part is currently used to process direct messages
+        // Format: enter the IP address of the user you wish to send it to
+        // followed by the message
+        // e.g. '10.0.0.3 Hi!' would send 'Hi!' to 10.0.0.3
         // TODO: delete this part once MVC is created
         let broadcastMessageSplit = broadcastMessage.split(' ');
         let ipAddr = broadcastMessageSplit[0];
@@ -33,6 +36,38 @@ function send_broadcast_message(e) {
         messageElement.value = '';
     }
 }
+/* Show online users on sidebar by dynamically creating elements based on list */
+electron_1.ipcRenderer.on('show_online_users', function (e, onlineUsers, nickname) {
+    // var onlineUsers1 = ["Hello","World"];
+    // ipcRenderer.on('show_online_users', function(e: any) {
+    document.getElementById("online-list").innerHTML = "";
+    for (var i = 0; i < onlineUsers.length; i++) {
+        if (onlineUsers[i].nickname === nickname) {
+            // if it's yourself
+            continue;
+        }
+        var online = document.getElementById("online-list");
+        var list = document.createElement("li");
+        list.className = "side-nav__item";
+        var link = document.createElement("a");
+        link.className = "side-nav__link";
+        var innerDiv = document.createElement("div");
+        innerDiv.className = "side-nav__container";
+        var spanName = document.createElement("span");
+        var name = document.createTextNode(onlineUsers[i].nickname);
+        spanName.appendChild(name);
+        innerDiv.appendChild(spanName);
+        link.appendChild(innerDiv);
+        link.href = "#";
+        list.appendChild(link);
+        online.appendChild(list);
+    }
+    // var online = document.getElementById("online-list");
+    // var name = document.createTextNode("my title text");
+    // online.appendChild(name);
+    // var online = document.getElementById("user-nav__active-chat");
+    // online.innerHTML = "Potato";
+});
 /* Handle display of broadcast message passed in from the main process */
 electron_1.ipcRenderer.on('received_broadcast', function (e, payload, fromSelf) {
     let newRow = document.createElement('div');
