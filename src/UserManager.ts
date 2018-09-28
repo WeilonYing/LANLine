@@ -6,10 +6,15 @@ import { User } from './User';
 export class UserManager {
   //hashmap of online users. Key is string, value is User
   private onlineUsers: { [uuid: string] : User } = {};
+  private allUsers: { [uuid: string] : User } = {};
 
   constructor() {
     // schedule checking of online users for a regular interval
     setInterval(() => this.checkOnlineUsers(), Settings.ONLINE_USER_TIMEOUT);
+  }
+
+  public addUser(user: User): void {
+    this.allUsers[user.uuid] = user;
   }
 
   public addOnlineUser(user: User): void {
@@ -47,6 +52,19 @@ export class UserManager {
   }
 
   /**
+  Gets an array containing all currently offline users.
+  */
+  public getOfflineUsers(): User[] {
+    let users: User[] = [];
+    for (let key in this.allUsers) {
+      if (this.onlineUsers[key] == undefined) {
+        users.push(this.allUsers[key]);
+      }
+    }
+    return users;
+  }
+
+  /**
   Get user object by uuid. Returns null if user doesn't exist or is not online.
   */
   public getOnlineUser(uuid: string) {
@@ -68,6 +86,7 @@ export class UserManager {
         lastHeard: new Date()
       }
       this.addOnlineUser(newUser);
+      this.addUser(newUser);
       return;
     }
 
