@@ -37,36 +37,49 @@ function send_broadcast_message(e) {
     }
 }
 /* Show online users on sidebar by dynamically creating elements based on list */
-electron_1.ipcRenderer.on('show_online_users', function (e, onlineUsers, nickname) {
-    // var onlineUsers1 = ["Hello","World"];
-    // ipcRenderer.on('show_online_users', function(e: any) {
+electron_1.ipcRenderer.on('show_online_users', function (e, onlineUsers, uuid) {
+    // Every time this function is called, clear the div and regenerate everything
+    // inside it. 
     document.getElementById("online-list").innerHTML = "";
     for (var i = 0; i < onlineUsers.length; i++) {
-        if (onlineUsers[i].nickname === nickname) {
-            // if it's yourself
+        if (onlineUsers[i].uuid === uuid) {
+            // if it's yourself, don't display
             continue;
         }
-        var online = document.getElementById("online-list");
-        var list = document.createElement("li");
+        let online = document.getElementById("online-list");
+        let list = document.createElement("li");
         list.className = "side-nav__item";
-        var link = document.createElement("a");
+        let link = document.createElement("a");
         link.className = "side-nav__link";
-        var innerDiv = document.createElement("div");
+        let innerDiv = document.createElement("div");
         innerDiv.className = "side-nav__container";
-        var spanName = document.createElement("span");
-        var name = document.createTextNode(onlineUsers[i].nickname);
+        let spanName = document.createElement("span");
+        let name = document.createTextNode(onlineUsers[i].nickname);
         spanName.appendChild(name);
         innerDiv.appendChild(spanName);
         link.appendChild(innerDiv);
-        link.href = "#";
+        link.href = "#"; // this should eventually link to the correct tab
         list.appendChild(link);
         online.appendChild(list);
     }
-    // var online = document.getElementById("online-list");
-    // var name = document.createTextNode("my title text");
-    // online.appendChild(name);
-    // var online = document.getElementById("user-nav__active-chat");
-    // online.innerHTML = "Potato";
+});
+/* Show offline users on sidebar by dynamically creating elements based on list */
+electron_1.ipcRenderer.on('show_offline_users', function (e, offlineUsers) {
+    // Every time this function is called, clear the div and regenerate everything
+    // inside it. 
+    document.getElementById("offline-list").innerHTML = "";
+    for (var i = 0; i < offlineUsers.length; i++) {
+        let offline = document.getElementById("offline-list");
+        let list = document.createElement("li");
+        list.className = "side-nav__container side-nav__offline--item";
+        let link = document.createElement("a");
+        link.className = "side-nav__link";
+        link.href = "#"; // this should eventually link to the correct tab
+        let name = document.createTextNode(offlineUsers[i].nickname);
+        list.appendChild(name);
+        link.appendChild(list);
+        offline.appendChild(link);
+    }
 });
 /* Handle display of broadcast message passed in from the main process */
 electron_1.ipcRenderer.on('received_broadcast', function (e, payload, fromSelf) {

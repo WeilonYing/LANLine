@@ -51,7 +51,8 @@ export class NetworkManager {
         // received heartbeat
         this.userManager.registerHeartbeat(msgPayload, rinfo);
         // update online users list
-        this.uiManager.showOnlineUsers(this.userManager.getOnlineUsers(), this.dataService.getNickname());
+        this.uiManager.showOnlineUsers(this.userManager.getOnlineUsers(), this.dataService.getId());
+        this.uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
         console.log(rinfo);
         console.log("Received heartbeat " + msgPayload);
       } else if (msgPayload.type = 'broadcast') {
