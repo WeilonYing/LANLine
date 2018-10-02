@@ -49,7 +49,12 @@ export class UIManager {
   	this.mainWindow.webContents.send('show_offline_users', offlineUsers);
   }
 
-  public getMyNickname() {
+  public getMyNickname(): string {
     return this.dataService.getNickname();
+  }
+  
+  // Display messages on the screen
+  public showMessages(messages: Payload[], ownUuid: string): void {
+    this.mainWindow.webContents.send('show_messages', messages, ownUuid);
   }
 }

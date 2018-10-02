@@ -87,3 +87,9 @@ ipcMain.on('send_private_message', function(e: any, ipAddr: string, message: str
   uiManager.setBroadcastMessage(message);
   networkManager.sendPrivateMessage(ipAddr);
 });
+
+// retrieve messages sent to and from a specific user
+ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
+  console.log("message passed to main process!"); // DEBUG
+  uiManager.showMessages(dataService.getMessages(uuid), /* own uuid */ dataService.getId());
+});
