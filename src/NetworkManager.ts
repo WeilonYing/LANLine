@@ -58,12 +58,12 @@ export class NetworkManager {
       } else if (msgPayload.type = 'broadcast') {
         // pass broadcast message to the UI
         uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
-        this.dataService.storeMessage(msgPayload);
+        this.dataService.storeMessage('lobby', msgPayload);
         console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       } else if (msgPayload.type = 'message') {
         // received private message
         uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
-        this.dataService.storeMessage(msgPayload);
+        // TODO: store received private message to dataService
         console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
@@ -141,7 +141,7 @@ export class NetworkManager {
       messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
     this.server.send(
       messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
-    this.dataService.storeMessage(messagePayload);
+    // TODO: Store message sent in dataService
     console.log("sent message " + messagePayload.message + " to " + recipientIP); // DEBUG
   }
 

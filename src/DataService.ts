@@ -23,11 +23,12 @@ export class DataService {
     // TODO: implement message retrieval from the database
   }
   
-  public storeMessage(payload: Payload): void {
-    if (!this.messages[payload.uuid]) {
-      this.messages[payload.uuid] = [];
+  /* Store message in chat history associated with the provided UUID */
+  public storeMessage(uuid: string, payload: Payload): void {
+    if (!this.messages[uuid]) {
+      this.messages[uuid] = [];
     }
-    this.messages[payload.uuid].push(payload);
+    this.messages[uuid].push(payload);
   }
   
   // TODO: implement message storage to the database

@@ -150,6 +150,6 @@ broadcast_form.addEventListener('click', send_broadcast_message);
 document.querySelector('form').addEventListener('submit', send_broadcast_message, false);
 
 // Add event listener for lobby navigation button on the sidebar
-const lobby_button: HTMLElement = document.querySelector(LOBBY_ID_NAME);
+const lobby_button: HTMLElement = document.querySelector('#' + LOBBY_ID_NAME);
 // TODO: add a special method for setting message views for lobby chat
 lobby_button.addEventListener('click', () => { setMessageView(/* uuid */ 'lobby'); }); 
