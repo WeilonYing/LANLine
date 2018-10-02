@@ -58,10 +58,12 @@ export class NetworkManager {
       } else if (msgPayload.type = 'broadcast') {
         // pass broadcast message to the UI
         uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
+        this.dataService.storeMessage('lobby', msgPayload);
         console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       } else if (msgPayload.type = 'message') {
         // received private message
         uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
+        // TODO: store received private message to dataService
         console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
@@ -117,6 +119,7 @@ export class NetworkManager {
     let broadcastPayloadString: string = JSON.stringify(broadcastPayloadJSON);
     this.server.send(
       broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
+    // NOTE: Not storing broadcast message. Program will receive our its broadcast message later on, and it'll store it then.
     console.log("sent broadcast: " + broadcastPayload.message); // DEBUG
   }
 
@@ -138,6 +141,7 @@ export class NetworkManager {
       messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
     this.server.send(
       messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
+    // TODO: Store message sent in dataService
     console.log("sent message " + messagePayload.message + " to " + recipientIP); // DEBUG
   }
 
