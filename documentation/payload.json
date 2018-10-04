@@ -1,0 +1,7 @@
+{
+  "uuid": "string",
+  "type": "message | heartbeat | broadcast",
+  "timestamp": "datetime",
+  "nickname": "string",
+  "message": "message content"
+}
