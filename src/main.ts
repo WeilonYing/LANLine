@@ -86,5 +86,7 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
 
 // retrieve messages sent to and from a specific user
 ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
-  uiManager.showMessages(dataService.getMessages(uuid), /* own uuid */ dataService.getId());
+  dataService.getMessages(uuid).then(function(result) {
+  	uiManager.showMessages(result, dataService.getId());
+  });
 });
