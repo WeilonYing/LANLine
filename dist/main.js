@@ -75,4 +75,9 @@ electron_1.ipcMain.on('send_private_message', function (e, ipAddr, message) {
     uiManager.setBroadcastMessage(message);
     networkManager.sendPrivateMessage(ipAddr);
 });
+// retrieve messages sent to and from a specific user
+electron_1.ipcMain.on('retrieve_messages', function (e, uuid) {
+    console.log("message passed to main process!"); // DEBUG
+    uiManager.showMessages(dataService.getMessages(uuid), /* own uuid */ dataService.getId());
+});
 //# sourceMappingURL=main.js.map
