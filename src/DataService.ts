@@ -5,6 +5,7 @@ import { User } from './User';
 
 export class DataService {
 	db: Database;
+  nickname: string;
 
 	constructor() {
 		this.db = new sqlite3.Database('db.sqlite3');
@@ -31,8 +32,15 @@ export class DataService {
   }
 
   public getNickname(): string {
-    return "Potato Salad";
+    if (this.nickname == undefined) {
+      this.nickname = "defaultNickname";
+    }
+    return this.nickname;
     // TODO: implement nickname creation and retrieval
+  }
+  
+  public setUserNickname(nickname: string): void {
+  	this.nickname = nickname;
   }
 
   public getBlockedUsers(): User[]  {

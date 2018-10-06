@@ -56,8 +56,9 @@ export class NetworkManager {
         // update online users list
         this.uiManager.showOnlineUsers(this.userManager.getOnlineUsers(this.dataService.getBlockedUsers()), this.dataService.getId());
         this.uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
-        console.log(rinfo); // DEBUG
-        console.log("Received heartbeat " + msgPayload); // DEBUG
+        this.uiManager.displayNickname(this.dataService.getNickname());
+        console.log(rinfo);
+        console.log("Received heartbeat " + msgPayload);
       } else if (msgPayload.type === 'broadcast') {
         // pass broadcast message to the UI
         if (msgPayload.uuid !== this.dataService.getId()) {

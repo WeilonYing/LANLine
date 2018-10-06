@@ -24,7 +24,12 @@ function init(): void {
   // Add event listener for lobby navigation button on the sidebar
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
-  
+
+  // Add event listeners for getting the display nickname
+  const user_nickname_form: HTMLElement = document.querySelector('#set_nickname')
+  const user_nickname_input: HTMLInputElement = document.querySelector('#userNicknameInput');
+  user_nickname_form.addEventListener('click', get_user_nickname);
+  document.querySelector('form').addEventListener('submit', get_user_nickname);
   setMessageView(); // Set up message view for the first time.
 }
 
@@ -44,6 +49,19 @@ function send_message(e: any): void {
   if (message.length > 0) {
 	  	ipcRenderer.send('send_message', currentViewChannel, message);
 	  	messageElement.value = '';
+  }
+}
+
+/* Get the new user nickname entered into the form for the user */
+function get_user_nickname(e: any): void {
+  if (e) {
+    e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
+  }
+  let userNicknameElement: HTMLInputElement = <HTMLInputElement> document.getElementById('userNicknameInput');
+  let nickname: string = userNicknameElement.value;
+  if (nickname.length > 0 && nickname.length < 20) {
+    ipcRenderer.send('set_nickname', nickname);
+    userNicknameElement.value = '';
   }
 }
 
