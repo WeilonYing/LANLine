@@ -1,6 +1,22 @@
+const sqlite3 = require('sqlite3').verbose();
+import { Database } from 'sqlite3';
 import { Payload } from './Payload';
 
 export class DataService {
+	db: Database;
+
+	constructor() {
+		this.db = new sqlite3.Database('db.sqlite3');
+		this.db.run('CREATE TABLE IF NOT EXISTS messages(\
+	           UUID int,\
+	           broadcast boolean,\
+	           timestamp datetime,\
+	           message string)');
+		this.db.run('CREATE TABLE IF NOT EXISTS users(\
+						UUID int,\
+						nickname string)');
+	}
+
   public getId(): string {
     return "angela";
     // TODO: implement ID storage and generator
@@ -11,29 +27,16 @@ export class DataService {
     // TODO: implement nickname creation and retrieval
   }
 
-  // Messages are simply stored in a hashmap for now, for testing purposes only
-  messages: { [uuid: string]: Payload[] } = {};
-
-  public getMessages(uuid: string): Payload[] {
-    if (!this.messages[uuid]) {
-      return [];
-    }
-    return this.messages[uuid];
-
-    // TODO: implement message retrieval from the database
-  }
   /* From and to represent the message interval. E.g. if from is 0, start from most recent message */
-  public getMessages(uuid: string, from: number, to: number): Payload[] {
+  public getMessages(uuid: string, from?: number, to?: number): Payload[] {
+  	if (!from && !to) {
+  		return null;
+  	}
     return null;
   }
 
   /* Store message in chat history associated with the provided UUID */
   public storeMessage(uuid: string, payload: Payload): void {
-    if (!this.messages[uuid]) {
-      this.messages[uuid] = [];
-    }
-    this.messages[uuid].push(payload);
   }
 
-  // TODO: implement message storage to the database
 }
