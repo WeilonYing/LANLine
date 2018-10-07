@@ -5,7 +5,6 @@ import { DataService } from './DataService';
 import { UIManager } from './UIManager';
 import { UserManager } from './UserManager';
 import { Settings } from './Settings';
-import { User } from './User';
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;

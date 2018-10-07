@@ -1,4 +1,5 @@
 import { Payload } from './Payload';
+import { User } from './User';
 
 export class DataService {
   public getId(): string {
@@ -9,6 +10,18 @@ export class DataService {
   public getNickname(): string {
     return "Angela";
     // TODO: implement nickname creation and retrieval
+  }
+
+  public getBlockedUsers(): User[]  {
+    let user1 :User = {
+      uuid: "teresa",
+      nickname: "teresa",
+      ip: "10.1.1",
+      lastHeard: new Date(),
+      blockedList: []
+    };
+
+    return [user1];
   }
   
   // Messages are simply stored in a hashmap for now, for testing purposes only

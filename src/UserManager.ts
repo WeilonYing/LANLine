@@ -1,12 +1,13 @@
 import { Payload } from './Payload';
 import { Settings } from './Settings';
 import { User } from './User';
-
+import { DataService } from './DataService';
 
 export class UserManager {
   //hashmap of online users. Key is string, value is User
   private onlineUsers: { [uuid: string] : User } = {};
   private allUsers: { [uuid: string] : User } = {};
+  private dataService: DataService;
 
   constructor() {
     // schedule checking of online users for a regular interval
@@ -30,7 +31,7 @@ export class UserManager {
   have timed out
   */
   public checkOnlineUsers(): void {
-    let keys: string[] = Object.keys(this.onlineUsers);;
+    let keys: string[] = Object.keys(this.onlineUsers);
     for (let i = 0; i < keys.length; i++) {
       let user: User = this.onlineUsers[keys[i]];
       let lastHeardDiff: number = (new Date().valueOf()) - user.lastHeard.valueOf(); // diff in milliseconds
@@ -43,11 +44,35 @@ export class UserManager {
   /**
   Gets an array containing all currently online users.
   */
-  public getOnlineUsers(): User[] {
-    let users: User[] = [];
-    for (let key in this.onlineUsers) {
-      users.push(this.onlineUsers[key]);
+  public getOnlineUsers(blockedUsers: User[]): User[] {
+    let user1 :User = {
+      uuid: "teresa",
+      nickname: "teresa",
+      ip: "10.1.1",
+      lastHeard: new Date(),
+      blockedList: [] 
+    };
+
+    let user2 :User = {
+      uuid: "weilon",
+      nickname: "weilon",
+      ip: "10.1.2",
+      lastHeard: new Date(),
+      blockedList: [user1]
+    };
+
+    let users: User[] = [user1, user2];
+
+    for (let i = 0; i < users.length; i++) {
+      for (let j = 0; j < blockedUsers.length; j++) {
+        if (users[i].uuid == blockedUsers[j].uuid) {
+          delete users[i];
+        }
+      }
     }
+    // for (let key in this.onlineUsers) {
+    //   users.push(this.onlineUsers[key]);
+    // }
     return users;
   }
 
@@ -83,7 +108,8 @@ export class UserManager {
         uuid: payload.uuid,
         nickname: payload.nickname,
         ip: rinfo.address,
-        lastHeard: new Date()
+        lastHeard: new Date(),
+        blockedList: []
       }
       this.addOnlineUser(newUser);
       this.addUser(newUser);

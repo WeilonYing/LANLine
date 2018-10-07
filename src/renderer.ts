@@ -3,7 +3,6 @@
 // All of the Node.js APIs are available in this process.
 
 import { ipcRenderer } from 'electron';
-import { DataService } from './DataService';
 import { Payload, PayloadJSON, PayloadUtils } from './Payload';
 import { User } from './User';
 
@@ -90,14 +89,18 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
 
 /* Show online users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: string) {
+
+  document.getElementById("own-nickname").innerHTML = uuid;
+
 	// Every time this function is called, clear the div and regenerate everything
 	// inside it.
 	document.getElementById("online-list").innerHTML = "";
 	for (let i = 0; i < onlineUsers.length; i++) {
 		if (onlineUsers[i].uuid === uuid) {
 			// if it's yourself, don't display
-			//continue;
+			continue;
 		}
+
 		let online: HTMLElement = document.getElementById("online-list");
 		let list: HTMLLIElement = document.createElement("li");
 		list.className = "side-nav__item";
