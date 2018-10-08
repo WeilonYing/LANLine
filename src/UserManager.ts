@@ -45,7 +45,8 @@ export class UserManager {
   Gets an array containing all currently online users.
   */
   public getOnlineUsers(blockedUsers: User[]): User[] {
-    let user1 :User = {
+    // Begin test code
+    let user1: User = {
       uuid: "teresa",
       nickname: "teresa",
       ip: "10.1.1",
@@ -53,7 +54,7 @@ export class UserManager {
       blockedList: [] 
     };
 
-    let user2 :User = {
+    let user2: User = {
       uuid: "weilon",
       nickname: "weilon",
       ip: "10.1.2",
@@ -62,6 +63,11 @@ export class UserManager {
     };
 
     let users: User[] = [user1, user2];
+    // End test code
+    
+    for (let key in this.onlineUsers) {
+      users.push(this.onlineUsers[key]);
+    }
 
     for (let i = 0; i < users.length; i++) {
       for (let j = 0; j < blockedUsers.length; j++) {

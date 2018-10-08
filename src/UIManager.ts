@@ -19,8 +19,8 @@ export class UIManager {
   }
 
   // Used to get the message from form and set
-  public setBroadcastMessage(broadcastMessage: string): void {
-  	this.message = broadcastMessage;
+  public setMessage(message: string): void {
+  	this.message = message;
   }
 
   public setMainWindow(mainWindow: Electron.BrowserWindow): void {
@@ -32,9 +32,8 @@ export class UIManager {
   }
 
   // Send message to screen
-  public receiveBroadcast(broadcast: Payload, isSelf: boolean): void {
-  	this.mainWindow.webContents.send('received_broadcast', broadcast, isSelf);
-  	// console.log("broadcastJSON: " + broadcastJSON);
+  public displayMessage(message: Payload, isSelf: boolean, channel: string): void {
+    this.mainWindow.webContents.send('received_message', message, isSelf, channel);
   }
 
   // Show online users on screen
@@ -52,7 +51,7 @@ export class UIManager {
   public getMyNickname(): string {
     return this.dataService.getNickname();
   }
-  
+
   // Display messages on the screen
   public showMessages(messages: Payload[], ownUuid: string): void {
     this.mainWindow.webContents.send('show_messages', messages, ownUuid);

@@ -75,20 +75,17 @@ ipcMain.on('start_scan', () => {
   networkManager.startHeartbeat();
 });
 
-// send broadcast message
-ipcMain.on('send_broadcast', function(e: any, broadcastMessage: string) {
-  uiManager.setBroadcastMessage(broadcastMessage);
-  networkManager.sendBroadcastMessage();
-});
-
 // send private message
-ipcMain.on('send_private_message', function(e: any, ipAddr: string, message: string) {
-  uiManager.setBroadcastMessage(message);
-  networkManager.sendPrivateMessage(ipAddr);
+ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
+  uiManager.setMessage(message);
+  if (uuid === Settings.LOBBY_ID_NAME) {
+    networkManager.sendBroadcastMessage();
+  } else {
+    networkManager.sendPrivateMessage(uuid);
+  }
 });
 
 // retrieve messages sent to and from a specific user
 ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
-  console.log("message passed to main process!"); // DEBUG
   uiManager.showMessages(dataService.getMessages(uuid), /* own uuid */ dataService.getId());
 });

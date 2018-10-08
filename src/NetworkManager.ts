@@ -38,16 +38,19 @@ export class NetworkManager {
     }
     this.userManager = userManager;
 
-    console.log("Broadcast address: " + this.broadcastAddr);
+    console.log("Broadcast address: " + this.broadcastAddr); // DEBUG
 
     this.server.on("listening", function() {
       console.log("Server is listening...");
     });
-
+    
+    /*
+      Handles incoming receipt of message data
+     */
     this.server.on('message', (msg: string, rinfo: JSON) => {
       let msgJSON: PayloadJSON = JSON.parse(msg);
       let msgPayload: Payload = PayloadUtils.jsonToPayload(msgJSON);
-      if (msgPayload.type == 'heartbeat') {
+      if (msgPayload.type === 'heartbeat') {
         // received heartbeat
         this.userManager.registerHeartbeat(msgPayload, rinfo);
         // update online users list
@@ -55,15 +58,17 @@ export class NetworkManager {
         this.uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
         console.log(rinfo);
         console.log("Received heartbeat " + msgPayload);
-      } else if (msgPayload.type = 'broadcast') {
+      } else if (msgPayload.type === 'broadcast') {
         // pass broadcast message to the UI
-        uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
-        this.dataService.storeMessage('lobby', msgPayload);
+        if (msgPayload.uuid !== this.dataService.getId()) {
+          uiManager.displayMessage(msgPayload, msgPayload.uuid === this.dataService.getId(), Settings.LOBBY_ID_NAME);
+          this.dataService.storeMessage(Settings.LOBBY_ID_NAME, msgPayload); // store broadcasts received from other users
+        }
         console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
-      } else if (msgPayload.type = 'message') {
+      } else if (msgPayload.type === 'message') {
         // received private message
-        uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
-        // TODO: store received private message to dataService
+        uiManager.displayMessage(msgPayload, msgPayload.uuid === this.dataService.getId(), msgPayload.uuid);
+        this.dataService.storeMessage(msgPayload.uuid, msgPayload);
         console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
@@ -117,16 +122,20 @@ export class NetworkManager {
     // Convert to a JSON string and send it to the broadcast address
     let broadcastPayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(broadcastPayload);
     let broadcastPayloadString: string = JSON.stringify(broadcastPayloadJSON);
+    
+    this.uiManager.displayMessage(
+      broadcastPayload, broadcastPayload.uuid === this.dataService.getId(), Settings.LOBBY_ID_NAME);
+    
     this.server.send(
       broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
-    // NOTE: Not storing broadcast message. Program will receive our its broadcast message later on, and it'll store it then.
+    this.dataService.storeMessage(Settings.LOBBY_ID_NAME, broadcastPayload);
     console.log("sent broadcast: " + broadcastPayload.message); // DEBUG
   }
 
   /**
-    Create private message package and send it to the given IP address
+    Create private message package and send it to the given user
   */
-  public sendPrivateMessage(recipientIP: string): void {
+  public sendPrivateMessage(recipient_uuid: string): void {
     // Create the message package
     let messagePayload: Payload = {
       uuid: this.dataService.getId(),
@@ -135,13 +144,22 @@ export class NetworkManager {
       nickname: this.dataService.getNickname(),
       message: this.uiManager.getMessage()
     }
+    let user = this.userManager.getOnlineUser(recipient_uuid);
+    if (!user) {
+      // TODO: let user know that recipient is offline
+      return;
+    }
+    let recipientIP = user.ip;
     let messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
     let messagePayloadString: string = JSON.stringify(messagePayloadJSON);
+    
+    this.uiManager.displayMessage(
+      messagePayload, messagePayload.uuid === this.dataService.getId(), recipient_uuid);
+    
     this.server.send(
       messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
-    this.server.send(
-      messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
-    // TODO: Store message sent in dataService
+    //   messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
+    this.dataService.storeMessage(recipient_uuid, messagePayload);
     console.log("sent message " + messagePayload.message + " to " + recipientIP); // DEBUG
   }
 

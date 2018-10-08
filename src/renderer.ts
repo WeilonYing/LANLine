@@ -4,14 +4,27 @@
 
 import { ipcRenderer } from 'electron';
 import { Payload, PayloadJSON, PayloadUtils } from './Payload';
+import { Settings } from './Settings';
 import { User } from './User';
 
 const BUBBLE_CLASS_NAME: string = 'bubbles';
 const MSG_CLASS_NAME: string = 'message';
-const LOBBY_ID_NAME: string = 'lobby';
 
 var msgCount: number = -1;
 var isChangingView: boolean = false;
+var currentViewChannel: string = Settings.LOBBY_ID_NAME;
+
+/* Initialisation function for the renderer process */
+function init(): void {
+  // Add event listeners for sending broadcast messages
+  const send_message_button: HTMLElement = document.querySelector('#sendMessage');
+  send_message_button.addEventListener('click', send_message);
+  document.querySelector('form').addEventListener('submit', send_message, false);
+
+  // Add event listener for lobby navigation button on the sidebar
+  const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
+  lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
+}
 
 /* Start sending of heartbeat messages */
 function start_scan(): void {
@@ -20,29 +33,15 @@ function start_scan(): void {
 }
 
 /* Handle sending of broadcast message from the GUI to the main process */
-function send_broadcast_message(e: any): void {
+function send_message(e: any): void {
   if (e) {
     e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
   }
-  let messageElement: HTMLInputElement = <HTMLInputElement> document.getElementById('broadcastMessage');
-  let broadcastMessage: string = messageElement.value;
-  if (broadcastMessage.length > 0) {
-  	// This part is currently used to process direct messages
-  	// Format: enter the IP address of the user you wish to send it to
-  	// followed by the message
-  	// e.g. '10.0.0.3 Hi!' would send 'Hi!' to 10.0.0.3
-	  // TODO: delete this part once MVC is created
-	  let broadcastMessageSplit: string[] = broadcastMessage.split(' ');
-	  let ipAddr: string = broadcastMessageSplit[0];
-	  if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipAddr)) {
-	  	let message: string[] = broadcastMessageSplit.slice(1, broadcastMessageSplit.length + 1);
-	  	ipcRenderer.send('send_private_message', ipAddr, message);
+  let messageElement: HTMLInputElement = <HTMLInputElement> document.getElementById('messageInput');
+  let message: string = messageElement.value;
+  if (message.length > 0) {
+	  	ipcRenderer.send('send_message', currentViewChannel, message);
 	  	messageElement.value = '';
-	  	return;
-	  }
-	  // end private message section
-    ipcRenderer.send('send_broadcast', broadcastMessage);
-    messageElement.value = '';
   }
 }
 
@@ -75,8 +74,13 @@ function clearMessageView(): void {
 /* Show all messages sent and received from a specific user */
 function setMessageView(uuid: string): void {
   clearMessageView();
+  currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
 }
+
+/**
+  Inter-process communication from main process
+ */
 
 /* Display messages sent and received */
 ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: string) {
@@ -84,14 +88,12 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
     let message: Payload = messages[i];
     addMessageToView(message, message.uuid === ownUuid);
   }
-  console.log("message passed back to renderer process!"); // DEBUG
 });
 
 /* Show online users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: string) {
-
   document.getElementById("own-nickname").innerHTML = uuid;
-
+  
 	// Every time this function is called, clear the div and regenerate everything
 	// inside it.
 	document.getElementById("online-list").innerHTML = "";
@@ -141,18 +143,14 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
 	}
 });
 
-/* Handle display of broadcast message passed in from the main process */
-ipcRenderer.on('received_broadcast', function(e: any, payload: Payload, fromSelf: boolean) {
-  addMessageToView(payload, fromSelf);
+/* Handle display of message passed in from the main process */
+ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string) {
+  console.log("Current channel: " + currentViewChannel + "; Message channel: " + channel);
+  if (currentViewChannel === channel) {
+    addMessageToView(payload, fromSelf);
+  } else {
+    // TODO: send notification
+  }
 });
 
-// Add event listeners for sending broadcast messages
-const broadcast_form: HTMLElement = document.querySelector('#send_broadcast');
-const broadcast_input: HTMLInputElement = document.querySelector('#broadcastMessage');
-broadcast_form.addEventListener('click', send_broadcast_message);
-document.querySelector('form').addEventListener('submit', send_broadcast_message, false);
-
-// Add event listener for lobby navigation button on the sidebar
-const lobby_button: HTMLElement = document.querySelector('#' + LOBBY_ID_NAME);
-// TODO: add a special method for setting message views for lobby chat
-lobby_button.addEventListener('click', () => { setMessageView(/* uuid */ 'lobby'); }); 
+init();
