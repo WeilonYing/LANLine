@@ -15,7 +15,7 @@
     <title>LANLine</title>
   </head>
   <body>
-    
+
     <!-- Fixes the "Couldn't set selectedTextBackgroundColor from default ()" error -->
     <style> ::selection { background: white; /* WebKit/Blink Browsers */ } </style>
 
@@ -36,60 +36,12 @@
             <nav class="sidebar">
                 <ul class="side-nav">
                             <li class="side-nav__item side-nav__item--active side-nav__lobby">
-                                <a href="#" class="side-nav__link">
+                                <a href="#" class="side-nav__link" id="lobby">
                                     <div class="side-nav__container side-nav__lobby--text"><span>Lobby <i class="fas fa-users"></i></span></div>
                                 </a>
                             </li>
 
-                        <div class="online-list">
-
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li> 
+                        <div class="online-list" id="online-list">
                         </div>                      
 
                         <div class="panel-group">
@@ -97,23 +49,7 @@
                                 <li class="side-nav__item side-nav__offline">
                                     <div data-toggle="collapse" class="side-nav__container side-nav__offline--text" data-target="#collapse1" aria-expanded="true" aria-controls="collapse"><span>Offline <i class="fas fa-angle-down"></i></span></div>
                                     <div id="collapse1" class="panel-collapse collapse" aria-labelledby="side-nav__offline">
-                                        <ul class="offline-list">
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
+                                        <ul class="offline-list" id="offline-list">
                                         </ul>
                                     </div>
                                 </li>
@@ -126,7 +62,7 @@
 
             <div class="chat-window">
                 <div class="bubbles" id="bubbles">
-                    
+
                 </div>
 
                 <div class="chat-input">

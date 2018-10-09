@@ -1,5 +1,6 @@
 import { Payload } from './Payload';
 import { DataService } from './DataService';
+import { User } from './User';
 
 export class UIManager {
 
@@ -36,7 +37,24 @@ export class UIManager {
   	// console.log("broadcastJSON: " + broadcastJSON);
   }
 
-  public getMyNickname() {
+  // Show online users on screen
+  public showOnlineUsers(onlineUsers: User[], uuid: string): void {
+  	this.mainWindow.webContents.send('show_online_users', onlineUsers, uuid);
+  	// console.log("onlineUsers: " + onlineUsers[0].nickname);
+  	// console.log("onlineUsers length: " + onlineUsers.length);
+  }
+
+  // Show offline users on screen
+  public showOfflineUsers(offlineUsers: User[]): void {
+  	this.mainWindow.webContents.send('show_offline_users', offlineUsers);
+  }
+
+  public getMyNickname(): string {
     return this.dataService.getNickname();
+  }
+  
+  // Display messages on the screen
+  public showMessages(messages: Payload[], ownUuid: string): void {
+    this.mainWindow.webContents.send('show_messages', messages, ownUuid);
   }
 }

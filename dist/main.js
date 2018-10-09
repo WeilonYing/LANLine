@@ -32,6 +32,7 @@ function createWindow() {
         mainWindow = null;
     });
     uiManager.setMainWindow(mainWindow);
+    networkManager.startHeartbeat();
 }
 // This method will be called when Electron has finished
 // basic initialisation
@@ -68,5 +69,17 @@ electron_1.ipcMain.on('start_scan', () => {
 electron_1.ipcMain.on('send_broadcast', function (e, broadcastMessage) {
     uiManager.setBroadcastMessage(broadcastMessage);
     networkManager.sendBroadcastMessage();
+});
+// send private message
+electron_1.ipcMain.on('send_private_message', function (e, ipAddr, message) {
+    uiManager.setBroadcastMessage(message);
+    networkManager.sendPrivateMessage(ipAddr);
+});
+// retrieve messages sent to and from a specific user
+electron_1.ipcMain.on('retrieve_messages', function (e, uuid) {
+    console.log("message passed to main process! " + uuid); // DEBUG
+    dataService.getMessages(uuid).then(function (result) {
+        uiManager.showMessages(result, dataService.getId());
+    });
 });
 //# sourceMappingURL=main.js.map

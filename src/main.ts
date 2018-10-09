@@ -5,6 +5,7 @@ import { DataService } from './DataService';
 import { UIManager } from './UIManager';
 import { UserManager } from './UserManager';
 import { Settings } from './Settings';
+import { User } from './User';
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;
@@ -37,6 +38,7 @@ function createWindow() {
   });
 
   uiManager.setMainWindow(mainWindow);
+  networkManager.startHeartbeat();
 }
 
 // This method will be called when Electron has finished
@@ -78,4 +80,19 @@ ipcMain.on('start_scan', () => {
 ipcMain.on('send_broadcast', function(e: any, broadcastMessage: string) {
   uiManager.setBroadcastMessage(broadcastMessage);
   networkManager.sendBroadcastMessage();
+});
+
+// send private message
+ipcMain.on('send_private_message', function(e: any, ipAddr: string, message: string) {
+  uiManager.setBroadcastMessage(message);
+  networkManager.sendPrivateMessage(ipAddr);
+});
+
+// retrieve messages sent to and from a specific user
+ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
+  console.log("message passed to main process! " + uuid); // DEBUG
+
+  dataService.getMessages(uuid).then(function(result) {
+  	uiManager.showMessages(result, dataService.getId());
+  });
 });
