@@ -4,27 +4,13 @@ import { User } from './User';
 
 export class UIManager {
 
-	message: string;
-	receivedBroadcast: string
-  mainWindow: Electron.BrowserWindow
+  message: string;
+  receivedBroadcast: string;
+  mainWindow: Electron.BrowserWindow;
   dataService: DataService;
 
-	// Used by NetworkManager
-  public getMessage(): string {
-    return this.message;
-  }
-
-  public getReceivedBroadcast(): string {
-  	return this.receivedBroadcast;
-  }
-
-  // Used to get the message from form and set
-  public setMessage(message: string): void {
-  	this.message = message;
-  }
-
   public setMainWindow(mainWindow: Electron.BrowserWindow): void {
-  	this.mainWindow = mainWindow;
+    this.mainWindow = mainWindow;
   }
 
   public getMainWindow(): Electron.BrowserWindow {
@@ -38,14 +24,12 @@ export class UIManager {
 
   // Show online users on screen
   public showOnlineUsers(onlineUsers: User[], uuid: string): void {
-  	this.mainWindow.webContents.send('show_online_users', onlineUsers, uuid);
-  	// console.log("onlineUsers: " + onlineUsers[0].nickname);
-  	// console.log("onlineUsers length: " + onlineUsers.length);
+    this.mainWindow.webContents.send('show_online_users', onlineUsers, uuid);
   }
 
   // Show offline users on screen
   public showOfflineUsers(offlineUsers: User[]): void {
-  	this.mainWindow.webContents.send('show_offline_users', offlineUsers);
+    this.mainWindow.webContents.send('show_offline_users', offlineUsers);
   }
 
   public getMyNickname(): string {

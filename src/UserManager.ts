@@ -51,7 +51,7 @@ export class UserManager {
       nickname: "teresa",
       ip: "10.1.1",
       lastHeard: new Date(),
-      blockedList: [] 
+      blockedList: []
     };
 
     let user2: User = {
@@ -64,7 +64,7 @@ export class UserManager {
 
     let users: User[] = [user1, user2];
     // End test code
-    
+
     for (let key in this.onlineUsers) {
       users.push(this.onlineUsers[key]);
     }
@@ -76,9 +76,7 @@ export class UserManager {
         }
       }
     }
-    // for (let key in this.onlineUsers) {
-    //   users.push(this.onlineUsers[key]);
-    // }
+    
     return users;
   }
 

@@ -92,8 +92,8 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
 
 /* Show online users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: string) {
-  document.getElementById("own-nickname").innerHTML = uuid;
-  
+  document.getElementById("own-nickname").innerHTML = uuid; // TODO: Properly display the nickname
+
 	// Every time this function is called, clear the div and regenerate everything
 	// inside it.
 	document.getElementById("online-list").innerHTML = "";
@@ -130,13 +130,13 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
 	// inside it.
 	document.getElementById("offline-list").innerHTML = "";
 	for (var i = 0; i < offlineUsers.length; i++) {
-		let offline = document.getElementById("offline-list");
-		let list = document.createElement("li");
+		let offline: HTMLElement = document.getElementById("offline-list");
+		let list: HTMLLIElement = document.createElement("li");
 		list.className = "side-nav__container side-nav__offline--item";
-		let link = document.createElement("a");
+		let link: HTMLAnchorElement = document.createElement("a");
 		link.className = "side-nav__link";
 		link.href = "#"; // this should eventually link to the correct tab
-		let name = document.createTextNode(offlineUsers[i].nickname);
+		let name: Text = document.createTextNode(offlineUsers[i].nickname);
 		list.appendChild(name);
 		link.appendChild(list);
 		offline.appendChild(link);
@@ -145,7 +145,6 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
 
 /* Handle display of message passed in from the main process */
 ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string) {
-  console.log("Current channel: " + currentViewChannel + "; Message channel: " + channel);
   if (currentViewChannel === channel) {
     addMessageToView(payload, fromSelf);
   } else {

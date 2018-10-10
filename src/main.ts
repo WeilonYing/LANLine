@@ -77,11 +77,10 @@ ipcMain.on('start_scan', () => {
 
 // send private message
 ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
-  uiManager.setMessage(message);
   if (uuid === Settings.LOBBY_ID_NAME) {
-    networkManager.sendBroadcastMessage();
+    networkManager.sendBroadcastMessage(message);
   } else {
-    networkManager.sendPrivateMessage(uuid);
+    networkManager.sendPrivateMessage(uuid, message);
   }
 });
 

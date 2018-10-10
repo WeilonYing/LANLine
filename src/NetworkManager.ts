@@ -43,7 +43,7 @@ export class NetworkManager {
     this.server.on("listening", function() {
       console.log("Server is listening...");
     });
-    
+
     /*
       Handles incoming receipt of message data
      */
@@ -110,22 +110,22 @@ export class NetworkManager {
   /**
     Create broadcast message package and send as a JSON string.
   */
-  public sendBroadcastMessage(): void {
+  public sendBroadcastMessage(message_content: string): void {
     // Create the broadcast package
     let broadcastPayload: Payload = {
       uuid: this.dataService.getId(),
       type: 'broadcast',
       timestamp: new Date(),
       nickname: this.dataService.getNickname(),
-      message: this.uiManager.getMessage()
+      message: message_content
     }
     // Convert to a JSON string and send it to the broadcast address
     let broadcastPayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(broadcastPayload);
     let broadcastPayloadString: string = JSON.stringify(broadcastPayloadJSON);
-    
+
     this.uiManager.displayMessage(
       broadcastPayload, broadcastPayload.uuid === this.dataService.getId(), Settings.LOBBY_ID_NAME);
-    
+
     this.server.send(
       broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
     this.dataService.storeMessage(Settings.LOBBY_ID_NAME, broadcastPayload);
@@ -135,14 +135,14 @@ export class NetworkManager {
   /**
     Create private message package and send it to the given user
   */
-  public sendPrivateMessage(recipient_uuid: string): void {
+  public sendPrivateMessage(recipient_uuid: string, message_content: string): void {
     // Create the message package
     let messagePayload: Payload = {
       uuid: this.dataService.getId(),
       type: 'message',
       timestamp: new Date(),
       nickname: this.dataService.getNickname(),
-      message: this.uiManager.getMessage()
+      message: message_content
     }
     let user = this.userManager.getOnlineUser(recipient_uuid);
     if (!user) {
@@ -152,10 +152,10 @@ export class NetworkManager {
     let recipientIP = user.ip;
     let messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
     let messagePayloadString: string = JSON.stringify(messagePayloadJSON);
-    
+
     this.uiManager.displayMessage(
       messagePayload, messagePayload.uuid === this.dataService.getId(), recipient_uuid);
-    
+
     this.server.send(
       messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
     //   messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
