@@ -15,16 +15,14 @@
     <title>LANLine</title>
   </head>
   <body>
-    
+
     <!-- Fixes the "Couldn't set selectedTextBackgroundColor from default ()" error -->
     <style> ::selection { background: white; /* WebKit/Blink Browsers */ } </style>
 
     <header class="header">
 
             <nav class="user-nav">
-                <div class="user-nav__you">
-                    10.0.0.3
-                </div>
+                <div class="user-nav__you" id="own-nickname"></div>
 
                 <div class="user-nav__active-chat">
                     Lobby
@@ -36,84 +34,20 @@
             <nav class="sidebar">
                 <ul class="side-nav">
                             <li class="side-nav__item side-nav__item--active side-nav__lobby">
-                                <a href="#" class="side-nav__link">
+                                <a href="#" class="side-nav__link" id="lobby">
                                     <div class="side-nav__container side-nav__lobby--text"><span>Lobby <i class="fas fa-users"></i></span></div>
                                 </a>
                             </li>
 
-                        <div class="online-list">
-
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li>
-    
-                            <li class="side-nav__item">
-                                <a href="#" class="side-nav__link">
-                                    <div class="side-nav__container"><span>10.0.0.2</span></div>
-                                </a>
-                            </li> 
-                        </div>                      
+                        <div class="online-list" id="online-list">
+                        </div>
 
                         <div class="panel-group">
                             <div class="panel panel-default">
                                 <li class="side-nav__item side-nav__offline">
                                     <div data-toggle="collapse" class="side-nav__container side-nav__offline--text" data-target="#collapse1" aria-expanded="true" aria-controls="collapse"><span>Offline <i class="fas fa-angle-down"></i></span></div>
                                     <div id="collapse1" class="panel-collapse collapse" aria-labelledby="side-nav__offline">
-                                        <ul class="offline-list">
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
-                                            <a href="#" class="side-nav__link"><li class="side-nav__container side-nav__offline--item">10.0.0.1</li></a>
+                                        <ul class="offline-list" id="offline-list">
                                         </ul>
                                     </div>
                                 </li>
@@ -126,15 +60,15 @@
 
             <div class="chat-window">
                 <div class="bubbles" id="bubbles">
-                    
+
                 </div>
 
                 <div class="chat-input">
-                    <form class="form-group" id="broadcastForm">
+                    <form class="form-group" id="messageForm">
                         <label class="sr-only">Message</label>
-                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0 input input__chat" placeholder="Message" id="broadcastMessage">
+                        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0 input input__chat" placeholder="Message" id="messageInput">
 
-                        <button type="button" class="chat-input__submit" id="send_broadcast"><i class="fas fa-paper-plane"></i></button>
+                        <button type="button" class="chat-input__submit" id="sendMessage"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
             </div>

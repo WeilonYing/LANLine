@@ -37,6 +37,7 @@ function createWindow() {
   });
 
   uiManager.setMainWindow(mainWindow);
+  networkManager.startHeartbeat();
 }
 
 // This method will be called when Electron has finished
@@ -74,8 +75,16 @@ ipcMain.on('start_scan', () => {
   networkManager.startHeartbeat();
 });
 
-// send broadcast message
-ipcMain.on('send_broadcast', function(e: any, broadcastMessage: string) {
-  uiManager.setBroadcastMessage(broadcastMessage);
-  networkManager.sendBroadcastMessage();
+// send private message
+ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
+  if (uuid === Settings.LOBBY_ID_NAME) {
+    networkManager.sendBroadcastMessage(message);
+  } else {
+    networkManager.sendPrivateMessage(uuid, message);
+  }
+});
+
+// retrieve messages sent to and from a specific user
+ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
+  uiManager.showMessages(dataService.getMessages(uuid), /* own uuid */ dataService.getId());
 });

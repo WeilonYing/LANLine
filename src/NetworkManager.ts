@@ -15,6 +15,7 @@ export class NetworkManager {
   isHeartbeating: boolean = false;
 
   broadcastAddr: string;
+  ipAddress: string;
   dataService: DataService;
   uiManager: UIManager;
   userManager: UserManager;
@@ -37,24 +38,38 @@ export class NetworkManager {
     }
     this.userManager = userManager;
 
-    console.log("Broadcast address: " + this.broadcastAddr);
+    console.log("Broadcast address: " + this.broadcastAddr); // DEBUG
 
     this.server.on("listening", function() {
       console.log("Server is listening...");
     });
 
+    /*
+      Handles incoming receipt of message data
+     */
     this.server.on('message', (msg: string, rinfo: JSON) => {
       let msgJSON: PayloadJSON = JSON.parse(msg);
       let msgPayload: Payload = PayloadUtils.jsonToPayload(msgJSON);
-      if (msgPayload.type == 'heartbeat') {
+      if (msgPayload.type === 'heartbeat') {
         // received heartbeat
         this.userManager.registerHeartbeat(msgPayload, rinfo);
+        // update online users list
+        this.uiManager.showOnlineUsers(this.userManager.getOnlineUsers(this.dataService.getBlockedUsers()), this.dataService.getId());
+        this.uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
         console.log(rinfo);
         console.log("Received heartbeat " + msgPayload);
-      } else if (msgPayload.type = 'broadcast') {
+      } else if (msgPayload.type === 'broadcast') {
         // pass broadcast message to the UI
-        uiManager.receiveBroadcast(msgPayload, msgPayload.uuid === this.dataService.getId());
+        if (msgPayload.uuid !== this.dataService.getId()) {
+          uiManager.displayMessage(msgPayload, msgPayload.uuid === this.dataService.getId(), Settings.LOBBY_ID_NAME);
+          this.dataService.storeMessage(Settings.LOBBY_ID_NAME, msgPayload); // store broadcasts received from other users
+        }
         console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
+      } else if (msgPayload.type === 'message') {
+        // received private message
+        uiManager.displayMessage(msgPayload, msgPayload.uuid === this.dataService.getId(), msgPayload.uuid);
+        this.dataService.storeMessage(msgPayload.uuid, msgPayload);
+        console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
 
@@ -95,21 +110,57 @@ export class NetworkManager {
   /**
     Create broadcast message package and send as a JSON string.
   */
-  public sendBroadcastMessage(): void {
+  public sendBroadcastMessage(message_content: string): void {
     // Create the broadcast package
     let broadcastPayload: Payload = {
       uuid: this.dataService.getId(),
       type: 'broadcast',
       timestamp: new Date(),
       nickname: this.dataService.getNickname(),
-      message: this.uiManager.getMessage()
+      message: message_content
     }
     // Convert to a JSON string and send it to the broadcast address
     let broadcastPayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(broadcastPayload);
     let broadcastPayloadString: string = JSON.stringify(broadcastPayloadJSON);
+
+    this.uiManager.displayMessage(
+      broadcastPayload, broadcastPayload.uuid === this.dataService.getId(), Settings.LOBBY_ID_NAME);
+
     this.server.send(
       broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
+    this.dataService.storeMessage(Settings.LOBBY_ID_NAME, broadcastPayload);
     console.log("sent broadcast: " + broadcastPayload.message); // DEBUG
+  }
+
+  /**
+    Create private message package and send it to the given user
+  */
+  public sendPrivateMessage(recipient_uuid: string, message_content: string): void {
+    // Create the message package
+    let messagePayload: Payload = {
+      uuid: this.dataService.getId(),
+      type: 'message',
+      timestamp: new Date(),
+      nickname: this.dataService.getNickname(),
+      message: message_content
+    }
+    let user = this.userManager.getOnlineUser(recipient_uuid);
+    if (!user) {
+      // TODO: let user know that recipient is offline
+      return;
+    }
+    let recipientIP = user.ip;
+    let messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
+    let messagePayloadString: string = JSON.stringify(messagePayloadJSON);
+
+    this.uiManager.displayMessage(
+      messagePayload, messagePayload.uuid === this.dataService.getId(), recipient_uuid);
+
+    this.server.send(
+      messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
+    //   messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
+    this.dataService.storeMessage(recipient_uuid, messagePayload);
+    console.log("sent message " + messagePayload.message + " to " + recipientIP); // DEBUG
   }
 
   /**
@@ -132,6 +183,7 @@ export class NetworkManager {
         buttons: interfaceNames
       }
     );
+    this.ipAddress = ip.address(interfaceNames[choice]);
     return ip.address(interfaceNames[choice]);
   }
 }

@@ -3,4 +3,5 @@ export interface User {
   nickname: string;
   ip: string;
   lastHeard: Date;
+  blockedList: User[];
 }
