@@ -105,7 +105,6 @@ function setMessageView(uuid?: string): void {
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
-  //TODO(Oliver): get the nickname from the uuid and replace uuid below
   ipcRenderer.send('display_friend_nickname', uuid);
 }
 
@@ -201,11 +200,11 @@ function get_friend_nickname(e: any): void {
   }
 }
 
-ipcRenderer.on('display_friend_nickname', function(e: any, friend_nickname: string) {
+ipcRenderer.on('display_friend_nickname', function(e: any, nickname: string) {
   let nicknameDiv: HTMLElement = document.getElementById("friend-nickname");
-  nicknameDiv.innerHTML = friend_nickname;
+  nicknameDiv.innerHTML = currentViewChannel;
   let formDiv: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameForm');
-  formDiv.placeholder = friend_nickname;
+  formDiv.placeholder = currentViewChannel;
 });
 
 // Add event listeners for getting the display nickname
