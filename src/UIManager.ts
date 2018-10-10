@@ -40,7 +40,11 @@ export class UIManager {
   public showMessages(messages: Payload[], ownUuid: string): void {
     this.mainWindow.webContents.send('show_messages', messages, ownUuid);
   }
-  
+
+  // Display the friend nickname on the screen
+  public displayFriendNickname(): void {
+    this.mainWindow.webContents.send('display_friend_nickname');
+  }
   // Display the user's personal nickname on the screen
   public displayPersonalNickname(nickname: string): void {
     this.mainWindow.webContents.send('display_personal_nickname', nickname);

@@ -47,8 +47,8 @@ function send_message(e: any): void {
   let messageElement: HTMLInputElement = <HTMLInputElement> document.getElementById('messageInput');
   let message: string = messageElement.value;
   if (message.length > 0) {
-	  	ipcRenderer.send('send_message', currentViewChannel, message);
-	  	messageElement.value = '';
+      ipcRenderer.send('send_message', currentViewChannel, message);
+      messageElement.value = '';
   }
 }
 
@@ -105,6 +105,7 @@ function setMessageView(uuid?: string): void {
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
+  ipcRenderer.send('display_friend_nickname', uuid);
 }
 
 /**
@@ -136,44 +137,44 @@ ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: 
 			continue;
 		}
 
-		let online: HTMLElement = document.getElementById("online-list");
-		let list: HTMLLIElement = document.createElement("li");
-		list.className = "side-nav__item";
-		let link: HTMLAnchorElement = document.createElement("a");
-		link.className = "side-nav__link";
-		let innerDiv: HTMLElement = document.createElement("div");
-		innerDiv.className = "side-nav__container";
-		let spanName: HTMLSpanElement = document.createElement("span");
-		let name: Text = document.createTextNode(onlineUsers[i].nickname);
-		spanName.appendChild(name);
-		innerDiv.appendChild(spanName);
-		link.appendChild(innerDiv);
-		link.href = "#"; // this should eventually link to the correct tab
+    let online: HTMLElement = document.getElementById("online-list");
+    let list: HTMLLIElement = document.createElement("li");
+    list.className = "side-nav__item";
+    let link: HTMLAnchorElement = document.createElement("a");
+    link.className = "side-nav__link";
+    let innerDiv: HTMLElement = document.createElement("div");
+    innerDiv.className = "side-nav__container";
+    let spanName: HTMLSpanElement = document.createElement("span");
+    let name: Text = document.createTextNode(onlineUsers[i].nickname);
+    spanName.appendChild(name);
+    innerDiv.appendChild(spanName);
+    link.appendChild(innerDiv);
+    link.href = "#"; // this should eventually link to the correct tab
     link.addEventListener('click', () => {
       setMessageView(onlineUsers[i].uuid);
     });
-		list.appendChild(link);
-		online.appendChild(list);
-	}
+    list.appendChild(link);
+    online.appendChild(list);
+  }
 });
 
 /* Show offline users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
-	// Every time this function is called, clear the div and regenerate everything
-	// inside it.
-	document.getElementById("offline-list").innerHTML = "";
-	for (var i = 0; i < offlineUsers.length; i++) {
-		let offline: HTMLElement = document.getElementById("offline-list");
-		let list: HTMLLIElement = document.createElement("li");
-		list.className = "side-nav__container side-nav__offline--item";
-		let link: HTMLAnchorElement = document.createElement("a");
-		link.className = "side-nav__link";
-		link.href = "#"; // this should eventually link to the correct tab
-		let name: Text = document.createTextNode(offlineUsers[i].nickname);
-		list.appendChild(name);
-		link.appendChild(list);
-		offline.appendChild(link);
-	}
+  // Every time this function is called, clear the div and regenerate everything
+  // inside it.
+  document.getElementById("offline-list").innerHTML = "";
+  for (var i = 0; i < offlineUsers.length; i++) {
+    let offline: HTMLElement = document.getElementById("offline-list");
+    let list: HTMLLIElement = document.createElement("li");
+    list.className = "side-nav__container side-nav__offline--item";
+    let link: HTMLAnchorElement = document.createElement("a");
+    link.className = "side-nav__link";
+    link.href = "#"; // this should eventually link to the correct tab
+    let name: Text = document.createTextNode(offlineUsers[i].nickname);
+    list.appendChild(name);
+    link.appendChild(list);
+    offline.appendChild(link);
+  }
 });
 
 /* Handle display of message passed in from the main process */
@@ -185,5 +186,31 @@ ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: 
     ipcRenderer.send('send_notification', payload.nickname, payload.message);
   }
 });
+
+/* Get the friend nickname entered into the form by the user */
+function get_friend_nickname(e: any): void {
+  if (e) {
+    e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
+  }
+  let friendNicknameElement: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameInput');
+  let nickname: string = friendNicknameElement.value;
+  if (nickname.length > 0 && nickname.length < 20) {
+    ipcRenderer.send('set_friend_nickname', nickname);
+    friendNicknameElement.value = '';
+  }
+}
+
+ipcRenderer.on('display_friend_nickname', function(e: any, nickname: string) {
+  let nicknameDiv: HTMLElement = document.getElementById("friend-nickname");
+  nicknameDiv.innerHTML = currentViewChannel;
+  let formDiv: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameForm');
+  formDiv.placeholder = currentViewChannel;
+});
+
+// Add event listeners for getting the display nickname
+const friend_nickname_form: HTMLElement = document.querySelector('#set_friend_nickname')
+const friend_nickname_input: HTMLInputElement = document.querySelector('#friendNicknameInput');
+friend_nickname_form.addEventListener('click', get_friend_nickname);
+document.querySelector('form').addEventListener('submit', get_friend_nickname);
 
 init();

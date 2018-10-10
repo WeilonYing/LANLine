@@ -58,6 +58,7 @@ export class NetworkManager {
         this.uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
         // display the user's nickname on the screen
         this.uiManager.displayPersonalNickname(this.dataService.getPersonalNickname());
+        this.uiManager.displayFriendNickname();
         console.log(rinfo);
         console.log("Received heartbeat " + msgPayload);
       } else if (msgPayload.type === 'broadcast') {
