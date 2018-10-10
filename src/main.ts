@@ -86,7 +86,13 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
 
 // retrieve messages sent to and from a specific user
 ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
-  dataService.getMessages(uuid).then(function(result) {
-  	uiManager.showMessages(result, dataService.getId());
-  });
+  if (uuid === Settings.LOBBY_ID_NAME) {
+    dataService.getBroadcasts().then(function(result) {
+    	uiManager.showMessages(result, dataService.getId());
+    });
+  } else {
+    dataService.getMessages(uuid).then(function(result) {
+    	uiManager.showMessages(result, dataService.getId());
+    });
+  }
 });

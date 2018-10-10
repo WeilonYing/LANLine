@@ -86,6 +86,7 @@ function setMessageView(uuid: string): void {
 ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: string) {
   for (let i = 0; i < messages.length; i++) {
     let message: Payload = messages[i];
+    console.log("DEBUG: " + message + ": " + message.uuid + ": " + ownUuid);
     addMessageToView(message, message.uuid === ownUuid);
   }
 });
