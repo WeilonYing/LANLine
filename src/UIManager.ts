@@ -45,8 +45,4 @@ export class UIManager {
   public displayNickname(nickname: string): void {
     this.mainWindow.webContents.send('display_nickname', nickname);
   }
-
-  public getMyNickname() {
-    return this.dataService.getNickname();
-  }
 }
