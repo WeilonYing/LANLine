@@ -62,13 +62,13 @@ export class NetworkManager {
         // pass broadcast message to the UI
         if (msgPayload.uuid !== this.dataService.getId()) {
           uiManager.displayMessage(msgPayload, msgPayload.uuid === this.dataService.getId(), Settings.LOBBY_ID_NAME);
-          this.dataService.storeMessage(Settings.LOBBY_ID_NAME, msgPayload); // store broadcasts received from other users
+          this.dataService.storeMessage(msgPayload); // store broadcasts received from other users
         }
         console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       } else if (msgPayload.type === 'message') {
         // received private message
         uiManager.displayMessage(msgPayload, msgPayload.uuid === this.dataService.getId(), msgPayload.uuid);
-        this.dataService.storeMessage(msgPayload.uuid, msgPayload);
+        this.dataService.storeMessage(msgPayload);
         console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
@@ -128,7 +128,7 @@ export class NetworkManager {
 
     this.server.send(
       broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
-    this.dataService.storeMessage(Settings.LOBBY_ID_NAME, broadcastPayload);
+    this.dataService.storeMessage(broadcastPayload);
     console.log("sent broadcast: " + broadcastPayload.message); // DEBUG
   }
 
@@ -159,7 +159,7 @@ export class NetworkManager {
     this.server.send(
       messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
     //   messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
-    this.dataService.storeMessage(recipient_uuid, messagePayload);
+    this.dataService.storeMessage(messagePayload);
     console.log("sent message " + messagePayload.message + " to " + recipientIP); // DEBUG
   }
 
