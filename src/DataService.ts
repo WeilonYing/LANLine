@@ -26,12 +26,12 @@ export class DataService {
 	}
 
   public getId(): string {
-    return "whale";
+    return "angela";
     // TODO: implement ID storage and generator
   }
 
   public getNickname(): string {
-    return "Potato Salad";
+    return "Angela";
     // TODO: implement nickname creation and retrieval
   }
 
