@@ -10,7 +10,8 @@ export class DataService {
 		this.db = new sqlite3.Database('db.sqlite3');
 
     let messageTableSql = 'CREATE TABLE IF NOT EXISTS messages( \
-                      UUID int,                                 \
+                      sender int,                               \
+                      receiver int,                             \
                       isBroadcast boolean,                      \
                       nickname string,                          \
                       timestamp datetime,                       \
@@ -25,12 +26,12 @@ export class DataService {
 	}
 
   public getId(): string {
-    return "angela";
+    return "whale";
     // TODO: implement ID storage and generator
   }
 
   public getNickname(): string {
-    return "Angela";
+    return "Potato Salad";
     // TODO: implement nickname creation and retrieval
   }
 
@@ -94,19 +95,19 @@ export class DataService {
     }
 
   	let sql = 'SELECT * FROM messages\
-                WHERE UUID = ? AND ISBROADCAST = false\
+                WHERE (SENDER = ? OR RECEIVER = ?) AND ISBROADCAST = false\
                 ORDER BY timestamp ASC\
                 LIMIT ?\
                 OFFSET ?';
 
     return new Promise((resolve, reject) => {
       const messages : Payload[] = [];
-      this.db.each(sql, [uuid, to-from, from], (err, row) => {
+      this.db.each(sql, [uuid, uuid, to-from, from], (err, row) => {
         if (err) {
           reject("sql failed: " + sql);
         } else {
           messages.push(PayloadUtils.jsonToPayload(
-            {uuid: row.UUID,
+            {uuid: row.sender,
             type: 'message',
             timestamp: row.timestamp,
             nickname: row.nickname,
@@ -123,10 +124,10 @@ export class DataService {
   }
 
   /* Store message in chat history associated with the provided UUID */
-  public storeMessage(payload: Payload): void {
-  	this.db.run(`INSERT INTO messages(UUID, isBroadcast, nickname, timestamp, message)
-  					VALUES(?, ?, ?, ?, ?)`,
-  					[payload.uuid, payload.type==='broadcast', payload.nickname, payload.timestamp, payload.message]);
+  public storeMessage(payload: Payload, sender: string, receiver: string): void {
+  	this.db.run(`INSERT INTO messages(sender, receiver, isBroadcast, nickname, timestamp, message)
+  					VALUES(?, ?, ?, ?, ?, ?)`,
+  					[sender, receiver, payload.type==='broadcast', payload.nickname, payload.timestamp, payload.message]);
   }
 
 
