@@ -41,9 +41,9 @@ export class UIManager {
     this.mainWindow.webContents.send('show_messages', messages, ownUuid);
   }
 
-  // Display the friend nickname on the screen
-  public displayFriendNickname(): void {
-    this.mainWindow.webContents.send('display_friend_nickname');
+  // Display the friend nickname on the header
+  public displayFriendNickname(friendNickname: string): void {
+    this.mainWindow.webContents.send('display_friend_nickname', friendNickname);
   }
   // Display the user's personal nickname on the screen
   public displayPersonalNickname(nickname: string): void {

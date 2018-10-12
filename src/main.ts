@@ -106,9 +106,20 @@ ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
   }
 });
 
-// display friend nickname
-ipcMain.on('display_friend_nickname', function(e: any) {
-  uiManager.displayFriendNickname();
+// display friend's nickname on header
+ipcMain.on('display_friend_nickname', function(e: any, friendNickname: string) {
+  uiManager.displayFriendNickname(friendNickname);
+});
+
+// Change the friend's nickname in the database and change the friend's nickname
+// on the header and sidebar
+ipcMain.on('set_friend_nickname', function(e: any, friendNicknameInput: string) {
+  // TODO(Oliver): store new name in database
+  uiManager.displayFriendNickname(friendNicknameInput);
+  // The two lines below have been commented out for now because blocking isn't 
+  // working yet but will need to be uncommented/fixed once it's working.
+  // uiManager.showOnlineUsers(this.userManager.getOnlineUsers(this.dataService.getBlockedUsers()), this.dataService.getId());
+  // uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
 });
 
 // set new personal nickname
