@@ -25,6 +25,7 @@ function init(): void {
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
 
+
   // Add event listeners for getting the personal nickname from the form
   const personal_nickname_form: HTMLElement = document.querySelector('#set_my_nickname')
   const personal_nickname_input: HTMLInputElement = document.querySelector('#personalNicknameInput');
@@ -98,15 +99,16 @@ function clearMessageView(): void {
 }
 
 /* Show all messages sent and received from a specific user */
-function setMessageView(uuid?: string): void {
+function setMessageView(nickname: string, uuid?: string): void {
   if (!uuid) {
     uuid = currentViewChannel;
   }
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
-  //TODO(Oliver): get the nickname from the uuid and replace uuid below
-  ipcRenderer.send('display_friend_nickname', uuid);
+  if (uuid !== Settings.LOBBY_ID_NAME) {
+    ipcRenderer.send('display_friend_nickname', nickname);
+  }
 }
 
 /**
@@ -152,7 +154,8 @@ ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: 
     link.appendChild(innerDiv);
     link.href = "#"; // this should eventually link to the correct tab
     link.addEventListener('click', () => {
-      setMessageView(onlineUsers[i].uuid);
+      const nickname = (onlineUsers[i].customNickname) ? onlineUsers[i].customNickname : onlineUsers[i].nickname;
+      setMessageView(onlineUsers[i].uuid, nickname);
     });
     list.appendChild(link);
     online.appendChild(list);
@@ -196,15 +199,15 @@ function get_friend_nickname(e: any): void {
   let friendNicknameElement: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameInput');
   let nickname: string = friendNicknameElement.value;
   if (nickname.length > 0 && nickname.length < 20) {
-    ipcRenderer.send('set_friend_nickname', nickname);
-    friendNicknameElement.value = '';
+    ipcRenderer.send('set_friend_nickname', currentViewChannel, nickname);
+    friendNicknameElement.value = "";
   }
 }
 
 ipcRenderer.on('display_friend_nickname', function(e: any, friend_nickname: string) {
   let nicknameDiv: HTMLElement = document.getElementById("friend-nickname");
   nicknameDiv.innerHTML = friend_nickname;
-  let formDiv: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameForm');
+  let formDiv: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameInput');
   formDiv.placeholder = friend_nickname;
 });
 

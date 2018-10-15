@@ -6,12 +6,13 @@ import { DataService } from './DataService';
 import { UIManager } from './UIManager';
 import { UserManager } from './UserManager';
 import { Settings } from './Settings';
+import {User} from "./User";
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;
 let dataService: DataService = new DataService();
 let uiManager: UIManager = new UIManager();
-let userManager: UserManager = new UserManager();
+let userManager: UserManager = new UserManager(dataService);
 
 function createWindow() {
   // Create the browser window.
@@ -113,13 +114,20 @@ ipcMain.on('display_friend_nickname', function(e: any, friendNickname: string) {
 
 // Change the friend's nickname in the database and change the friend's nickname
 // on the header and sidebar
-ipcMain.on('set_friend_nickname', function(e: any, friendNicknameInput: string) {
-  // TODO(Oliver): store new name in database
+
+ipcMain.on('set_friend_nickname', function(e: any, UUID: string, friendNicknameInput: string) {
+
+  console.log("trying to change friend nickname for " + UUID + " to " + friendNicknameInput);
+  dataService.updateUserCustomNickname(UUID, friendNicknameInput);
   uiManager.displayFriendNickname(friendNicknameInput);
-  // The two lines below have been commented out for now because blocking isn't 
-  // working yet but will need to be uncommented/fixed once it's working.
-  // uiManager.showOnlineUsers(this.userManager.getOnlineUsers(this.dataService.getBlockedUsers()), this.dataService.getId());
-  // uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
+
+  userManager.getNonBlockedOnlineUsers().then((onlineUsers: User[]) => {
+      uiManager.showOnlineUsers(onlineUsers, dataService.getId());
+  });
+
+  userManager.getNonBlockedOnlineUsers().then((offlineUsers: User[]) => {
+      uiManager.showOfflineUsers(offlineUsers);
+  });
 });
 
 // set new personal nickname

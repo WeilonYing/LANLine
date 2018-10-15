@@ -7,6 +7,7 @@ import { DataService } from './DataService';
 import { UIManager } from './UIManager';
 import { UserManager } from './UserManager';
 import { Payload, PayloadJSON, PayloadUtils } from './Payload';
+import {AddressInfo} from "dgram";
 
 
 export class NetworkManager {
@@ -47,19 +48,25 @@ export class NetworkManager {
     /*
       Handles incoming receipt of message data
      */
-    this.server.on('message', (msg: string, rinfo: JSON) => {
-      let msgJSON: PayloadJSON = JSON.parse(msg);
-      let msgPayload: Payload = PayloadUtils.jsonToPayload(msgJSON);
-      if (msgPayload.type === 'heartbeat') {
+    this.server.on("message", (msg: string, addressInfo: AddressInfo) => {
+      const msgJSON: PayloadJSON = JSON.parse(msg);
+      const msgPayload: Payload = PayloadUtils.jsonToPayload(msgJSON);
+      if (msgPayload.type === "heartbeat") {
         // received heartbeat
-        this.userManager.registerHeartbeat(msgPayload, rinfo);
-        // update online users list
-        this.uiManager.showOnlineUsers(this.userManager.getOnlineUsers(this.dataService.getBlockedUsers()), this.dataService.getId());
-        this.uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
+        this.userManager.registerHeartbeat(msgPayload, addressInfo.address);
+
+
         // display the user's nickname on the screen
         this.uiManager.displayPersonalNickname(this.dataService.getPersonalNickname());
-        this.uiManager.displayFriendNickname();
-        console.log(rinfo);
+
+        // update online users list
+        this.userManager.getNonBlockedOnlineUsers().then((onlineUsers) => {
+          this.uiManager.showOnlineUsers(onlineUsers, this.dataService.getId());
+        });
+        this.userManager.getNonBlockedOnlineUsers().then((offlineUsers) => {
+            this.uiManager.showOfflineUsers(offlineUsers);
+        });
+        console.log(addressInfo);
         console.log("Received heartbeat " + msgPayload);
       } else if (msgPayload.type === 'broadcast') {
         // pass broadcast message to the UI
@@ -148,15 +155,18 @@ export class NetworkManager {
       timestamp: new Date(),
       nickname: this.dataService.getPersonalNickname(),
       message: message_content
-    }
-    let user = this.userManager.getOnlineUser(recipient_uuid);
-    if (!user) {
-      // TODO: let user know that recipient is offline
-      return;
-    }
-    let recipientIP = user.ip;
-    let messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
-    let messagePayloadString: string = JSON.stringify(messagePayloadJSON);
+    };
+
+    var recipientIP;
+    this.userManager.getOnlineUserIP(recipient_uuid).then((userIP) => {
+      if (userIP === null) {
+        // TODO: let user know that recipient is offline
+      }
+      recipientIP = userIP;
+    });
+
+    const messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
+    const messagePayloadString: string = JSON.stringify(messagePayloadJSON);
 
     this.uiManager.displayMessage(
       messagePayload, messagePayload.uuid === this.dataService.getId(), recipient_uuid);
