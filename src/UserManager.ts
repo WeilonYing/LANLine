@@ -46,24 +46,25 @@ export class UserManager {
   */
   public getOnlineUsers(blockedUsers: User[]): User[] {
     // Begin test code
-    let user1: User = {
-      uuid: "teresa",
-      nickname: "teresa",
-      ip: "10.1.1",
-      lastHeard: new Date(),
-      blockedList: []
-    };
-
-    let user2: User = {
-      uuid: "weilon",
-      nickname: "weilon",
-      ip: "10.1.2",
-      lastHeard: new Date(),
-      blockedList: [user1]
-    };
-
-    let users: User[] = [user1, user2];
+    // let user1: User = {
+    //   uuid: "teresa",
+    //   nickname: "teresa",
+    //   ip: "10.1.1",
+    //   lastHeard: new Date(),
+    //   blockedList: []
+    // };
+    // 
+    // let user2: User = {
+    //   uuid: "weilon",
+    //   nickname: "weilon",
+    //   ip: "10.1.2",
+    //   lastHeard: new Date(),
+    //   blockedList: [user1]
+    // };
+    // 
+    // let users: User[] = [user1, user2];
     // End test code
+    let users: User[] = [];
 
     for (let key in this.onlineUsers) {
       users.push(this.onlineUsers[key]);

@@ -66,7 +66,7 @@ export class DataService {
           reject("sql failed: " + sql);
         } else {
           messages.push(PayloadUtils.jsonToPayload(
-            {uuid: row.UUID,
+            {uuid: row.sender,
             type: 'broadcast',
             timestamp: row.timestamp,
             nickname: row.nickname,
