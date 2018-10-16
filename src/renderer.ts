@@ -9,7 +9,6 @@ import { User } from './User';
 
 const BUBBLE_CLASS_NAME: string = 'bubbles';
 const MSG_CLASS_NAME: string = 'message';
-const path = require('path');
 
 var msgCount: number = -1;
 var isChangingView: boolean = false;
