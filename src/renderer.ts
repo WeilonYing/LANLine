@@ -9,6 +9,7 @@ import { User } from './User';
 
 const BUBBLE_CLASS_NAME: string = 'bubbles';
 const MSG_CLASS_NAME: string = 'message';
+const path = require('path');
 
 var msgCount: number = -1;
 var isChangingView: boolean = false;
@@ -144,13 +145,16 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
 });
 
 /* Handle display of message passed in from the main process */
-ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string) {
+ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string, isFocused: boolean) {
   if (currentViewChannel === channel) {
     addMessageToView(payload, fromSelf);
   } else {
     if (!fromSelf) {
       ipcRenderer.send('send_notification', payload.nickname, payload.message);
     }
+  }
+  if (!isFocused) {
+    ipcRenderer.send('send_notification', payload.nickname, payload.message);
   }
 });
 

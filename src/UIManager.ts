@@ -19,7 +19,7 @@ export class UIManager {
 
   // Send message to screen
   public displayMessage(message: Payload, isSelf: boolean, channel: string): void {
-    this.mainWindow.webContents.send('received_message', message, isSelf, channel);
+    this.mainWindow.webContents.send('received_message', message, isSelf, channel, this.mainWindow.isFocused());
   }
 
   // Show online users on screen
