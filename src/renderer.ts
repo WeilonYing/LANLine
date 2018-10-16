@@ -150,6 +150,7 @@ ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: 
   } else {
     if (!fromSelf) {
       ipcRenderer.send('send_notification', payload.nickname, payload.message);
+      return;
     }
   }
   if (!isFocused) {
