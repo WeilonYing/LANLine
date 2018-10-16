@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Notification } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import * as notifier from 'node-notifier';
 import { NetworkManager } from './NetworkManager';
@@ -89,8 +89,8 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
 ipcMain.on('send_notification', function(e: any, nickname: string, message: string) {
   notifier.notify({
     icon: path.join('favicon.png'),
-    title: Settings.APPNAME,
-    message: nickname + ": " + message
+    title: nickname,
+    message: message
   });
 });
 
