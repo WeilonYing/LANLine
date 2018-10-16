@@ -88,7 +88,7 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
 // send private message
 ipcMain.on('send_notification', function(e: any, nickname: string, message: string) {
   notifier.notify({
-    icon: path.join('chimmy.png'),
+    icon: path.join('favicon.png'),
     title: Settings.APPNAME,
     message: nickname + ": " + message
   });
