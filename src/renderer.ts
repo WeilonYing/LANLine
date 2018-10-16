@@ -24,6 +24,8 @@ function init(): void {
   // Add event listener for lobby navigation button on the sidebar
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
+  
+  setMessageView(); // Set up message view for the first time.
 }
 
 /* Start sending of heartbeat messages */
@@ -72,7 +74,10 @@ function clearMessageView(): void {
 }
 
 /* Show all messages sent and received from a specific user */
-function setMessageView(uuid: string): void {
+function setMessageView(uuid?: string): void {
+  if (!uuid) {
+    uuid = currentViewChannel;
+  }
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
