@@ -49,19 +49,24 @@ function send_message(e: any): void {
 
 /* Add a chat bubble message to the screen */
 function addMessageToView(payload: Payload, fromSelf: boolean) {
-  let newRow: HTMLElement = document.createElement('div');
+  let newRow: HTMLDivElement = document.createElement('div');
   newRow.className = MSG_CLASS_NAME;
   document.getElementById(BUBBLE_CLASS_NAME).appendChild(newRow);
-  let newMessage: HTMLElement = document.createElement('div');
+
+  let newMessage: HTMLDivElement = document.createElement('div');
   newMessage.className = "chat-bubble ";
   if (fromSelf) { // display message depending on whether it's from our user or not
     newMessage.className += "chat-bubble__right";
+    newMessage.title = "Sent at ";
   } else {
     newMessage.className += "chat-bubble__left";
+    newMessage.title = "Received at ";
   }
   newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + payload.message + "</span>";
   msgCount = msgCount + 1;
-  document.getElementsByClassName(MSG_CLASS_NAME)[msgCount].appendChild(newMessage);
+
+  let timestamp: Date = new Date(payload.timestamp);
+  newMessage.title += timestamp.toLocaleString();
 }
 
 /* Remove all displayed messages on the screen */
