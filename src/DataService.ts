@@ -259,6 +259,35 @@ export class DataService {
     });
   }
 
+  public getNonBlockedOfflineUsers(): Promise<User[]> {
+    const sql = "SELECT * FROM users WHERE isBlocked = ? AND isOnline = ?";
+    const users: User[] = [];
+    return new Promise<User[]>((resolve, reject) => {
+      this.db.each(sql, [false, false], (err, row) => {
+        if (err) {
+          reject("sql failed: " + sql);
+        } else {
+          const u: User = {
+            uuid: row.uuid,
+            nickname: row.nickname,
+            customNickname: row.customNickname,
+            isBlocked: row.isBlocked,
+            ip: row.ip,
+            lastHeartbeat: row.lastHeartbeat,
+            isOnline: row.isOnline,
+          };
+          users.push(u);
+        }
+      }, (err, n) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(users);
+        }
+      });
+    });
+  }
+
   public updateUserHeartbeat(uuid: string, nickname: string, address: string, timeStamp: Date) {
     const sql = "UPDATE users SET nickname = ?, ip = ?, lastHeartbeat = ?, isOnline = ? WHERE uuid = ?";
     this.db.run(sql, [nickname, address, timeStamp, true, uuid]);

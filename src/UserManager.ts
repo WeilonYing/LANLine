@@ -28,6 +28,14 @@ export class UserManager {
     return this.dataService.getNonBlockedOnlineUsers();
   }
 
+   /**
+   * Gets an array containing currently offline users.
+   * Excludes users who are blocked
+   */
+  public getNonBlockedOfflineUsers(): Promise<User[]> {
+    return this.dataService.getNonBlockedOfflineUsers();
+  }
+
   /**
    * Gets an array containing all currently offline users.
    */

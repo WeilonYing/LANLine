@@ -3,6 +3,7 @@ import { dialog } from 'electron';
 import * as ip from 'ip';
 import * as os from 'os';
 import { Settings } from './Settings';
+import { User } from './User';
 import { DataService } from './DataService';
 import { UIManager } from './UIManager';
 import { UserManager } from './UserManager';
@@ -63,8 +64,8 @@ export class NetworkManager {
         this.userManager.getNonBlockedOnlineUsers().then((onlineUsers) => {
           this.uiManager.showOnlineUsers(onlineUsers, this.dataService.getId());
         });
-        this.userManager.getNonBlockedOnlineUsers().then((offlineUsers) => {
-            this.uiManager.showOfflineUsers(offlineUsers);
+        this.userManager.getNonBlockedOfflineUsers().then((offlineUsers) => {
+          this.uiManager.showOfflineUsers(offlineUsers);
         });
         console.log(addressInfo);
         console.log("Received heartbeat " + msgPayload);

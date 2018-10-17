@@ -125,7 +125,7 @@ ipcMain.on('set_friend_nickname', function(e: any, UUID: string, friendNicknameI
       uiManager.showOnlineUsers(onlineUsers, dataService.getId());
   });
 
-  userManager.getNonBlockedOnlineUsers().then((offlineUsers: User[]) => {
+  userManager.getNonBlockedOfflineUsers().then((offlineUsers: User[]) => {
       uiManager.showOfflineUsers(offlineUsers);
   });
 });

@@ -148,13 +148,13 @@ ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: 
     let innerDiv: HTMLElement = document.createElement("div");
     innerDiv.className = "side-nav__container";
     let spanName: HTMLSpanElement = document.createElement("span");
-    let name: Text = document.createTextNode(onlineUsers[i].nickname);
+    const nickname = (onlineUsers[i].customNickname) ? onlineUsers[i].customNickname : onlineUsers[i].nickname;
+    let name: Text = document.createTextNode(nickname);
     spanName.appendChild(name);
     innerDiv.appendChild(spanName);
     link.appendChild(innerDiv);
     link.href = "#"; // this should eventually link to the correct tab
     link.addEventListener('click', () => {
-      const nickname = (onlineUsers[i].customNickname) ? onlineUsers[i].customNickname : onlineUsers[i].nickname;
       setMessageView(onlineUsers[i].uuid, nickname);
     });
     list.appendChild(link);
@@ -174,7 +174,8 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
     let link: HTMLAnchorElement = document.createElement("a");
     link.className = "side-nav__link";
     link.href = "#"; // this should eventually link to the correct tab
-    let name: Text = document.createTextNode(offlineUsers[i].nickname);
+    const nickname = (offlineUsers[i].customNickname) ? offlineUsers[i].customNickname : offlineUsers[i].nickname;
+    let name: Text = document.createTextNode(nickname);
     list.appendChild(name);
     link.appendChild(list);
     offline.appendChild(link);
