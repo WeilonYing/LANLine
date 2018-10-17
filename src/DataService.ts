@@ -36,6 +36,7 @@ export class DataService {
   }
 
   public getBlockedUsers(): User[]  {
+    // Begin debug code
     let user1 :User = {
       uuid: "teresa",
       nickname: "teresa",
@@ -43,7 +44,7 @@ export class DataService {
       lastHeard: new Date(),
       blockedList: []
     };
-
+    // End debug code
     return [user1];
   }
 
@@ -53,11 +54,13 @@ export class DataService {
       to = 10;
     }
 
-  	let sql = 'SELECT * FROM messages\
-                WHERE ISBROADCAST = true\
-                ORDER BY timestamp ASC\
-                LIMIT ?\
-                OFFSET ?';
+  	let sql: string = `SELECT q.* FROM (
+                        SELECT * FROM messages
+                        WHERE ISBROADCAST = true
+                        ORDER BY timestamp DESC
+                        LIMIT ?
+                        OFFSET ?) q
+                      ORDER BY q.timestamp ASC`;
 
     return new Promise((resolve, reject) => {
       const messages : Payload[] = [];
@@ -66,7 +69,7 @@ export class DataService {
           reject("sql failed: " + sql);
         } else {
           messages.push(PayloadUtils.jsonToPayload(
-            {uuid: row.UUID,
+            {uuid: row.sender,
             type: 'broadcast',
             timestamp: row.timestamp,
             nickname: row.nickname,
@@ -94,11 +97,13 @@ export class DataService {
       to = 10;
     }
 
-  	let sql = 'SELECT * FROM messages\
-                WHERE (SENDER = ? OR RECEIVER = ?) AND ISBROADCAST = false\
-                ORDER BY timestamp ASC\
-                LIMIT ?\
-                OFFSET ?';
+  	let sql: string = `SELECT q.* FROM (
+                        SELECT * FROM messages
+                        WHERE (SENDER = ? OR RECEIVER = ?) AND ISBROADCAST = false
+                        ORDER BY timestamp DESC
+                        LIMIT ?
+                        OFFSET ?) q
+                      ORDER BY q.timestamp ASC`;
 
     return new Promise((resolve, reject) => {
       const messages : Payload[] = [];

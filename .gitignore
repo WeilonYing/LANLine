@@ -3,3 +3,4 @@ dist/
 out/
 npm-debug.log
 package-lock.json
+*.sqlite3

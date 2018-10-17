@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
+import * as notifier from 'node-notifier';
 import { NetworkManager } from './NetworkManager';
 import { DataService } from './DataService';
 import { UIManager } from './UIManager';
@@ -82,6 +83,15 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
   } else {
     networkManager.sendPrivateMessage(uuid, message);
   }
+});
+
+// send private message
+ipcMain.on('send_notification', function(e: any, nickname: string, message: string) {
+  notifier.notify({
+    icon: path.join('favicon.png'),
+    title: nickname,
+    message: message
+  });
 });
 
 // retrieve messages sent to and from a specific user

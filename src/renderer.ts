@@ -24,6 +24,8 @@ function init(): void {
   // Add event listener for lobby navigation button on the sidebar
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
+  
+  setMessageView(); // Set up message view for the first time.
 }
 
 /* Start sending of heartbeat messages */
@@ -72,7 +74,10 @@ function clearMessageView(): void {
 }
 
 /* Show all messages sent and received from a specific user */
-function setMessageView(uuid: string): void {
+function setMessageView(uuid?: string): void {
+  if (!uuid) {
+    uuid = currentViewChannel;
+  }
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
@@ -144,11 +149,12 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
 });
 
 /* Handle display of message passed in from the main process */
-ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string) {
+ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string, isFocused: boolean) {
   if (currentViewChannel === channel) {
     addMessageToView(payload, fromSelf);
-  } else {
-    // TODO: send notification
+  }
+  if ((currentViewChannel !== channel && !fromSelf) || !isFocused) {
+    ipcRenderer.send('send_notification', payload.nickname, payload.message);
   }
 });
 
