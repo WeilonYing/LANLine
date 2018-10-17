@@ -77,15 +77,33 @@ function get_personal_nickname(e: any): void {
 function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: string) {
   let newRow: HTMLElement = document.createElement('div');
   newRow.className = MSG_CLASS_NAME;
-  document.getElementById(BUBBLE_CLASS_NAME).appendChild(newRow);
+  document.getElementById(BUBBLE_CLASS_NAME).appendChild(newRow); // append row to message view
+
+  let newContainer: HTMLDivElement = document.createElement('div');
+  newContainer.className = "chat-container ";
+  newRow.appendChild(newContainer);
+
+  let newDeleteButton: HTMLAnchorElement = document.createElement('a');
+  newDeleteButton.innerHTML = "x";
+  newDeleteButton.className = "chat-delete "; // TODO: Properly style the delete button
+  newDeleteButton.addEventListener('click', () => {
+    newRow.parentNode.removeChild(newRow);
+    // TODO: Call delete message in DB
+    // TODO: Create confirmation button
+  });
+  newContainer.appendChild(newDeleteButton);
 
   let newMessage: HTMLDivElement = document.createElement('div');
   newMessage.className = "chat-bubble ";
   if (fromSelf) { // display message depending on whether it's from our user or not
     newMessage.className += "chat-bubble__right";
+    newContainer.className += "chat-container__right";
+    newDeleteButton.className += "chat-delete__left"; // put delete button to left of bubble
     newMessage.title = "Sent at ";
   } else {
     newMessage.className += "chat-bubble__left";
+    newContainer.className += "chat-container__left";
+    newDeleteButton.className += "chat-delete__right"; // put delete button to right of bubble
     newMessage.title = "Received at ";
   }
   newRow.appendChild(newMessage);
@@ -106,6 +124,8 @@ function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: stri
 
   let timestamp: Date = new Date(payload.timestamp);
   newMessage.title += timestamp.toLocaleString();
+
+  newContainer.appendChild(newMessage); // add message to row
 }
 
 /* Remove all displayed messages on the screen */
