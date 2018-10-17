@@ -149,11 +149,12 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
 });
 
 /* Handle display of message passed in from the main process */
-ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string) {
+ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string, isFocused: boolean) {
   if (currentViewChannel === channel) {
     addMessageToView(payload, fromSelf);
-  } else {
-    // TODO: send notification
+  }
+  if ((currentViewChannel !== channel && !fromSelf) || !isFocused) {
+    ipcRenderer.send('send_notification', payload.nickname, payload.message);
   }
 });
 
