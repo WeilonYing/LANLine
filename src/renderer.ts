@@ -147,13 +147,8 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
 ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string, isFocused: boolean) {
   if (currentViewChannel === channel) {
     addMessageToView(payload, fromSelf);
-  } else {
-    if (!fromSelf) {
-      ipcRenderer.send('send_notification', payload.nickname, payload.message);
-      return;
-    }
   }
-  if (!isFocused) {
+  if ((currentViewChannel !== channel && !fromSelf) || !isFocused) {
     ipcRenderer.send('send_notification', payload.nickname, payload.message);
   }
 });
