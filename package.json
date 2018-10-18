@@ -17,7 +17,8 @@
     "compress:css": "node-sass css/style.prefix.css css/style.css --output-style compressed",
     "build:css": "npm-run-all compile:sass prefix:css compress:css",
     "postinstall": "install-app-deps",
-    "rebuild": "electron-rebuild -f -w sqlite3 -v 2.0.11"
+    "rebuild": "electron-rebuild -f -w sqlite3 -v 2.0.11",
+    "test": "./node_modules/.bin/jest"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -32,6 +33,7 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "@types/ip": "0.0.31",
+    "@types/jest": "^23.3.5",
     "@types/node-notifier": "0.0.28",
     "awesome-typescript-loader": "^5.2.1",
     "electron": "^2.0.11",
@@ -40,9 +42,11 @@
     "electron-prebuilt-compile": "^3.0.0",
     "electron-rebuild": "^1.8.2",
     "ip": "^1.1.5",
+    "jest": "^23.6.0",
     "node-gyp": "^3.8.0",
     "node-pre-gyp": "^0.11.0",
     "source-map-loader": "^0.2.4",
+    "ts-jest": "^23.10.4",
     "tslint": "^5.10.0",
     "typescript": "^2.9.2",
     "webpack": "^4.19.1",
