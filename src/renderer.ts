@@ -54,13 +54,16 @@ function send_message(e: any): void {
 
 /* Get the new user nickname entered into the form for the user */
 function get_user_nickname(e: any): void {
+  console.log("SL;DFKJASDLFJLKSDJFLSJFL;SDFJLKJSL;JFKLSDJFLD;KJF");
   if (e) {
     e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
   }
   let userNicknameElement: HTMLInputElement = <HTMLInputElement> document.getElementById('userNicknameInput');
+  let userNicknameDisplay: HTMLAnchorElement = <HTMLAnchorElement> document.getElementById('user-nickname');
   let nickname: string = userNicknameElement.value;
   if (nickname.length > 0 && nickname.length < 20) {
     ipcRenderer.send('set_nickname', nickname);
+    userNicknameDisplay.innerHTML = nickname;
     userNicknameElement.value = '';
   }
 }
@@ -115,8 +118,6 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
 
 /* Show online users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: string) {
-  document.getElementById("own-nickname").innerHTML = uuid; // TODO: Properly display the nickname
-
 	// Every time this function is called, clear the div and regenerate everything
 	// inside it.
 	document.getElementById("online-list").innerHTML = "";

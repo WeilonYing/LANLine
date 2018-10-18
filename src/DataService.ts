@@ -27,7 +27,7 @@ export class DataService {
 	}
 
   public getId(): string {
-    return "whale";
+    return "goldfish";
     // TODO: implement ID storage and generator
   }
 
@@ -38,7 +38,7 @@ export class DataService {
     return this.nickname;
     // TODO: implement nickname creation and retrieval
   }
-  
+
   public setUserNickname(nickname: string): void {
   	this.nickname = nickname;
   }
