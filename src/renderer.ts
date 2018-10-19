@@ -27,7 +27,7 @@ function init(): void {
 
   // Add event listeners for getting the personal nickname from the form
   const personal_nickname_form: HTMLElement = document.querySelector('#set_my_nickname')
-  const user_nickname_input: HTMLInputElement = document.querySelector('#personalNicknameInput');
+  const personal_nickname_input: HTMLInputElement = document.querySelector('#personalNicknameInput');
   personal_nickname_form.addEventListener('click', get_personal_nickname);
   document.querySelector('form').addEventListener('submit', get_personal_nickname);
   setMessageView(); // Set up message view for the first time.
