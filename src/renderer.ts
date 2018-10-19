@@ -54,7 +54,6 @@ function send_message(e: any): void {
 
 /* Get the new user nickname entered into the form for the user */
 function get_user_nickname(e: any): void {
-  console.log("SL;DFKJASDLFJLKSDJFLSJFL;SDFJLKJSL;JFKLSDJFLD;KJF");
   if (e) {
     e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
   }
@@ -114,6 +113,12 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
     let message: Payload = messages[i];
     addMessageToView(message, message.uuid === ownUuid);
   }
+});
+
+/* Display nickname on the top corner of the screen */
+ipcRenderer.on('display_nickname', function(e: any, nickname: string) {
+  let userNicknameDisplay: HTMLAnchorElement = <HTMLAnchorElement> document.getElementById('user-nickname');
+  userNicknameDisplay.innerHTML = nickname;
 });
 
 /* Show online users on sidebar by dynamically creating elements based on list */
