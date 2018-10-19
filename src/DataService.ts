@@ -31,7 +31,7 @@ export class DataService {
     // TODO: implement ID storage and generator
   }
 
-  public getNickname(): string {
+  public getPersonalNickname(): string {
     if (this.nickname == undefined) {
       this.nickname = "defaultNickname";
     }
@@ -39,7 +39,7 @@ export class DataService {
     // TODO: implement nickname creation and retrieval
   }
 
-  public setUserNickname(nickname: string): void {
+  public setPersonalNickname(nickname: string): void {
   	this.nickname = nickname;
   }
 

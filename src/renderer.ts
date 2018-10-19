@@ -25,11 +25,11 @@ function init(): void {
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
 
-  // Add event listeners for getting the display nickname
-  const user_nickname_form: HTMLElement = document.querySelector('#set_nickname')
-  const user_nickname_input: HTMLInputElement = document.querySelector('#userNicknameInput');
-  user_nickname_form.addEventListener('click', get_user_nickname);
-  document.querySelector('form').addEventListener('submit', get_user_nickname);
+  // Add event listeners for getting the personal nickname from the form
+  const personal_nickname_form: HTMLElement = document.querySelector('#set_my_nickname')
+  const user_nickname_input: HTMLInputElement = document.querySelector('#personalNicknameInput');
+  personal_nickname_form.addEventListener('click', get_personal_nickname);
+  document.querySelector('form').addEventListener('submit', get_personal_nickname);
   setMessageView(); // Set up message view for the first time.
 }
 
@@ -52,18 +52,16 @@ function send_message(e: any): void {
   }
 }
 
-/* Get the new user nickname entered into the form for the user */
-function get_user_nickname(e: any): void {
+/* Get the new personal nickname entered into the form for the user */
+function get_personal_nickname(e: any): void {
   if (e) {
     e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
   }
-  let userNicknameElement: HTMLInputElement = <HTMLInputElement> document.getElementById('userNicknameInput');
-  let userNicknameDisplay: HTMLAnchorElement = <HTMLAnchorElement> document.getElementById('user-nickname');
-  let nickname: string = userNicknameElement.value;
+  let personalNicknameElement: HTMLInputElement = <HTMLInputElement> document.getElementById('personalNicknameInput');
+  let nickname: string = personalNicknameElement.value;
   if (nickname.length > 0 && nickname.length < 20) {
-    ipcRenderer.send('set_nickname', nickname);
-    userNicknameDisplay.innerHTML = nickname;
-    userNicknameElement.value = '';
+    ipcRenderer.send('set_my_nickname', nickname);
+    personalNicknameElement.value = '';
   }
 }
 
@@ -115,10 +113,10 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
   }
 });
 
-/* Display nickname on the top corner of the screen */
-ipcRenderer.on('display_nickname', function(e: any, nickname: string) {
-  let userNicknameDisplay: HTMLAnchorElement = <HTMLAnchorElement> document.getElementById('user-nickname');
-  userNicknameDisplay.innerHTML = nickname;
+/* Display personal nickname on the top corner of the screen */
+ipcRenderer.on('display_personal_nickname', function(e: any, nickname: string) {
+  let personalNicknameDisplay: HTMLAnchorElement = <HTMLAnchorElement> document.getElementById('my-nickname');
+  personalNicknameDisplay.innerHTML = nickname;
 });
 
 /* Show online users on sidebar by dynamically creating elements based on list */

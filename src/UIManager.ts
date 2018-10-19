@@ -33,7 +33,7 @@ export class UIManager {
   }
 
   public getMyNickname(): string {
-    return this.dataService.getNickname();
+    return this.dataService.getPersonalNickname();
   }
 
   // Display messages on the screen
@@ -41,8 +41,8 @@ export class UIManager {
     this.mainWindow.webContents.send('show_messages', messages, ownUuid);
   }
   
-  // Display the user nickname on the screen
-  public displayNickname(nickname: string): void {
-    this.mainWindow.webContents.send('display_nickname', nickname);
+  // Display the user's personal nickname on the screen
+  public displayPersonalNickname(nickname: string): void {
+    this.mainWindow.webContents.send('display_personal_nickname', nickname);
   }
 }
