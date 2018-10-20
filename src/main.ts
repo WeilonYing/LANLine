@@ -85,7 +85,7 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
   }
 });
 
-// send private message
+// send notification
 ipcMain.on('send_notification', function(e: any, nickname: string, message: string) {
   notifier.notify({
     icon: path.join('favicon.png'),

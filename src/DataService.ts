@@ -34,15 +34,12 @@ export class DataService {
   }
 
   public getId(): string {
-    return "goldfish";
+    return "MY_UUID";
     // TODO: implement ID storage and generator
   }
 
-  public getPersonalNickname(): string {
-    if (this.nickname == undefined) {
-      this.nickname = "defaultNickname";
-    }
-    return this.nickname;
+  public getNickname(): string {
+    return "MY_NICKNAME";
     // TODO: implement nickname creation and retrieval
   }
 

@@ -67,8 +67,6 @@ export class NetworkManager {
         this.userManager.getNonBlockedOfflineUsers().then((offlineUsers) => {
           this.uiManager.showOfflineUsers(offlineUsers);
         });
-        console.log(addressInfo);
-        console.log("Received heartbeat " + msgPayload);
       } else if (msgPayload.type === 'broadcast') {
         // pass broadcast message to the UI
         if (msgPayload.uuid !== this.dataService.getId()) {
@@ -158,25 +156,19 @@ export class NetworkManager {
       message: message_content
     };
 
-    var recipientIP;
-    this.userManager.getOnlineUserIP(recipient_uuid).then((userIP) => {
-      if (userIP === null) {
+    this.userManager.getOnlineUserIP(recipient_uuid).then((recipientIP) => {
+      if (recipientIP === null) {
         // TODO: let user know that recipient is offline
       }
-      recipientIP = userIP;
+      const messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
+      const messagePayloadString: string = JSON.stringify(messagePayloadJSON);
+
+      this.uiManager.displayMessage(
+          messagePayload, messagePayload.uuid === this.dataService.getId(), recipient_uuid);
+
+      this.server.send(messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
+      this.dataService.storeMessage(messagePayload, this.dataService.getId(), recipient_uuid);
     });
-
-    const messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
-    const messagePayloadString: string = JSON.stringify(messagePayloadJSON);
-
-    this.uiManager.displayMessage(
-      messagePayload, messagePayload.uuid === this.dataService.getId(), recipient_uuid);
-
-    this.server.send(
-      messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
-    //   messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
-    this.dataService.storeMessage(messagePayload, this.dataService.getId(), recipient_uuid);
-    console.log("sent message " + messagePayload.message + " to " + recipientIP); // DEBUG
   }
 
   /**

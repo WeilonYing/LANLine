@@ -103,9 +103,6 @@ function setMessageView(nickname?: string, uuid?: string): void {
   if (!uuid) {
     uuid = currentViewChannel;
   }
-  if (!nickname) {
-    nickname = "";
-  }
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
@@ -158,7 +155,7 @@ ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: 
     link.appendChild(innerDiv);
     link.href = "#"; // this should eventually link to the correct tab
     link.addEventListener('click', () => {
-      setMessageView(onlineUsers[i].uuid, nickname);
+      setMessageView(nickname, onlineUsers[i].uuid);
     });
     list.appendChild(link);
     online.appendChild(list);
