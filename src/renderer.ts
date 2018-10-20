@@ -62,6 +62,7 @@ function addMessageToView(payload: Payload, fromSelf: boolean) {
     newMessage.className += "chat-bubble__left";
     newMessage.title = "Received at ";
   }
+  newRow.appendChild(newMessage);
   newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + payload.message + "</span>";
   msgCount = msgCount + 1;
 
