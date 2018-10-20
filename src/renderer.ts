@@ -99,9 +99,12 @@ function clearMessageView(): void {
 }
 
 /* Show all messages sent and received from a specific user */
-function setMessageView(nickname: string, uuid?: string): void {
+function setMessageView(nickname?: string, uuid?: string): void {
   if (!uuid) {
     uuid = currentViewChannel;
+  }
+  if (!nickname) {
+    nickname = "";
   }
   clearMessageView();
   currentViewChannel = uuid;

@@ -301,6 +301,6 @@ export class DataService {
 
   public timeoutOfflineUsers() {
     const sql = "UPDATE users SET isOnline = ? WHERE isOnline = ? AND ? - lastHeartbeat > ?";
-    this.db.run(sql, [false, true, Settings.ONLINE_USER_TIMEOUT]);
+    this.db.run(sql, [false, true, new Date(), Settings.ONLINE_USER_TIMEOUT]);
   }
 }
