@@ -26,7 +26,7 @@ export class DataService {
 	}
 
   public getId(): string {
-    return "whale"
+    return "whale";
     // TODO: implement ID storage and generator
   }
 
