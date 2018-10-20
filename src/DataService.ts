@@ -111,6 +111,10 @@ export class DataService {
     });
   }
 
+  // public getSearchResults(searchTerm: string, uuid: string): Promise<Payload[]> {
+  //   TODO(Oliver)
+  // }
+
   /*
     Get messages from database.
     From and to represent the message interval.
