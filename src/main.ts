@@ -87,7 +87,7 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
 
 // get search results from database
 ipcMain.on('get_search_results', function(e: any, searchTerm: string, uuid: string) {
-  // TODO(Oliver): Uncomment the 3 lines below once getSearchResults and showSearchResults are implemented
+  // TODO(Oliver): Uncomment the 3 lines below once getSearchResults is implemented (you shouldn't need to change uiManager.showSearchResults)
   // dataService.getSearchResults(searchTerm, uuid).then(function(result) {
   //   uiManager.showSearchResults(result);
   // });
