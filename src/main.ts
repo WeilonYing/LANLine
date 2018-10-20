@@ -112,6 +112,10 @@ ipcMain.on('display_friend_nickname', function(e: any, friendNickname: string) {
   uiManager.displayFriendNickname(friendNickname);
 });
 
+ipcMain.on('display_lobby_header', function (e: any) {
+  uiManager.displayLobbyHeader();
+});
+
 // Change the friend's nickname in the database and change the friend's nickname
 // on the header and sidebar
 

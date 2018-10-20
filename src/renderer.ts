@@ -109,6 +109,8 @@ function setMessageView(uuid: string, nickname?: string): void {
   ipcRenderer.send('retrieve_messages', uuid);
   if (uuid !== Settings.LOBBY_ID_NAME) {
     ipcRenderer.send('display_friend_nickname', nickname);
+  } else {
+    ipcRenderer.send('display_lobby_header');
   }
 }
 
@@ -208,10 +210,25 @@ function get_friend_nickname(e: any): void {
 }
 
 ipcRenderer.on('display_friend_nickname', function(e: any, friend_nickname: string) {
-  let nicknameDiv: HTMLElement = document.getElementById("friend-nickname");
-  nicknameDiv.innerHTML = friend_nickname;
-  let formDiv: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameInput');
-  formDiv.placeholder = friend_nickname;
+
+  const headerDiv: HTMLElement = document.getElementById('channel-header');
+  if (headerDiv.getElementsByTagName("a").length === 0) {
+    const nicknameElement = document.createElement("div");
+    headerDiv.appendChild(nicknameElement);
+    nicknameElement.outerHTML = "<a type=\"button\" id=\"friend-nickname\" class=\"friend-nickname\"" +
+        " data-toggle=\"modal\" data-target=\"#editFriendNickname\">"+ friend_nickname +"</a>";
+
+    let formDiv: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameInput');
+    formDiv.placeholder = friend_nickname;
+  } else {
+    const nicknameElement = document.getElementById('friend-nickname');
+    nicknameElement.innerHTML = friend_nickname;
+  }
+});
+
+ipcRenderer.on('display_lobby_header', function(e: any) {
+  let nicknameButton = document.getElementById('friend-nickname');
+  nicknameButton.parentElement.removeChild(nicknameButton);
 });
 
 // Add event listeners for getting the display nickname

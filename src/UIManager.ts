@@ -55,4 +55,9 @@ export class UIManager {
   public displayPersonalNickname(nickname: string): void {
     this.mainWindow.webContents.send('display_personal_nickname', nickname);
   }
+
+  public displayLobbyHeader(): void {
+    this.mainWindow.webContents.send('display_lobby_header');
+  }
+
 }
