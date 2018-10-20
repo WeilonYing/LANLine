@@ -60,4 +60,9 @@ export class UIManager {
     this.mainWindow.webContents.send('display_lobby_header');
   }
 
+
+  // Display search results on screen
+  public showSearchResults(messages: Payload[]): void {
+    this.mainWindow.webContents.send('show_search_results', messages);
+  }
 }
