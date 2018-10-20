@@ -8,10 +8,26 @@ export class UserManager {
   private onlineUsers: { [uuid: string] : User } = {};
   private allUsers: { [uuid: string] : User } = {};
   private dataService: DataService;
+  private userCheckTimer: NodeJS.Timer;
 
   constructor() {
     // schedule checking of online users for a regular interval
-    setInterval(() => this.checkOnlineUsers(), Settings.ONLINE_USER_TIMEOUT);
+    this.startCheckOnlineUsers();
+  }
+  
+  /* Start checking online users between set time intervals */
+  public startCheckOnlineUsers(): void {
+    if (!this.userCheckTimer) {
+      this.userCheckTimer = setInterval(() => this.checkOnlineUsers(), Settings.ONLINE_USER_TIMEOUT);
+    }
+  }
+  
+  /* Stop doing regular online user checking if they are scheduled */
+  public stopCheckOnlineUsers(): void {
+    if (this.userCheckTimer) {
+      clearInterval(this.userCheckTimer);
+      this.userCheckTimer = null;
+    }
   }
 
   public addUser(user: User): void {
@@ -45,25 +61,6 @@ export class UserManager {
   Gets an array containing all currently online users.
   */
   public getOnlineUsers(blockedUsers: User[]): User[] {
-    // Begin test code
-    // let user1: User = {
-    //   uuid: "teresa",
-    //   nickname: "teresa",
-    //   ip: "10.1.1",
-    //   lastHeard: new Date(),
-    //   blockedList: []
-    // };
-    // 
-    // let user2: User = {
-    //   uuid: "weilon",
-    //   nickname: "weilon",
-    //   ip: "10.1.2",
-    //   lastHeard: new Date(),
-    //   blockedList: [user1]
-    // };
-    // 
-    // let users: User[] = [user1, user2];
-    // End test code
     let users: User[] = [];
 
     for (let key in this.onlineUsers) {
@@ -97,7 +94,7 @@ export class UserManager {
   /**
   Get user object by uuid. Returns null if user doesn't exist or is not online.
   */
-  public getOnlineUser(uuid: string) {
+  public getOnlineUser(uuid: string): User {
     if (!this.onlineUsers[uuid]) {
       return null;
     }

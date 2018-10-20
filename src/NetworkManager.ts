@@ -74,7 +74,9 @@ export class NetworkManager {
         console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
-
+    if (process.env['test']) {
+      return;
+    }
     this.server.bind(Settings.PORT, () => {
       this.server.setBroadcast(true);
     });
@@ -170,7 +172,10 @@ export class NetworkManager {
     opens a dialog box to select which interface's IP address to use.
     @return IP address
   */
-  private getIPAddress(): string {
+  public getIPAddress(): string {
+    if (process.env['test']) {
+      return '192.168.1.10';
+    }
     let interfaces: { [index: string]: os.NetworkInterfaceInfo[] } = os.networkInterfaces();
     let interfaceNames: string[] = Object.keys(interfaces);
     if (interfaceNames.length <= 1) {
