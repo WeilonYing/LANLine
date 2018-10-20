@@ -103,7 +103,7 @@ export class NetworkManager {
     this.server.send(
       payloadJsonStr, 0, payloadJsonStr.length, Settings.PORT, this.broadcastAddr);
 
-    console.log("Sending heartbeat with content: " + payloadJsonStr); // DEBUG
+    //console.log("Sending heartbeat with content: " + payloadJsonStr); // DEBUG
   }
 
   /**

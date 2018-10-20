@@ -65,8 +65,7 @@ export class DataService {
       from = 0;
       to = 10;
     }
-
-  	let sql: string = `SELECT q.* FROM (
+    const sql: string = `SELECT q.* FROM (
                         SELECT * FROM messages
                         WHERE ISBROADCAST = true
                         ORDER BY timestamp DESC
@@ -108,8 +107,7 @@ export class DataService {
       from = 0;
       to = 10;
     }
-
-  	let sql: string = `SELECT q.* FROM (
+    const sql: string = `SELECT q.* FROM (
                         SELECT * FROM messages
                         WHERE (SENDER = ? OR RECEIVER = ?) AND ISBROADCAST = false
                         ORDER BY timestamp DESC
@@ -142,9 +140,12 @@ export class DataService {
 
   /* Store message in chat history associated with the provided UUID */
   public storeMessage(p: Payload, sender: string, receiver: string): void {
-    const sql = `INSERT INTO messages(sender, receiver, isBroadcast, nickname, timestamp, message) \
-                 VALUES(?, ?, ?, ?, ?, ?)`;
-    this.db.run(sql , [sender, receiver, p.type === "broadcast", p.nickname, p.timestamp, p.message]);
+
+    this.getUserNickname(p.uuid).then(nickname => {
+      const sql = `INSERT INTO messages(sender, receiver, isBroadcast, nickname, timestamp, message) \
+             VALUES(?, ?, ?, ?, ?, ?)`;
+      this.db.run(sql , [sender, receiver, p.type === "broadcast", nickname, p.timestamp, p.message]);
+    });
   }
 
   // adds a user to the database
@@ -192,6 +193,23 @@ export class DataService {
             resolve(null);
           } else {
             resolve(row.ip);
+          }
+        }
+      });
+    });
+  }
+
+  public getUserNickname(uuid: string): Promise<string> {
+    const sql = "SELECT nickname, customNickname FROM users WHERE uuid = ?";
+    return new Promise<string>((resolve, reject) => {
+      this.db.get(sql, [uuid], (err, row) => {
+        if (err) {
+          reject("sql failed: " + sql + err);
+        } else {
+          if (row === undefined) {
+            reject("No user with this UUID");
+          } else {
+            resolve(row.customNickname ? row.customNickname : row.nickname);
           }
         }
       });
@@ -291,7 +309,6 @@ export class DataService {
   }
 
   public updateUserCustomNickname(uuid: string, newNickname: string) {
-    console.log("updating custom nickname: UUID is " + uuid + "\nnew custom nickname is " + newNickname );
     const sql = "UPDATE users SET customNickname = ? WHERE uuid = ?";
     this.db.run(sql, [newNickname, uuid]);
   }

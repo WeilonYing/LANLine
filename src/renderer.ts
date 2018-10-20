@@ -31,7 +31,7 @@ function init(): void {
   const personal_nickname_input: HTMLInputElement = document.querySelector('#personalNicknameInput');
   personal_nickname_form.addEventListener('click', get_personal_nickname);
   document.querySelector('form').addEventListener('submit', get_personal_nickname);
-  setMessageView(); // Set up message view for the first time.
+  setMessageView(Settings.LOBBY_ID_NAME); // Set up message view for the first time.
 }
 
 /* Start sending of heartbeat messages */
@@ -67,8 +67,8 @@ function get_personal_nickname(e: any): void {
 }
 
 /* Add a chat bubble message to the screen */
-function addMessageToView(payload: Payload, fromSelf: boolean) {
-  let newRow: HTMLDivElement = document.createElement('div');
+function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: string) {
+  let newRow: HTMLElement = document.createElement('div');
   newRow.className = MSG_CLASS_NAME;
   document.getElementById(BUBBLE_CLASS_NAME).appendChild(newRow);
 
@@ -83,6 +83,10 @@ function addMessageToView(payload: Payload, fromSelf: boolean) {
   }
   newRow.appendChild(newMessage);
   newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + payload.message + "</span>";
+  if (!senderName) {
+    senderName = payload.nickname;
+  }
+  newMessage.innerHTML = senderName + "<span class=\"chat-name\">" + payload.message + "</span>";
   msgCount = msgCount + 1;
 
   let timestamp: Date = new Date(payload.timestamp);
@@ -99,10 +103,7 @@ function clearMessageView(): void {
 }
 
 /* Show all messages sent and received from a specific user */
-function setMessageView(nickname?: string, uuid?: string): void {
-  if (!uuid) {
-    uuid = currentViewChannel;
-  }
+function setMessageView(uuid: string, nickname?: string): void {
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
@@ -116,7 +117,7 @@ function setMessageView(nickname?: string, uuid?: string): void {
  */
 
 /* Display messages sent and received */
-ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: string) {
+ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: string, senderName: string) {
   for (let i = 0; i < messages.length; i++) {
     let message: Payload = messages[i];
     addMessageToView(message, message.uuid === ownUuid);
@@ -131,14 +132,15 @@ ipcRenderer.on('display_personal_nickname', function(e: any, nickname: string) {
 
 /* Show online users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: string) {
-	// Every time this function is called, clear the div and regenerate everything
-	// inside it.
-	document.getElementById("online-list").innerHTML = "";
-	for (let i = 0; i < onlineUsers.length; i++) {
-		if (onlineUsers[i].uuid === uuid) {
-			// if it's yourself, don't display
-			continue;
-		}
+
+  // Every time this function is called, clear the div and regenerate everything
+  // inside it.
+  document.getElementById("online-list").innerHTML = "";
+  for (let i = 0; i < onlineUsers.length; i++) {
+    if (onlineUsers[i].uuid === uuid) {
+      // if it's yourself, don't display
+      continue;
+    }
 
     let online: HTMLElement = document.getElementById("online-list");
     let list: HTMLLIElement = document.createElement("li");
@@ -155,7 +157,7 @@ ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: 
     link.appendChild(innerDiv);
     link.href = "#"; // this should eventually link to the correct tab
     link.addEventListener('click', () => {
-      setMessageView(nickname, onlineUsers[i].uuid);
+      setMessageView(onlineUsers[i].uuid, nickname);
     });
     list.appendChild(link);
     online.appendChild(list);
@@ -183,9 +185,9 @@ ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
 });
 
 /* Handle display of message passed in from the main process */
-ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string, isFocused: boolean) {
+ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string, isFocused: boolean, senderName: string) {
   if (currentViewChannel === channel) {
-    addMessageToView(payload, fromSelf);
+    addMessageToView(payload, fromSelf, senderName);
   }
   if ((currentViewChannel !== channel && !fromSelf) || !isFocused) {
     ipcRenderer.send('send_notification', payload.nickname, payload.message);

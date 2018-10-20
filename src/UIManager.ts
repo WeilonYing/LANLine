@@ -9,6 +9,10 @@ export class UIManager {
   mainWindow: Electron.BrowserWindow;
   dataService: DataService;
 
+  constructor(dataService: DataService) {
+    this.dataService = dataService;
+  }
+
   public setMainWindow(mainWindow: Electron.BrowserWindow): void {
     this.mainWindow = mainWindow;
   }
@@ -19,7 +23,9 @@ export class UIManager {
 
   // Send message to screen
   public displayMessage(message: Payload, isSelf: boolean, channel: string): void {
-    this.mainWindow.webContents.send('received_message', message, isSelf, channel, this.mainWindow.isFocused());
+    this.dataService.getUserNickname(message.uuid).then((senderName) => {
+      this.mainWindow.webContents.send('received_message', message, isSelf, channel, this.mainWindow.isFocused(), senderName);
+    });
   }
 
   // Show online users on screen

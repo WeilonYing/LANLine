@@ -11,7 +11,7 @@ import {User} from "./User";
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;
 let dataService: DataService = new DataService();
-let uiManager: UIManager = new UIManager();
+let uiManager: UIManager = new UIManager(dataService);
 let userManager: UserManager = new UserManager(dataService);
 
 function createWindow() {
