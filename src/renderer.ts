@@ -14,6 +14,9 @@ var msgCount: number = -1;
 var isChangingView: boolean = false;
 var currentViewChannel: string = Settings.LOBBY_ID_NAME;
 
+// TODO: change it to use DB once it's in
+var isMuted: boolean = false;
+
 /* Initialisation function for the renderer process */
 function init(): void {
   // Add event listeners for sending broadcast messages
@@ -81,6 +84,18 @@ function setMessageView(uuid?: string): void {
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
+
+  let muteButton = document.getElementById("mute");
+  muteButton.innerHTML = (isMuted == false) ? ("Mute " +  uuid) : ("Unmute " +  uuid);
+  muteButton.addEventListener('click', () => {
+    if (isMuted == false) {
+      isMuted = true;
+      muteButton.innerHTML = "Unmute " +  uuid;
+    } else {
+      isMuted = false;
+      muteButton.innerHTML = "Mute " +  uuid;
+    }
+  });
 }
 
 /**
