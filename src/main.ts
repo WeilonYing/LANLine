@@ -85,6 +85,17 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
   }
 });
 
+// get search results from database
+ipcMain.on('get_search_results', function(e: any, searchTerm: string, uuid: string) {
+  // TODO(Oliver): Uncomment the 3 lines below once getSearchResults and showSearchResults are implemented
+  // dataService.getSearchResults(searchTerm, uuid).then(function(result) {
+  //   uiManager.showSearchResults(result);
+  // });
+
+  // TODO(Oliver):  Delete this once uiManager.showSearchResults is implemented
+  uiManager.searchResults();
+});
+
 // send private message
 ipcMain.on('send_notification', function(e: any, nickname: string, message: string) {
   notifier.notify({

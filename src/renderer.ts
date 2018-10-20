@@ -21,6 +21,10 @@ function init(): void {
   send_message_button.addEventListener('click', send_message);
   document.querySelector('form').addEventListener('submit', send_message, false);
 
+  // Add event listener for search
+  const search_button: HTMLElement = document.querySelector('#sendSearch');
+  search_button.addEventListener('click', send_search);
+
   // Add event listener for lobby navigation button on the sidebar
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
@@ -45,6 +49,56 @@ function send_message(e: any): void {
 	  	ipcRenderer.send('send_message', currentViewChannel, message);
 	  	messageElement.value = '';
   }
+}
+
+/* Handle getting the search term from the GUI to the main process */
+function send_search(e: any): void {
+  if (e) {
+    e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
+  }
+  let searchElement: HTMLInputElement = <HTMLInputElement> document.getElementById('searchInput');
+  let searchTerm: string = searchElement.value;
+  if (searchTerm.length > 0) {
+      setSearchView(searchTerm);
+  }
+}
+
+function setSearchView(searchTerm: string): void {
+  clearMessageView();
+  let screen = document.getElementById('bubbles');
+  // Create button to return to message screen
+  let backToMessagesButton = document.createElement("BUTTON");
+  backToMessagesButton.innerHTML = "Back to Messages";
+  backToMessagesButton.id = "backButton";
+  backToMessagesButton.className = "back-button";
+  backToMessagesButton.addEventListener("click", () => { setMessageView(currentViewChannel); });
+  screen.appendChild(backToMessagesButton);
+  // Heading for search results page
+  let heading: HTMLElement = document.createElement('div');
+  heading.className = 'search-heading';
+  heading.innerHTML = "Search results for <i>" + searchTerm + "</i>";
+  screen.appendChild(heading);
+  // Get the search results
+  ipcRenderer.send('get_search_results', searchTerm);
+}
+
+/* Add a new search result to the screen */
+function addSearchResultToView(payload: Payload) {
+  let newRow: HTMLElement = document.createElement('div');
+  document.getElementById('bubbles').appendChild(newRow);
+  let result: HTMLLIElement = document.createElement("li");
+  result.className += "list-group-item";
+
+  // Result format: Nickname: message    time
+  let newMessage: HTMLElement = document.createElement('div');
+  newMessage.innerHTML = "<b>" + payload.nickname + ":</b> " 
+    + payload.message 
+    + "<font style=\"font-size: 8px; color: #BDBDBD\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" 
+    + payload.timestamp 
+    + "</font>";
+
+  result.appendChild(newMessage);
+  newRow.appendChild(result);
 }
 
 /* Add a chat bubble message to the screen */
@@ -92,6 +146,14 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
   for (let i = 0; i < messages.length; i++) {
     let message: Payload = messages[i];
     addMessageToView(message, message.uuid === ownUuid);
+  }
+});
+
+/* Display list of messages where search result appears */
+ipcRenderer.on('show_search_results', function(e: any, messages: Payload[]) {
+  for (let i = 0; i < messages.length; i++) {
+    let message: Payload = messages[i];
+    addSearchResultToView(message);
   }
 });
 

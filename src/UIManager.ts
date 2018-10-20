@@ -40,4 +40,44 @@ export class UIManager {
   public showMessages(messages: Payload[], ownUuid: string): void {
     this.mainWindow.webContents.send('show_messages', messages, ownUuid);
   }
+
+  // Display search results on screen
+  public showSearchResults(messages: Payload[]): void {
+    this.mainWindow.webContents.send('show_search_results', messages);
+  }
+
+  // TODO(Oliver): delete this once showSearchResults is complete (currently used for testing)
+  public searchResults(): void {
+    let payload1: Payload = {
+      uuid: 'a',
+      type: 'message',
+      message: 'Message 1',
+      timestamp: new Date(),
+      nickname: 'Jungkook'
+    };
+    let payload2: Payload = {
+      uuid: 'b',
+      type: 'message',
+      message: 'Message 2',
+      timestamp: new Date(),
+      nickname: 'Jimin'
+    };
+    let payload3: Payload = {
+      uuid: 'c',
+      type: 'message',
+      message: 'Message 3',
+      timestamp: new Date(),
+      nickname: 'V'
+    };
+    let payload4: Payload = {
+      uuid: 'd',
+      type: 'message',
+      message: 'Message 4',
+      timestamp: new Date(),
+      nickname: 'Namjoon'
+    };
+    var messages: Payload[] = [payload1, payload2, payload3, payload4];
+
+    this.mainWindow.webContents.send('show_search_results', messages);
+  }
 }
