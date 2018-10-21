@@ -126,12 +126,6 @@ function addSettingsCog(uuid: string): void {
   muteAction.innerHTML = "Mute " + uuid;
 
   document.querySelector('form').addEventListener('submit', send_message, false);
-
-  blockAction.addEventListener('click', block_users, false);
-}
-
-function block_users (e: any) {
-  // TO DO
 }
 
 /* Show all messages sent and received from a specific user */
