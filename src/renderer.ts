@@ -25,12 +25,13 @@ function init(): void {
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
 
+
   // Add event listeners for getting the personal nickname from the form
   const personal_nickname_form: HTMLElement = document.querySelector('#set_my_nickname')
   const personal_nickname_input: HTMLInputElement = document.querySelector('#personalNicknameInput');
   personal_nickname_form.addEventListener('click', get_personal_nickname);
   document.querySelector('form').addEventListener('submit', get_personal_nickname);
-  setMessageView(); // Set up message view for the first time.
+  setMessageView(Settings.LOBBY_ID_NAME); // Set up message view for the first time.
 }
 
 /* Start sending of heartbeat messages */
@@ -47,8 +48,8 @@ function send_message(e: any): void {
   let messageElement: HTMLInputElement = <HTMLInputElement> document.getElementById('messageInput');
   let message: string = messageElement.value;
   if (message.length > 0) {
-	  	ipcRenderer.send('send_message', currentViewChannel, message);
-	  	messageElement.value = '';
+      ipcRenderer.send('send_message', currentViewChannel, message);
+      messageElement.value = '';
   }
 }
 
@@ -66,8 +67,8 @@ function get_personal_nickname(e: any): void {
 }
 
 /* Add a chat bubble message to the screen */
-function addMessageToView(payload: Payload, fromSelf: boolean) {
-  let newRow: HTMLDivElement = document.createElement('div');
+function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: string) {
+  let newRow: HTMLElement = document.createElement('div');
   newRow.className = MSG_CLASS_NAME;
   document.getElementById(BUBBLE_CLASS_NAME).appendChild(newRow);
 
@@ -82,6 +83,10 @@ function addMessageToView(payload: Payload, fromSelf: boolean) {
   }
   newRow.appendChild(newMessage);
   newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + payload.message + "</span>";
+  if (!senderName) {
+    senderName = payload.nickname;
+  }
+  newMessage.innerHTML = senderName + "<span class=\"chat-name\">" + payload.message + "</span>";
   msgCount = msgCount + 1;
 
   let timestamp: Date = new Date(payload.timestamp);
@@ -98,13 +103,15 @@ function clearMessageView(): void {
 }
 
 /* Show all messages sent and received from a specific user */
-function setMessageView(uuid?: string): void {
-  if (!uuid) {
-    uuid = currentViewChannel;
-  }
+function setMessageView(uuid: string, nickname?: string): void {
   clearMessageView();
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
+  if (uuid !== Settings.LOBBY_ID_NAME) {
+    ipcRenderer.send('display_friend_nickname', nickname);
+  } else {
+    ipcRenderer.send('display_lobby_header');
+  }
 }
 
 /**
@@ -112,7 +119,7 @@ function setMessageView(uuid?: string): void {
  */
 
 /* Display messages sent and received */
-ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: string) {
+ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: string, senderName: string) {
   for (let i = 0; i < messages.length; i++) {
     let message: Payload = messages[i];
     addMessageToView(message, message.uuid === ownUuid);
@@ -127,63 +134,107 @@ ipcRenderer.on('display_personal_nickname', function(e: any, nickname: string) {
 
 /* Show online users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: string) {
-	// Every time this function is called, clear the div and regenerate everything
-	// inside it.
-	document.getElementById("online-list").innerHTML = "";
-	for (let i = 0; i < onlineUsers.length; i++) {
-		if (onlineUsers[i].uuid === uuid) {
-			// if it's yourself, don't display
-			continue;
-		}
 
-		let online: HTMLElement = document.getElementById("online-list");
-		let list: HTMLLIElement = document.createElement("li");
-		list.className = "side-nav__item";
-		let link: HTMLAnchorElement = document.createElement("a");
-		link.className = "side-nav__link";
-		let innerDiv: HTMLElement = document.createElement("div");
-		innerDiv.className = "side-nav__container";
-		let spanName: HTMLSpanElement = document.createElement("span");
-		let name: Text = document.createTextNode(onlineUsers[i].nickname);
-		spanName.appendChild(name);
-		innerDiv.appendChild(spanName);
-		link.appendChild(innerDiv);
-		link.href = "#"; // this should eventually link to the correct tab
+  // Every time this function is called, clear the div and regenerate everything
+  // inside it.
+  document.getElementById("online-list").innerHTML = "";
+  for (let i = 0; i < onlineUsers.length; i++) {
+    if (onlineUsers[i].uuid === uuid) {
+      // if it's yourself, don't display
+      continue;
+    }
+
+    let online: HTMLElement = document.getElementById("online-list");
+    let list: HTMLLIElement = document.createElement("li");
+    list.className = "side-nav__item";
+    let link: HTMLAnchorElement = document.createElement("a");
+    link.className = "side-nav__link";
+    let innerDiv: HTMLElement = document.createElement("div");
+    innerDiv.className = "side-nav__container";
+    let spanName: HTMLSpanElement = document.createElement("span");
+    const nickname = (onlineUsers[i].customNickname) ? onlineUsers[i].customNickname : onlineUsers[i].nickname;
+    let name: Text = document.createTextNode(nickname);
+    spanName.appendChild(name);
+    innerDiv.appendChild(spanName);
+    link.appendChild(innerDiv);
+    link.href = "#"; // this should eventually link to the correct tab
     link.addEventListener('click', () => {
-      setMessageView(onlineUsers[i].uuid);
+      setMessageView(onlineUsers[i].uuid, nickname);
     });
-		list.appendChild(link);
-		online.appendChild(list);
-	}
+    list.appendChild(link);
+    online.appendChild(list);
+  }
 });
 
 /* Show offline users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_offline_users', function(e: any, offlineUsers: User[]) {
-	// Every time this function is called, clear the div and regenerate everything
-	// inside it.
-	document.getElementById("offline-list").innerHTML = "";
-	for (var i = 0; i < offlineUsers.length; i++) {
-		let offline: HTMLElement = document.getElementById("offline-list");
-		let list: HTMLLIElement = document.createElement("li");
-		list.className = "side-nav__container side-nav__offline--item";
-		let link: HTMLAnchorElement = document.createElement("a");
-		link.className = "side-nav__link";
-		link.href = "#"; // this should eventually link to the correct tab
-		let name: Text = document.createTextNode(offlineUsers[i].nickname);
-		list.appendChild(name);
-		link.appendChild(list);
-		offline.appendChild(link);
-	}
+  // Every time this function is called, clear the div and regenerate everything
+  // inside it.
+  document.getElementById("offline-list").innerHTML = "";
+  for (var i = 0; i < offlineUsers.length; i++) {
+    let offline: HTMLElement = document.getElementById("offline-list");
+    let list: HTMLLIElement = document.createElement("li");
+    list.className = "side-nav__container side-nav__offline--item";
+    let link: HTMLAnchorElement = document.createElement("a");
+    link.className = "side-nav__link";
+    link.href = "#"; // this should eventually link to the correct tab
+    const nickname = (offlineUsers[i].customNickname) ? offlineUsers[i].customNickname : offlineUsers[i].nickname;
+    let name: Text = document.createTextNode(nickname);
+    list.appendChild(name);
+    link.appendChild(list);
+    offline.appendChild(link);
+  }
 });
 
 /* Handle display of message passed in from the main process */
-ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string, isFocused: boolean) {
+ipcRenderer.on('received_message', function(e: any, payload: Payload, fromSelf: boolean, channel: string, isFocused: boolean, senderName: string) {
   if (currentViewChannel === channel) {
-    addMessageToView(payload, fromSelf);
+    addMessageToView(payload, fromSelf, senderName);
   }
   if ((currentViewChannel !== channel && !fromSelf) || !isFocused) {
     ipcRenderer.send('send_notification', payload.nickname, payload.message);
   }
 });
+
+/* Get the friend nickname entered into the form by the user */
+function get_friend_nickname(e: any): void {
+  if (e) {
+    e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
+  }
+  let friendNicknameElement: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameInput');
+  let nickname: string = friendNicknameElement.value;
+  if (nickname.length > 0 && nickname.length < 20) {
+    ipcRenderer.send('set_friend_nickname', currentViewChannel, nickname);
+    friendNicknameElement.value = "";
+  }
+}
+
+ipcRenderer.on('display_friend_nickname', function(e: any, friend_nickname: string) {
+
+  const headerDiv: HTMLElement = document.getElementById('channel-header');
+  if (headerDiv.getElementsByTagName("a").length === 0) {
+    const nicknameElement = document.createElement("div");
+    headerDiv.appendChild(nicknameElement);
+    nicknameElement.outerHTML = "<a type=\"button\" id=\"friend-nickname\" class=\"friend-nickname\"" +
+        " data-toggle=\"modal\" data-target=\"#editFriendNickname\">"+ friend_nickname +"</a>";
+
+    let formDiv: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameInput');
+    formDiv.placeholder = friend_nickname;
+  } else {
+    const nicknameElement = document.getElementById('friend-nickname');
+    nicknameElement.innerHTML = friend_nickname;
+  }
+});
+
+ipcRenderer.on('display_lobby_header', function(e: any) {
+  let nicknameButton = document.getElementById('friend-nickname');
+  nicknameButton.parentElement.removeChild(nicknameButton);
+});
+
+// Add event listeners for getting the display nickname
+const friend_nickname_form: HTMLElement = document.querySelector('#set_friend_nickname')
+const friend_nickname_input: HTMLInputElement = document.querySelector('#friendNicknameInput');
+friend_nickname_form.addEventListener('click', get_friend_nickname);
+document.querySelector('form').addEventListener('submit', get_friend_nickname);
 
 init();

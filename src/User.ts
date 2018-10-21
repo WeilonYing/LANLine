@@ -1,7 +1,9 @@
 export interface User {
   uuid: string;
+  customNickname: string;
   nickname: string;
   ip: string;
-  lastHeard: Date;
-  blockedList: User[];
+  lastHeartbeat: Date;
+  isOnline: boolean;
+  isBlocked: boolean;
 }

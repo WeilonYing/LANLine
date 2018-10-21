@@ -104,7 +104,7 @@ li {
     margin-left: 2rem;
     font-size: 1.6rem; }
   .user-nav__active-chat {
-    margin-left: 40vh; }
+    margin-left: 20vh; }
 
 .side-nav {
   font-size: 1.4rem;
@@ -338,6 +338,21 @@ li {
   cursor: pointer;
 }
 
+.friend-nickname {
+  background-color: #ff4351;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+
+
 .modal{
   overflow-x:hidden;
   overflow-y:auto
@@ -371,107 +386,107 @@ li {
 }
 
 .modal-dialog{
-  -webkit-transform:translate(0,0);
-  transform:translate(0,0)
+    -webkit-transform:translate(0,0);
+    transform:translate(0,0)
 }
 .modal-dialog-centered{
-  display:-ms-flexbox;
-  display:flex;
-  -ms-flex-align:center;
-  align-items:center;
-  min-height:calc(100% - (.5rem * 2))
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-align:center;
+    align-items:center;
+    min-height:calc(100% - (.5rem * 2))
 }
 .modal-dialog-centered::before{
-  display:block;
-  height:calc(100vh - (.5rem * 2));
-  content:""
+    display:block;
+    height:calc(100vh - (.5rem * 2));
+    content:""
 }
 .modal-content{
-  position:relative;
-  display:-ms-flexbox;
-  display:flex;
-  -ms-flex-direction:column;
-  flex-direction:column;
-  width:100%;
-  pointer-events:auto;
-  background-color:#fff;
-  background-clip:padding-box;
-  border:1px solid rgba(0,0,0,.2);
-  border-radius:.3rem;
-  outline:0
+    position:relative;
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-direction:column;
+    flex-direction:column;
+    width:100%;
+    pointer-events:auto;
+    background-color:#fff;
+    background-clip:padding-box;
+    border:1px solid rgba(0,0,0,.2);
+    border-radius:.3rem;
+    outline:0
 }
 .modal-backdrop{
-  position:fixed;
-  top:0;
-  right:0;
-  bottom:0;
-  left:0;
-  z-index:1040;
-  background-color:#000
+    position:fixed;
+    top:0;
+    right:0;
+    bottom:0;
+    left:0;
+    z-index:1040;
+    background-color:#000
 }
 .modal-backdrop.fade{
-  opacity:0
+    opacity:0
 }
 .modal-backdrop.show{
-  opacity:.5
+    opacity:.5
 }
 .modal-header{
-  display:-ms-flexbox;
-  display:flex;
-  -ms-flex-align:start;
-  align-items:flex-start;
-  -ms-flex-pack:justify;
-  justify-content:space-between;
-  padding:1rem;
-  border-bottom:1px solid #e9ecef;
-  border-top-left-radius:.3rem;
-  border-top-right-radius:.3rem
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-align:start;
+    align-items:flex-start;
+    -ms-flex-pack:justify;
+    justify-content:space-between;
+    padding:1rem;
+    border-bottom:1px solid #e9ecef;
+    border-top-left-radius:.3rem;
+    border-top-right-radius:.3rem
 }
 .modal-header .close{
-  padding:1rem;
-  margin:-1rem -1rem -1rem auto
+    padding:1rem;
+    margin:-1rem -1rem -1rem auto
 }
 .modal-title{
-  margin-bottom:0;
-  line-height:1.5;
-  font-size: 20px;
+    margin-bottom:0;
+    line-height:1.5;
+    font-size: 20px;
 }
 .modal-body{
   color: #000;
-  position:relative;
-  -ms-flex:1 1 auto;
-  flex:1 1 auto;
-  padding:1rem
+    position:relative;
+    -ms-flex:1 1 auto;
+    flex:1 1 auto;
+    padding:1rem
 }
 .modal-footer{
-  display:-ms-flexbox;
-  display:flex;
-  -ms-flex-align:center;
-  align-items:center;
-  -ms-flex-pack:end;
-  justify-content:flex-end;
-  padding:1rem;
-  border-top:1px solid #e9ecef
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-align:center;
+    align-items:center;
+    -ms-flex-pack:end;
+    justify-content:flex-end;
+    padding:1rem;
+    border-top:1px solid #e9ecef
 }
 .modal-footer>:not(:first-child){
-  margin-left:.25rem
+    margin-left:.25rem
 }
 .modal-footer>:not(:last-child){
-  margin-right:.25rem
+    margin-right:.25rem
 }
 
 @media (min-width:576px){
-  .modal-dialog{
-      max-width:500px;
-      margin:1.75rem auto
-  }
-  .modal-dialog-centered{
-      min-height:calc(100% - (1.75rem * 2))
-  }
-  .modal-dialog-centered::before{
-      height:calc(100vh - (1.75rem * 2))
-  }
-  .modal-sm{
-      max-width:300px
-  }
+    .modal-dialog{
+        max-width:500px;
+        margin:1.75rem auto
+    }
+    .modal-dialog-centered{
+        min-height:calc(100% - (1.75rem * 2))
+    }
+    .modal-dialog-centered::before{
+        height:calc(100vh - (1.75rem * 2))
+    }
+    .modal-sm{
+        max-width:300px
+    }
 }

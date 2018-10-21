@@ -24,10 +24,6 @@ describe('Test that functions in DataService exist', () => {
     expect(typeof dataService.getPersonalNickname).toEqual('function');
   });
   
-  test('getBlockedUsers() function exists', () => {
-    expect(typeof dataService.getBlockedUsers).toEqual('function');
-  });
-  
   test('getMessages() function exists', () => {
     expect(typeof dataService.getMessages).toEqual('function');
   });
