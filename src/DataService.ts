@@ -1,4 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
+const uuidv4 = require('uuid/v4');
+const fs = require('fs');
 import { Database } from 'sqlite3';
 import {Payload, PayloadJSON, PayloadUtils} from './Payload';
 import { User } from './User';
@@ -7,6 +9,7 @@ import { Settings } from './Settings';
 export class DataService {
   private db: Database;
   nickname: string;
+  id: string;
 
   constructor() {
     this.db = new sqlite3.Database("db.sqlite3");
@@ -27,23 +30,49 @@ export class DataService {
                     customNickname string,\
                     isOnline boolean,\
                     isBlocked boolean)";
+                  
+    const selfTableSql = `CREATE TABLE IF NOT EXISTS self(
+                    uuid string NOT NULL,
+                    nickname string NOT NULL)`
 
     this.db.run(messageTableSql);
     this.db.run(userTableSql);
-
+    this.db.run(selfTableSql);
+    this.maybeInitId();
+  }
+  
+  public maybeInitId() {
+    
+    const uuid: string = uuidv4();
+    if (!fs.existsSync('UUID') || !fs.existsSync("user")) {
+      fs.writeFile("UUID", uuid, (err: any) => {
+        
+      });
+      fs.writeFile("user", uuid, (err: any) => {
+        
+      });
+    }
   }
 
   public getId(): string {
-    return "MY_UUID";
-    // TODO: implement ID storage and generator
+    if (!this.id) {
+      this.id = fs.readFileSync('UUID', 'utf8');
+    }
+    return this.id;
   }
 
   public getPersonalNickname(): string {
+    if (!this.nickname) {
+      this.nickname = fs.readFileSync('user', 'utf8');
+    }
     return this.nickname;
   }
 
   public setPersonalNickname(nickname: string): void {
   	this.nickname = nickname;
+    fs.writeFile('user', nickname, (err: any) => {
+      
+    });
   }
 
   public getBroadcasts(from?: number, to?: number): Promise<Payload[]> {
