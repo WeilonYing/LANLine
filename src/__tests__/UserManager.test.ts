@@ -1,3 +1,5 @@
+const sqlite3 = require('sqlite3').verbose();
+import { Database } from 'sqlite3';
 import { Payload, PayloadJSON, PayloadUtils } from '../Payload';
 import { Settings } from '../Settings';
 import { UserManager } from '../UserManager';
@@ -5,11 +7,9 @@ import { User } from '../User';
 import {DataService} from "../DataService";
 
 process.env.test = "true";
-jest.useFakeTimers();
 
 let dataService: DataService = new DataService();
-let userManager: UserManager = new UserManager(dataService);
-
+let userManager: UserManager;
 
 let testHeartbeats: Payload[] = [
   {
@@ -38,68 +38,98 @@ let testHeartbeats: Payload[] = [
   }
 ];
 
-let testRinfo = [ // NOTE: length must be >= length of testHeartbeats
-  { address: '10.0.0.4' },
-  { address: '10.0.0.5' },
-  { address: '10.0.0.6' },
-  { address: '10.0.0.7' }
+let addresses = [ // NOTE: length must be >= length of testHeartbeats
+  '10.0.0.4',
+  '10.0.0.5',
+  '10.0.0.6',
+  '10.0.0.7'
 ]
 
-/* Set user's last heard time to be outside of the timeout limit
+/* Set user's last heard time to be outside of the timeout limit */
 function expireUser(user: User): void {
-  user.lastHeard.setTime(user.lastHeard.getTime() - Settings.ONLINE_USER_TIMEOUT - 1);
+  user.lastHeartbeat.setTime(user.lastHeartbeat.getTime() - Settings.ONLINE_USER_TIMEOUT - 1);
+  dataService.updateUserHeartbeat(user.uuid, user.nickname, user.ip, user.lastHeartbeat);
 }
 
-beforeEach(() => {
-  for (let i = 0; i < testHeartbeats.length; i++) {
-    let payload: Payload = testHeartbeats[i];
-    let rinfo: any = testRinfo[i];
-    userManager.registerHeartbeat(payload, rinfo);
-  }
-});
-
-describe('Test online users after their heartbeats registered', () => {
-  test('getOnlineUser() to return user object given valid UUID and within the timeout limit', () => {
-    let user: User = userManager.getOnlineUser('bae48971-4d4e-4157-8901-4b0c5cec37c8');
-    expect(user).toBeTruthy();
-    expect(user).not.toBeNull();
-    expect(user).toBeDefined();
-  });
-  
-  test('getOnlineUsers() to return a sufficient list of online users', () => {
-    expect(userManager.getOnlineUsers([]).length).toEqual(testHeartbeats.length);
-  });
-  
-  test('getOnlineUser() to return null given invalid UUID', () => {
-    let user: User = userManager.getOnlineUser('bae48971-4d4e-4157-8901-4b0c5cec37c9');
-    expect(user).toBeNull();
-  });
-  
-  test('getOnlineUser() to return null given valid UUID and outside the timeout limit', () => {
-    let uuid: string = 'bae48971-4d4e-4157-8901-4b0c5cec37c8';
-    let user: User = userManager.getOnlineUser(uuid);
-    
-    expireUser(user);
-    userManager.checkOnlineUsers();
-    user = userManager.getOnlineUser(uuid);
-    expect(user).toBeNull();
+function registerHeartbeats(index: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (index >= testHeartbeats.length) {
+      resolve(); 
+    }
+    let payload: Payload = testHeartbeats[index];
+    let ip: string = addresses[index];
+    userManager.registerHeartbeat(payload, ip).then(() => {
+      registerHeartbeats(index + 1).then(() => {
+        resolve();
+      })
+    })
   })
-});
+}
 
-describe('Test users in offline list after they have gone offline', () => {
-  test('getOfflineUsers() to return empty list given all online users have not timed out', () => {
-    expect(userManager.getOfflineUsers().length).toEqual(0);
-  });
-  
-  test('getOfflineUsers() to return size one after a user is no longer online', () => {
-    let uuid: string = 'bae48971-4d4e-4157-8901-4b0c5cec37c8';
-    let user: User = userManager.getOnlineUser(uuid);
-    
-    userManager.removeOnlineUser(user);
-    expect(userManager.getOfflineUsers().length).toEqual(1);
-  });
-});*/
+beforeAll(() => {
+  jest.useFakeTimers();
+  userManager = new UserManager(dataService);
+  return registerHeartbeats(0);
+});
 
 afterAll(() => {
   userManager.stopCheckOnlineUsers();
+  let db: Database;
+  db = new sqlite3.Database('db.sqlite3');
+  db.run('DELETE FROM messages', []);
+  db.run('DELETE FROM users', []);
 });
+
+
+describe('Test online users after their heartbeats registered', () => {
+  test('getOnlineUserIP() to return user object given valid UUID and within the timeout limit', () => {
+    return userManager.getOnlineUserIP('bae48971-4d4e-4157-8901-4b0c5cec37c8').then((userIP: string) => {
+      expect(userIP).toBeTruthy();
+      expect(userIP).not.toBeNull();
+      expect(userIP).toBeDefined();
+    });
+    
+  });
+  
+  test('getOnlineUserIP() to return null given invalid UUID', () => {
+    return userManager.getOnlineUserIP('bae48971-4d4e-4157-8901-4b0c5cec37c9').then((userIP: string) => {
+      expect(userIP).toBeNull();
+    });
+  });
+  
+  test('getNonBlockedOnlineUsers() to return a sufficient list of online users', () => {
+    return userManager.getNonBlockedOnlineUsers().then((users: User[]) => {
+      expect(users.length).toEqual(testHeartbeats.length);
+    });
+  });
+  
+  
+  test('getOnlineUserIP() to return null given valid UUID and outside the timeout limit', () => {
+    let user: User;
+    return userManager.getNonBlockedOnlineUsers().then((users: User[]) => {
+      user = users[0];
+      expireUser(users[0]);
+      userManager.timeoutOfflineUsers().then(() => {
+        userManager.getOnlineUserIP(user.uuid).then((userIP: string) => {
+          expect(userIP).toBeNull();
+        });
+      });
+    });
+  });
+});
+
+describe('Test users in offline list after they have gone offline', () => {
+  test('getOfflineUsers() to return size one after a user is no longer online', () => {
+    let user: User;
+    return userManager.getNonBlockedOnlineUsers().then((users: User[]) => {
+      user = users[0];
+    }).then(() => {
+      expireUser(user);
+      userManager.timeoutOfflineUsers();
+      userManager.getOfflineUsers().then((users: User[]) => {
+        expect(users.length).toBe(1);
+      });
+    });
+  });
+});
+

@@ -17,8 +17,8 @@ export class UserManager {
    * Checks all online users if they have timed out. Removes a user from list of online users if they
    * have timed out
    */
-  public timeoutOfflineUsers(): void {
-    this.dataService.timeoutOfflineUsers();
+  public timeoutOfflineUsers(): Promise<void> {
+    return this.dataService.timeoutOfflineUsers();
   }
 
   /**
@@ -47,7 +47,7 @@ export class UserManager {
   /**
    * Get promise of user IP by uuid. Returns null if user doesn't exist or is not online.
    */
-  public getOnlineUserIP(uuid: string) {
+  public getOnlineUserIP(uuid: string): Promise<string> {
     return this.dataService.getUserIP(uuid);
   }
 
@@ -55,10 +55,10 @@ export class UserManager {
    * Updates online user list with information from the heartbeat.
    * Adds User to db if they are new
    */
-  public registerHeartbeat(payload: Payload, address: string): void {
+  public registerHeartbeat(payload: Payload, address: string): Promise<void> {
 
     // required to access dataService within promise.then
-    this.dataService.getUser(payload.uuid).then((user) => {
+    return this.dataService.getUser(payload.uuid).then((user) => {
       if (!user) {
         const u: User = {
           customNickname: null,

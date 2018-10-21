@@ -12,17 +12,17 @@ export class DataService {
     this.db = new sqlite3.Database("db.sqlite3");
 
     const messageTableSql = "CREATE TABLE IF NOT EXISTS messages( \
-                    sender int,\
-                    receiver int,\
+                    sender string,\
+                    receiver string,\
                     isBroadcast boolean,\
                     nickname string,\
                     timestamp datetime,\
                     message string)";
 
     const userTableSql = "CREATE TABLE IF NOT EXISTS users(\
-                    uuid string,\
+                    uuid string NOT NULL PRIMARY KEY,\
                     ip string,\
-                    lastHeartbeat datetime,\
+                    lastHeartbeat datetime NOT NULL,\
                     nickname string,\
                     customNickname string,\
                     isOnline boolean,\
@@ -139,7 +139,7 @@ export class DataService {
   public addUser(u: User) {
     const sql = `INSERT INTO users(uuid, ip, lastHeartbeat, nickname, isOnline, isBlocked, customNickname) \
                VALUES(?, ?, ?, ?, ?, ?, ?)`;
-    this.db.run(sql , [u.uuid, u.ip, u.lastHeartbeat, u.nickname, true, false, null]);
+    this.db.run(sql , [u.uuid, u.ip, u.lastHeartbeat.toString(), u.nickname, true, false, null]);
   }
 
   public getUser(uuid: string): Promise<User> {
@@ -158,7 +158,7 @@ export class DataService {
               customNickname: row.customNickname,
               isBlocked: row.isBlocked,
               ip: row.ip,
-              lastHeartbeat: row.lastHeartbeat,
+              lastHeartbeat: new Date(row.lastHeartbeat),
               isOnline: row.isOnline,
             };
             resolve(user);
@@ -245,7 +245,7 @@ export class DataService {
             customNickname: row.customNickname,
             isBlocked: row.isBlocked,
             ip: row.ip,
-            lastHeartbeat: row.lastHeartbeat,
+            lastHeartbeat: new Date(row.lastHeartbeat),
             isOnline: row.isOnline,
           };
           users.push(u);
@@ -274,7 +274,7 @@ export class DataService {
             customNickname: row.customNickname,
             isBlocked: row.isBlocked,
             ip: row.ip,
-            lastHeartbeat: row.lastHeartbeat,
+            lastHeartbeat: new Date(row.lastHeartbeat),
             isOnline: row.isOnline,
           };
           users.push(u);
@@ -299,8 +299,13 @@ export class DataService {
     this.db.run(sql, [newNickname, uuid]);
   }
 
-  public timeoutOfflineUsers() {
+  public timeoutOfflineUsers(): Promise<void> {
     const sql = "UPDATE users SET isOnline = ? WHERE isOnline = ? AND ? - lastHeartbeat > ?";
-    this.db.run(sql, [false, true, new Date(), Settings.ONLINE_USER_TIMEOUT]);
+    return new Promise<void>((resolve, reject) => {
+      this.db.run(sql, [false, true, new Date(), Settings.ONLINE_USER_TIMEOUT], () => {
+        resolve();
+      });
+    });
+    
   }
 }
