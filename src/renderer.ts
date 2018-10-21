@@ -24,9 +24,7 @@ function init(): void {
 
   // Add event listener for lobby navigation button on the sidebar
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
-  lobby_button.addEventListener('click', () => { 
-    setMessageView(Settings.LOBBY_ID_NAME); 
-  });
+  lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
 
   // Add event listener for sidebar toggle
   const toggle_menu: HTMLElement = document.getElementById('toggle');
@@ -34,7 +32,12 @@ function init(): void {
     const side_nav: HTMLElement = document.getElementById('side-nav');
     side_nav.classList.toggle("side-nav--active"); 
   }, false);
-  
+
+  // Add event listeners for getting the personal nickname from the form
+  const personal_nickname_form: HTMLElement = document.querySelector('#set_my_nickname')
+  const personal_nickname_input: HTMLInputElement = document.querySelector('#personalNicknameInput');
+  personal_nickname_form.addEventListener('click', get_personal_nickname);
+  document.querySelector('form').addEventListener('submit', get_personal_nickname);
   setMessageView(); // Set up message view for the first time.
 }
 
@@ -57,23 +60,46 @@ function send_message(e: any): void {
   }
 }
 
+/* Get the new personal nickname entered into the form for the user */
+function get_personal_nickname(e: any): void {
+  if (e) {
+    e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
+  }
+  let personalNicknameElement: HTMLInputElement = <HTMLInputElement> document.getElementById('personalNicknameInput');
+  let nickname: string = personalNicknameElement.value;
+  if (nickname.length > 0 && nickname.length < 20) {
+    ipcRenderer.send('set_my_nickname', nickname);
+    personalNicknameElement.value = '';
+  }
+}
+
 /* Add a chat bubble message to the screen */
 function addMessageToView(payload: Payload, fromSelf: boolean) {
-  let newRow: HTMLElement = document.createElement('div');
+  let newRow: HTMLDivElement = document.createElement('div');
   newRow.className = MSG_CLASS_NAME;
   document.getElementById(BUBBLE_CLASS_NAME).appendChild(newRow);
-  let newMessage: HTMLElement = document.createElement('div');
+
+  let newMessage: HTMLDivElement = document.createElement('div');
   newMessage.className = "chat-bubble ";
   if (fromSelf) { // display message depending on whether it's from our user or not
     newMessage.className += "chat-bubble__right";
+    newMessage.title = "Sent at ";
   } else {
     newMessage.className += "chat-bubble__left";
+    newMessage.title = "Received at ";
   }
+
+  msgCount = msgCount + 1;
   let msg: string = linkifyStr(payload.message);
   newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + msg + "</span>";
-  msgCount = msgCount + 1;
+  
   document.getElementsByClassName(MSG_CLASS_NAME)[msgCount].appendChild(newMessage);
   document.getElementById(BUBBLE_CLASS_NAME).scrollTop = document.getElementById(BUBBLE_CLASS_NAME).scrollHeight;
+  newRow.appendChild(newMessage);
+
+
+  let timestamp: Date = new Date(payload.timestamp);
+  newMessage.title += timestamp.toLocaleString();
 }
 
 /* Remove all displayed messages on the screen */
@@ -107,6 +133,10 @@ function setMessageView(uuid?: string): void {
   if (!uuid) {
     uuid = currentViewChannel;
   }
+  
+  let currChat: HTMLElement = document.getElementById("user-nav__active-chat");
+  currChat.innerHTML = uuid;
+
   clearMessageView();
   addSettingsCog(uuid);
   currentViewChannel = uuid;
@@ -126,10 +156,14 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
   
 });
 
+/* Display personal nickname on the top corner of the screen */
+ipcRenderer.on('display_personal_nickname', function(e: any, nickname: string) {
+  let personalNicknameDisplay: HTMLAnchorElement = <HTMLAnchorElement> document.getElementById('my-nickname');
+  personalNicknameDisplay.innerHTML = nickname;
+});
+
 /* Show online users on sidebar by dynamically creating elements based on list */
 ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: string) {
-  document.getElementById("own-nickname").innerHTML = uuid; // TODO: Properly display the nickname
-
 	// Every time this function is called, clear the div and regenerate everything
 	// inside it.
 	document.getElementById("online-list").innerHTML = "";
