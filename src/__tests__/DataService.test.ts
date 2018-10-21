@@ -11,29 +11,17 @@ function initialiseDatabase() {
   db = new sqlite3.Database('db.sqlite3');
 }
 
-function destroyDatabase() {
-  fs.unlink('db.sqlite3', (err) => {
-    console.log("Unable to delete db");
-    console.log(err);
-  });
-}
-
 beforeEach(() => {
   initialiseDatabase();
 });
-
-afterEach(() => {
-  destroyDatabase();
-});
-
 
 describe('Test that functions in DataService exist', () => {
   test('getId() function exists', () => {
     expect(typeof dataService.getId).toEqual('function');
   });
   
-  test('getNickname() function exists', () => {
-    expect(typeof dataService.getNickname).toEqual('function');
+  test('getPersonalNickname() function exists', () => {
+    expect(typeof dataService.getPersonalNickname).toEqual('function');
   });
   
   test('getBlockedUsers() function exists', () => {
