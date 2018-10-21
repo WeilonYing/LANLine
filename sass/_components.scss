@@ -82,12 +82,6 @@
         border-bottom: 0.5px solid $color-grey-dark-2;
 
         &:not(:last-child) {
-<<<<<<< HEAD
-            
-=======
-            margin-bottom: .5rem;
-
->>>>>>> Added delete message button. Clicking on it removes message.
             @media only screen and (max-width: $bp-medium) {
                 margin: 0;
             }
@@ -411,7 +405,7 @@
 .bubbles {
     overflow: auto;
     height: 75vh;
-    margin-top: 1rem;
+    margin-top: 0.0rem;
 }
 
 .message {
@@ -420,7 +414,17 @@
     overflow: hidden;
 }
 
-<<<<<<< HEAD
+.chat-container {
+  width: 50%;
+  &__right {
+    float: right;
+  }
+  
+  &__left {
+    float: left;
+  }
+}
+
 .linkified {
     color: $color-grey-light-1;
     text-decoration: underline;
@@ -430,57 +434,35 @@
     }
 }
 
-.chat-bubble {
-=======
 .chat-delete {
-    font-size: 1.4rem;
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: white;
+    position: relative;
+    z-index: 1000;
     &__left {
         float: left;
-        margin-right: 1rem;
+        padding-right: 1.1rem;
     }
 
     &__right {
         float: right;
-        margin-left: 1rem;
-    }
-}
-
-.chat-container {
->>>>>>> Added delete message button. Clicking on it removes message.
-    margin-top: 2rem;
-    display: block;
-    position: relative;
-    width: 50%;
-    background-size: 45% auto;
-
-    &__left {
-        margin-left: 2rem;
-    }
-
-    &__right {
-        float: right;
-        margin-right: 2rem;
-    }
-
-    &:after {
-        position: absolute;
-    }
+        padding-left: 1rem;
+    }    
 }
 
 .chat-bubble {
     border-radius: .4em;
     padding: 2rem;
     width: 90%;
+    margin-top: 2rem;
+    display: block;
+    position: relative;
+    background-size: 45% auto;
 
     &__left {
-<<<<<<< HEAD
         background-color:$color-grey-dark-2;
         margin-left: 2rem;
-        
-=======
-        background-color: #e5e5e5;
-
->>>>>>> Added delete message button. Clicking on it removes message.
         &::after {
             position: absolute;
             left: 0;
@@ -499,6 +481,7 @@
         background-color: $color-primary;
         color: white;
         float: right;
+        margin-right: 2rem;
 
         &::after {
             position: absolute;

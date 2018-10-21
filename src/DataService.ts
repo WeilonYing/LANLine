@@ -34,7 +34,7 @@ export class DataService {
   }
 
   public getId(): string {
-    return "MY_UUID";
+    return "asdf";
     // TODO: implement ID storage and generator
   }
 

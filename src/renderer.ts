@@ -86,6 +86,7 @@ function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: stri
   let newDeleteButton: HTMLAnchorElement = document.createElement('a');
   newDeleteButton.innerHTML = "x";
   newDeleteButton.className = "chat-delete "; // TODO: Properly style the delete button
+  newDeleteButton.title = "Delete message";
   newDeleteButton.addEventListener('click', () => {
     newRow.parentNode.removeChild(newRow);
     // TODO: Call delete message in DB
@@ -107,7 +108,7 @@ function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: stri
     newMessage.title = "Received at ";
   }
   newRow.appendChild(newMessage);
-
+  
   msgCount = msgCount + 1;
   let msg: string = linkifyStr(payload.message);
   
