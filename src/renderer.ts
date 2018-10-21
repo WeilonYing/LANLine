@@ -13,6 +13,7 @@ const MSG_CLASS_NAME: string = 'message';
 var msgCount: number = -1;
 var isChangingView: boolean = false;
 var currentViewChannel: string = Settings.LOBBY_ID_NAME;
+var linkifyStr = require('linkifyjs/string');
 
 /* Initialisation function for the renderer process */
 function init(): void {
@@ -25,6 +26,12 @@ function init(): void {
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
 
+  // Add event listener for sidebar toggle
+  const toggle_menu: HTMLElement = document.getElementById('toggle');
+  toggle_menu.addEventListener('click', () => {
+    const side_nav: HTMLElement = document.getElementById('side-nav');
+    side_nav.classList.toggle("side-nav--active"); 
+  }, false);
 
   // Add event listeners for getting the personal nickname from the form
   const personal_nickname_form: HTMLElement = document.querySelector('#set_my_nickname')
@@ -82,12 +89,20 @@ function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: stri
     newMessage.title = "Received at ";
   }
   newRow.appendChild(newMessage);
-  newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + payload.message + "</span>";
+
+  msgCount = msgCount + 1;
+  let msg: string = linkifyStr(payload.message);
+  
+  newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + msg + "</span>";
   if (!senderName) {
     senderName = payload.nickname;
   }
-  newMessage.innerHTML = senderName + "<span class=\"chat-name\">" + payload.message + "</span>";
-  msgCount = msgCount + 1;
+  newMessage.innerHTML = senderName + "<span class=\"chat-name\">" + msg + "</span>";
+
+  document.getElementsByClassName(MSG_CLASS_NAME)[msgCount].appendChild(newMessage);
+  document.getElementById(BUBBLE_CLASS_NAME).scrollTop = document.getElementById(BUBBLE_CLASS_NAME).scrollHeight;
+  newRow.appendChild(newMessage);
+
 
   let timestamp: Date = new Date(payload.timestamp);
   newMessage.title += timestamp.toLocaleString();
@@ -102,9 +117,21 @@ function clearMessageView(): void {
   msgCount = -1;
 }
 
+
+/* Change the cog when message view is changed */
+function addSettingsCog(uuid: string): void {
+  let blockAction: HTMLElement = document.getElementById("block-action");
+  let muteAction: HTMLElement = document.getElementById("mute-action");
+  blockAction.innerHTML = "Block " + uuid;
+  muteAction.innerHTML = "Mute " + uuid;
+
+  document.querySelector('form').addEventListener('submit', send_message, false);
+}
+
 /* Show all messages sent and received from a specific user */
 function setMessageView(uuid: string, nickname?: string): void {
   clearMessageView();
+  addSettingsCog(uuid);
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
   if (uuid !== Settings.LOBBY_ID_NAME) {
@@ -124,6 +151,7 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
     let message: Payload = messages[i];
     addMessageToView(message, message.uuid === ownUuid);
   }
+  
 });
 
 /* Display personal nickname on the top corner of the screen */

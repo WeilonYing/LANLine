@@ -30,21 +30,24 @@
 .side-nav {
     font-size: 1.4rem;
     list-style: none;
+    display: block;
 
-    @media only screen and (max-width: $bp-medium) {
-        display: flex;
-        margin: 0;
+    @include respond(tab-port) {
+        display: none;
     }
 
     &__container {
         width: 80%;
         margin: 0 auto;
 
+        @include respond(tab-port) {
+            width: 100%;
+            padding-left: 2rem;
+        } 
+
     }
 
     &__lobby {
-        background-color: rgba($color-primary, 0.2);
-
         &--text {
             color: $color-primary;
         }
@@ -53,7 +56,6 @@
     &__offline {
         &--text {
             color: $color-grey-dark-2;
-            font-weight: bold;
             cursor: pointer;
         }
 
@@ -69,7 +71,6 @@
 
         &:hover {
             text-decoration: none;
-            font-weight:600;
             color: $color-primary;
             cursor: pointer;
         }
@@ -80,12 +81,7 @@
         padding: 1rem 0;
         border-bottom: 0.5px solid $color-grey-dark-2;
 
-        &--active {
-            font-weight: 600;
-        }
-
         &:not(:last-child) {
-            margin-bottom: .5rem;
             
             @media only screen and (max-width: $bp-medium) {
                 margin: 0;
@@ -96,6 +92,20 @@
             flex: 1;
         }
     }
+}
+
+.side-nav--active {
+    display: block;
+}
+
+.toggle-menu {
+    display: none; 
+
+    @include respond(tab-port) {
+        display: block;
+        padding: 1rem 2rem;
+        border-bottom: 0.5px solid #777;
+    } 
 }
 
 ////////////////////////////////////////
@@ -171,6 +181,10 @@
     display: block;
     width: 40%; }
 
+.save-button {
+    background-color: $color-primary;
+    color: white; 
+}
 
 ////////////////////////////////////////
 // LOGO
@@ -178,6 +192,10 @@
     margin: 0 auto;
     width: 60%;
     margin-bottom: 2rem;
+
+    @include respond(tab-port) {
+        display: none;
+    }
 }
 
 ////////////////////////////////////////
@@ -199,13 +217,13 @@
 
 .form-group {
     display: flex;
+    width: 100%;
 }
 
 .input {
     margin-top: 1rem;
     font-size: 1.6rem;
     padding: 2rem 0;
-    border: none;
     border-bottom: 0.5px solid $color-grey-dark-1;
 
     &:focus {
@@ -220,7 +238,7 @@
         margin: 1rem;
         padding-left: 2rem;
         display: inline-block;
-        width: 110rem;
+        width: 100%;
 
         &:focus {
             border: 0.5px solid $color-grey-dark-2;
@@ -229,18 +247,19 @@
     }
 }
 
-
 .user-nickname {
-  background-color: #ff4351;
+  background: none;
   border: none;
   color: white;
-  padding: 15px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 20px;
   margin: 4px 2px;
   cursor: pointer;
+
+  &:focus {
+      outline: none;
+  }
 }
 
 .modal{
@@ -396,6 +415,15 @@
     overflow: hidden;
 }
 
+.linkified {
+    color: $color-grey-light-1;
+    text-decoration: underline;
+
+    &:hover {
+        color: white;
+    }
+}
+
 .chat-bubble {
     margin-top: 2rem;
     display: block;
@@ -406,7 +434,7 @@
     background-size: 45% auto;
 
     &__left {
-        background-color: #e5e5e5;
+        background-color:$color-grey-dark-2;
         margin-left: 2rem;
         
         &::after {
@@ -416,7 +444,7 @@
             width: 0;
             height: 0;
             border: 2rem solid transparent;
-            border-right-color: #e5e5e5;
+            border-right-color: $color-grey-dark-2;
             border-left: 0;
             margin-top: -2rem;
             margin-left: -2rem;
@@ -455,14 +483,24 @@
     display: flex;
     position: absolute;
     bottom: 1rem;
+    width: 100%;
+
+    @include respond(tab-port) {
+        bottom: 0;
+    }
 }
 
 .chat-input__submit {
     font-size: 2rem;
     color: $color-grey-dark-2;
+    background: none;
     border: none;
     padding: 1rem;
     cursor: pointer;
+
+    &:focus {
+        outline: none;
+    }
 }
 
 .chat-name {
@@ -470,4 +508,79 @@
     display: block;
     margin-top: 0.5rem;
     font-weight: 600;
+}
+
+////////////////////////////////////////
+// CHAT SETTINGS
+
+.settings {
+    &--dropdown {
+        float: right;
+        position: absolute;
+        right: 2rem;
+    }
+
+    &--button {
+        background: none;
+        color: white;
+        border: none;
+
+        &:hover, &:not(:disabled):not(.disabled):active, &:focus {
+            background: none;
+            border: none;
+            box-shadow: none;
+        }
+    }
+
+    &--item {
+        font-family: sans-serif;
+        font-weight: 400;
+        line-height: 1.6;
+        font-size: 1.6rem;
+        color: $color-grey-dark-2;
+
+        &:active {
+            background-color: rgba($color-primary, 0.2);
+            color: $color-primary;
+            font-weight: 600;
+        }
+    }
+}
+
+.show>.btn-secondary.dropdown-toggle {
+    background: none;
+    border: none;
+
+    &:focus {
+        box-shadow: none;
+    }
+}
+
+.fa-cog {
+    font-size: 2rem;
+}
+
+////////////////////////////////////////
+// SEARCH
+
+.search {
+    padding: 2rem;
+    margin: 1rem;
+}
+
+.input-group-text {
+    background-color: $color-primary;
+    font-size: 1.6rem;
+    color: white;
+    border: none;
+}
+
+.form-control {
+    font-size: 1.4rem;
+    border-radius: .4rem;
+    padding-left: 2rem;
+
+    &:focus {
+        box-shadow: none;
+    }
 }
