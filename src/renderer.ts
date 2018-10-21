@@ -100,23 +100,23 @@ function setSearchView(searchTerm: string): void {
   backToMessagesButton.addEventListener("click", () => { setMessageView(currentViewChannel); });
   screen.appendChild(backToMessagesButton);
   // Heading for search results page
-  let heading: HTMLElement = document.createElement('div');
+  let heading: HTMLElement = document.createElement("div");
   heading.className = 'search-heading';
   heading.innerHTML = "Search results for <i>" + searchTerm + "</i>";
   screen.appendChild(heading);
   // Get the search results
-  ipcRenderer.send('get_search_results', searchTerm);
+  ipcRenderer.send("get_search_results", searchTerm, currentViewChannel);
 }
 
 /* Add a new search result to the screen */
 function addSearchResultToView(payload: Payload) {
-  let newRow: HTMLElement = document.createElement('div');
-  document.getElementById('bubbles').appendChild(newRow);
+  let newRow: HTMLElement = document.createElement("div");
+  document.getElementById("bubbles").appendChild(newRow);
   let result: HTMLLIElement = document.createElement("li");
   result.className += "list-group-item";
 
   // Result format: Nickname: message    time
-  let newMessage: HTMLElement = document.createElement('div');
+  let newMessage: HTMLElement = document.createElement("div");
   newMessage.innerHTML = "<b>" + payload.nickname + ":</b> "
     + payload.message
     + "<font style=\"font-size: 8px; color: #BDBDBD\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
