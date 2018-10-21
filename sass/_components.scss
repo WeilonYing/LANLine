@@ -262,6 +262,21 @@
   }
 }
 
+.friend-nickname {
+    background: none;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+  
+    &:focus {
+        outline: none;
+    }
+  }
+
 .modal{
   overflow-x:hidden;
   overflow-y:auto
@@ -436,6 +451,7 @@
     &__left {
         background-color:$color-grey-dark-2;
         margin-left: 2rem;
+        color: $color-grey-light-1;
         
         &::after {
             position: absolute;
