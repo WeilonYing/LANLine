@@ -298,6 +298,18 @@ a {
   .user-nickname:focus {
     outline: none; }
 
+.friend-nickname {
+  background: none;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer; }
+  .friend-nickname:focus {
+    outline: none; }
+
 .modal {
   overflow-x: hidden;
   overflow-y: auto; }
@@ -452,7 +464,8 @@ a {
   background-size: 45% auto; }
   .chat-bubble__left {
     background-color: #777;
-    margin-left: 2rem; }
+    margin-left: 2rem;
+    color: #faf9f9; }
     .chat-bubble__left::after {
       position: absolute;
       left: 0;

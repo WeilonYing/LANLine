@@ -240,11 +240,11 @@ function get_friend_nickname(e: any): void {
 ipcRenderer.on('display_friend_nickname', function(e: any, friend_nickname: string) {
 
   const headerDiv: HTMLElement = document.getElementById('channel-header');
-  if (headerDiv.getElementsByTagName("a").length === 0) {
+  if (headerDiv.getElementsByTagName("button").length === 0) {
     const nicknameElement = document.createElement("div");
     headerDiv.appendChild(nicknameElement);
-    nicknameElement.outerHTML = "<a type=\"button\" id=\"friend-nickname\" class=\"friend-nickname\"" +
-        " data-toggle=\"modal\" data-target=\"#editFriendNickname\">"+ friend_nickname +"</a>";
+    nicknameElement.outerHTML = "<button type=\"button\" id=\"friend-nickname\" class=\"friend-nickname\"" +
+        " data-toggle=\"modal\" data-target=\"#editFriendNickname\">"+ friend_nickname +"</button>";
 
     let formDiv: HTMLInputElement = <HTMLInputElement> document.getElementById('friendNicknameInput');
     formDiv.placeholder = friend_nickname;
