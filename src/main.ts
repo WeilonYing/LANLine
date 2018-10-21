@@ -14,8 +14,6 @@ let uiManager: UIManager = new UIManager();
 let userManager: UserManager = new UserManager();
 
 function createWindow() {
-  networkManager = new NetworkManager(dataService, uiManager, userManager);
-
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 600,
@@ -38,6 +36,7 @@ function createWindow() {
   });
 
   uiManager.setMainWindow(mainWindow);
+  networkManager = new NetworkManager(dataService, uiManager, userManager);
   networkManager.startHeartbeat();
 }
 
