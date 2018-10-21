@@ -40,8 +40,6 @@ export class NetworkManager {
     }
     this.userManager = userManager;
 
-    console.log("Broadcast address: " + this.broadcastAddr); // DEBUG
-
     this.server.on("listening", function() {
       console.log("Server is listening...");
     });
@@ -73,12 +71,10 @@ export class NetworkManager {
           uiManager.displayMessage(msgPayload, msgPayload.uuid === this.dataService.getId(), Settings.LOBBY_ID_NAME);
           this.dataService.storeMessage(msgPayload, msgPayload.uuid, this.dataService.getId()); // store broadcasts received from other users
         }
-        console.log("received broadcast from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       } else if (msgPayload.type === 'message') {
         // received private message
         uiManager.displayMessage(msgPayload, msgPayload.uuid === this.dataService.getId(), msgPayload.uuid);
         this.dataService.storeMessage(msgPayload, msgPayload.uuid, this.dataService.getId());
-        console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
     if (process.env['test']) {
@@ -92,7 +88,7 @@ export class NetworkManager {
   /**
     Broadcasts a heartbeat signal to the entire local area network.
   */
-  public heartbeat(): void { //TODO: set this to private once startHeartbeat is implemented
+  public heartbeat(): void {
     let payload: Payload = {
       uuid: this.dataService.getId(),
       type: 'heartbeat',
@@ -102,8 +98,6 @@ export class NetworkManager {
     let payloadJsonStr: string = JSON.stringify(PayloadUtils.payloadToJson(payload));
     this.server.send(
       payloadJsonStr, 0, payloadJsonStr.length, Settings.PORT, this.broadcastAddr);
-
-    //console.log("Sending heartbeat with content: " + payloadJsonStr); // DEBUG
   }
 
   /**
@@ -140,7 +134,6 @@ export class NetworkManager {
     this.server.send(
       broadcastPayloadString, 0, broadcastPayloadString.length, Settings.PORT, this.broadcastAddr);
     this.dataService.storeMessage(broadcastPayload, this.dataService.getId(), Settings.LOBBY_ID_NAME);
-    console.log("sent broadcast: " + broadcastPayload.message); // DEBUG
   }
 
   /**

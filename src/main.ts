@@ -72,7 +72,6 @@ app.on("activate", () => {
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 ipcMain.on('start_scan', () => {
-  console.log("Beginning scan...");
   networkManager.startHeartbeat();
 });
 
@@ -83,6 +82,13 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
   } else {
     networkManager.sendPrivateMessage(uuid, message);
   }
+});
+
+// get search results from database
+ipcMain.on('get_search_results', function(e: any, searchTerm: string, uuid: string) {
+  dataService.getSearchResults(searchTerm, uuid).then(function(result) {
+    uiManager.showSearchResults(result);
+  });
 });
 
 // send notification
@@ -120,8 +126,6 @@ ipcMain.on('display_lobby_header', function (e: any) {
 // on the header and sidebar
 
 ipcMain.on('set_friend_nickname', function(e: any, UUID: string, friendNicknameInput: string) {
-
-  console.log("trying to change friend nickname for " + UUID + " to " + friendNicknameInput);
   dataService.updateUserCustomNickname(UUID, friendNicknameInput);
   uiManager.displayFriendNickname(friendNicknameInput);
 

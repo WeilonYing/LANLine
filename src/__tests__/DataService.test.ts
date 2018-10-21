@@ -19,20 +19,16 @@ describe('Test that functions in DataService exist', () => {
   test('getId() function exists', () => {
     expect(typeof dataService.getId).toEqual('function');
   });
-  
+
   test('getPersonalNickname() function exists', () => {
     expect(typeof dataService.getPersonalNickname).toEqual('function');
   });
-  
+
   test('getMessages() function exists', () => {
     expect(typeof dataService.getMessages).toEqual('function');
   });
-  
+
   test('storeMessage() function exists', () => {
     expect(typeof dataService.storeMessage).toEqual('function');
   });
-});
-
-test('getId()', () => {
-  expect(true).toEqual(true); // TODO: DataService needs to implement getID();
 });

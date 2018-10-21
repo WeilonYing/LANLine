@@ -13,6 +13,8 @@ const MSG_CLASS_NAME: string = 'message';
 var msgCount: number = -1;
 var isChangingView: boolean = false;
 var currentViewChannel: string = Settings.LOBBY_ID_NAME;
+var currentSearchedTerm: string = null;
+var isOnSearchPage: boolean = false;
 var linkifyStr = require('linkifyjs/string');
 
 /* Initialisation function for the renderer process */
@@ -22,6 +24,10 @@ function init(): void {
   send_message_button.addEventListener('click', send_message);
   document.querySelector('form').addEventListener('submit', send_message, false);
 
+  // Add event listener for search
+  const search_button: HTMLElement = document.querySelector('#sendSearch');
+  search_button.addEventListener('click', send_search);
+
   // Add event listener for lobby navigation button on the sidebar
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
   lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
@@ -30,7 +36,7 @@ function init(): void {
   const toggle_menu: HTMLElement = document.getElementById('toggle');
   toggle_menu.addEventListener('click', () => {
     const side_nav: HTMLElement = document.getElementById('side-nav');
-    side_nav.classList.toggle("side-nav--active"); 
+    side_nav.classList.toggle("side-nav--active");
   }, false);
 
   // Add event listeners for getting the personal nickname from the form
@@ -43,7 +49,6 @@ function init(): void {
 
 /* Start sending of heartbeat messages */
 function start_scan(): void {
-  console.log("scanning");
   ipcRenderer.send('start_scan');
 }
 
@@ -51,6 +56,10 @@ function start_scan(): void {
 function send_message(e: any): void {
   if (e) {
     e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
+  }
+  if (isOnSearchPage) {
+    setMessageView(currentViewChannel);
+    isOnSearchPage = false;
   }
   let messageElement: HTMLInputElement = <HTMLInputElement> document.getElementById('messageInput');
   let message: string = messageElement.value;
@@ -73,6 +82,62 @@ function get_personal_nickname(e: any): void {
   }
 }
 
+/* Handle getting the search term from the GUI to the main process */
+function send_search(e: any): void {
+  if (e) {
+    e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
+  }
+  let searchElement: HTMLInputElement = <HTMLInputElement> document.getElementById('searchInput');
+  let searchTerm: string = searchElement.value;
+  if (searchTerm.length > 0) {
+    currentSearchedTerm = searchTerm;
+    isOnSearchPage = true;
+    setSearchView(searchTerm);
+  }
+}
+
+function setSearchView(searchTerm: string): void {
+  clearMessageView();
+  let screen = document.getElementById('bubbles');
+  // Create button to return to message screen
+  let backToMessagesButton = document.createElement("BUTTON");
+  backToMessagesButton.innerHTML = "Back to Messages";
+  backToMessagesButton.id = "backButton";
+  backToMessagesButton.className = "back-button";
+  backToMessagesButton.addEventListener("click", () => { setMessageView(currentViewChannel); });
+  screen.appendChild(backToMessagesButton);
+  // Heading for search results page
+  let heading: HTMLElement = document.createElement("div");
+  heading.className = 'search-heading';
+  heading.innerHTML = "Search results for <i><font style=\"color: #ff4351\">" + searchTerm + "</font></i>";
+  screen.appendChild(heading);
+  // Get the search results
+  ipcRenderer.send("get_search_results", searchTerm, currentViewChannel);
+}
+
+/* Add a new search result to the screen */
+function addSearchResultToView(payload: Payload) {
+  let newRow: HTMLElement = document.createElement("div");
+  document.getElementById("bubbles").appendChild(newRow);
+  let result: HTMLLIElement = document.createElement("li");
+  result.className += "list-group-item";
+
+  // Result format: Nickname: message    time
+  let newMessage: HTMLElement = document.createElement("div");
+  let searchResultMessage: string = payload.message;
+  let searchRegex: RegExp = new RegExp(currentSearchedTerm, 'gi');
+  searchResultMessage = searchResultMessage
+    .replace(searchRegex, "<font style=\"color: #ff4351\">" + '$&' + "</font>");
+  newMessage.innerHTML = "<b>" + payload.nickname + ":</b> "
+    + searchResultMessage
+    + "<font style=\"font-size: 9px; color: #BDBDBD\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+    + payload.timestamp
+    + "</font>";
+
+  result.appendChild(newMessage);
+  newRow.appendChild(result);
+}
+
 /* Add a chat bubble message to the screen */
 function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: string) {
   let newRow: HTMLElement = document.createElement('div');
@@ -92,7 +157,7 @@ function addMessageToView(payload: Payload, fromSelf: boolean, senderName?: stri
 
   msgCount = msgCount + 1;
   let msg: string = linkifyStr(payload.message);
-  
+
   newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + msg + "</span>";
   if (!senderName) {
     senderName = payload.nickname;
@@ -151,13 +216,21 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
     let message: Payload = messages[i];
     addMessageToView(message, message.uuid === ownUuid);
   }
-  
+
 });
 
 /* Display personal nickname on the top corner of the screen */
 ipcRenderer.on('display_personal_nickname', function(e: any, nickname: string) {
   let personalNicknameDisplay: HTMLAnchorElement = <HTMLAnchorElement> document.getElementById('my-nickname');
   personalNicknameDisplay.innerHTML = nickname;
+});
+
+/* Display list of messages where search result appears */
+ipcRenderer.on('show_search_results', function(e: any, messages: Payload[]) {
+  for (let i = 0; i < messages.length; i++) {
+    let message: Payload = messages[i];
+    addSearchResultToView(message);
+  }
 });
 
 /* Show online users on sidebar by dynamically creating elements based on list */
