@@ -38,26 +38,12 @@ export class DataService {
     // TODO: implement ID storage and generator
   }
 
-  public getNickname(): string {
-    return "MY_NICKNAME";
-    // TODO: implement nickname creation and retrieval
+  public getPersonalNickname(): string {
+    return this.nickname;
   }
 
   public setPersonalNickname(nickname: string): void {
   	this.nickname = nickname;
-  }
-
-  public getBlockedUsers(): User[]  {
-    // Begin debug code
-    let user1 :User = {
-      uuid: "teresa",
-      nickname: "teresa",
-      ip: "10.1.1",
-      lastHeard: new Date(),
-      blockedList: []
-    };
-    // End debug code
-    return [user1];
   }
 
   public getBroadcasts(from?: number, to?: number): Promise<Payload[]> {

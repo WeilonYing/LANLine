@@ -5,11 +5,12 @@ import { DataService } from './DataService';
 
 export class UserManager {
   private dataService: DataService;
+  private intervalId: NodeJS.Timer;
 
   constructor(dataService: DataService) {
     // schedule checking of online users for a regular interval
     this.dataService = dataService;
-    setInterval(() => this.timeoutOfflineUsers(), Settings.ONLINE_USER_TIMEOUT);
+    this.intervalId = setInterval(() => this.timeoutOfflineUsers(), Settings.ONLINE_USER_TIMEOUT);
   }
 
   /**
@@ -73,5 +74,9 @@ export class UserManager {
         this.dataService.updateUserHeartbeat(payload.uuid, payload.nickname, address, new Date());
       }
     });
+  }
+
+  public stopCheckOnlineUsers() {
+    clearInterval(this.intervalId);
   }
 }

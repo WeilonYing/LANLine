@@ -8,8 +8,8 @@ import { UserManager } from '../UserManager';
 process.env.test = "true";
 
 let dataService: DataService = new DataService();
-let uiManager: UIManager = new UIManager();
-let userManager: UserManager = new UserManager();
+let uiManager: UIManager = new UIManager(dataService);
+let userManager: UserManager = new UserManager(dataService);
 NetworkManager.prototype.getIPAddress = jest.fn().mockReturnValue("10.0.0.4");
 let networkManager: NetworkManager = new NetworkManager(
     dataService, uiManager, userManager);
