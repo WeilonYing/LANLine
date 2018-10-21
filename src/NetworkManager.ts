@@ -56,8 +56,10 @@ export class NetworkManager {
         // update online users list
         this.uiManager.showOnlineUsers(this.userManager.getOnlineUsers(this.dataService.getBlockedUsers()), this.dataService.getId());
         this.uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
-        console.log(rinfo); // DEBUG
-        console.log("Received heartbeat " + msgPayload); // DEBUG
+        // display the user's nickname on the screen
+        this.uiManager.displayPersonalNickname(this.dataService.getPersonalNickname());
+        console.log(rinfo);
+        console.log("Received heartbeat " + msgPayload);
       } else if (msgPayload.type === 'broadcast') {
         // pass broadcast message to the UI
         if (msgPayload.uuid !== this.dataService.getId()) {
@@ -86,7 +88,7 @@ export class NetworkManager {
       uuid: this.dataService.getId(),
       type: 'heartbeat',
       timestamp: new Date(),
-      nickname: this.dataService.getNickname()
+      nickname: this.dataService.getPersonalNickname()
     };
     let payloadJsonStr: string = JSON.stringify(PayloadUtils.payloadToJson(payload));
     this.server.send(
@@ -116,7 +118,7 @@ export class NetworkManager {
       uuid: this.dataService.getId(),
       type: 'broadcast',
       timestamp: new Date(),
-      nickname: this.dataService.getNickname(),
+      nickname: this.dataService.getPersonalNickname(),
       message: message_content
     }
     // Convert to a JSON string and send it to the broadcast address
@@ -141,7 +143,7 @@ export class NetworkManager {
       uuid: this.dataService.getId(),
       type: 'message',
       timestamp: new Date(),
-      nickname: this.dataService.getNickname(),
+      nickname: this.dataService.getPersonalNickname(),
       message: message_content
     }
     let user = this.userManager.getOnlineUser(recipient_uuid);

@@ -106,3 +106,9 @@ ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
     });
   }
 });
+
+// set new personal nickname
+ipcMain.on('set_my_nickname', function(e: any, userNicknameInput: string) {
+  dataService.setPersonalNickname(userNicknameInput);
+  uiManager.displayPersonalNickname(userNicknameInput);
+});
