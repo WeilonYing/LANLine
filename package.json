@@ -40,6 +40,7 @@
     "electron-prebuilt-compile": "^3.0.0",
     "electron-rebuild": "^1.8.2",
     "ip": "^1.1.5",
+    "linkifyjs": "^2.1.7",
     "node-gyp": "^3.8.0",
     "node-pre-gyp": "^0.11.0",
     "source-map-loader": "^0.2.4",

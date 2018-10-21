@@ -30,21 +30,24 @@
 .side-nav {
     font-size: 1.4rem;
     list-style: none;
+    display: block;
 
-    @media only screen and (max-width: $bp-medium) {
-        display: flex;
-        margin: 0;
+    @include respond(tab-port) {
+        display: none;
     }
 
     &__container {
         width: 80%;
         margin: 0 auto;
 
+        @include respond(tab-port) {
+            width: 100%;
+            padding-left: 2rem;
+        } 
+
     }
 
     &__lobby {
-        background-color: rgba($color-primary, 0.2);
-
         &--text {
             color: $color-primary;
         }
@@ -53,7 +56,6 @@
     &__offline {
         &--text {
             color: $color-grey-dark-2;
-            font-weight: bold;
             cursor: pointer;
         }
 
@@ -69,7 +71,6 @@
 
         &:hover {
             text-decoration: none;
-            font-weight:600;
             color: $color-primary;
             cursor: pointer;
         }
@@ -80,12 +81,7 @@
         padding: 1rem 0;
         border-bottom: 0.5px solid $color-grey-dark-2;
 
-        &--active {
-            font-weight: 600;
-        }
-
         &:not(:last-child) {
-            margin-bottom: .5rem;
             
             @media only screen and (max-width: $bp-medium) {
                 margin: 0;
@@ -96,6 +92,20 @@
             flex: 1;
         }
     }
+}
+
+.side-nav--active {
+    display: block;
+}
+
+.toggle-menu {
+    display: none; 
+
+    @include respond(tab-port) {
+        display: block;
+        padding: 1rem 2rem;
+        border-bottom: 0.5px solid #777;
+    } 
 }
 
 ////////////////////////////////////////
@@ -145,6 +155,10 @@
     margin: 0 auto;
     width: 60%;
     margin-bottom: 2rem;
+
+    @include respond(tab-port) {
+        display: none;
+    }
 }
 
 ////////////////////////////////////////
@@ -189,13 +203,13 @@
 
 .form-group {
     display: flex;
+    width: 100%;
 }
 
 .input {
     margin-top: 1rem;
     font-size: 1.6rem;
     padding: 2rem 0;
-    border: none;
     border-bottom: 0.5px solid $color-grey-dark-1;
 
     &:focus {
@@ -210,7 +224,7 @@
         margin: 1rem;
         padding-left: 2rem;
         display: inline-block;
-        width: 110rem;
+        width: 100%;
 
         &:focus {
             border: 0.5px solid $color-grey-dark-2;
@@ -232,6 +246,15 @@
     width: 100%;
     height: auto;
     overflow: hidden;
+}
+
+.linkified {
+    color: white;
+    text-decoration: underline;
+
+    &:hover {
+        color: white;
+    }
 }
 
 .chat-bubble {
@@ -293,14 +316,24 @@
     display: flex;
     position: absolute;
     bottom: 1rem;
+    width: 100%;
+
+    @include respond(tab-port) {
+        bottom: 0;
+    }
 }
 
 .chat-input__submit {
     font-size: 2rem;
     color: $color-grey-dark-2;
+    background: none;
     border: none;
     padding: 1rem;
     cursor: pointer;
+
+    &:focus {
+        outline: none;
+    }
 }
 
 .chat-name {
@@ -357,4 +390,29 @@
 
 .fa-cog {
     font-size: 2rem;
+}
+
+////////////////////////////////////////
+// SEARCH
+
+.search {
+    padding: 2rem;
+    margin: 1rem;
+}
+
+.input-group-text {
+    background-color: $color-primary;
+    font-size: 1.6rem;
+    color: white;
+    border: none;
+}
+
+.form-control {
+    font-size: 1.4rem;
+    border-radius: .4rem;
+    padding-left: 2rem;
+
+    &:focus {
+        box-shadow: none;
+    }
 }

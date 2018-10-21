@@ -13,6 +13,7 @@ const MSG_CLASS_NAME: string = 'message';
 var msgCount: number = -1;
 var isChangingView: boolean = false;
 var currentViewChannel: string = Settings.LOBBY_ID_NAME;
+var linkifyStr = require('linkifyjs/string');
 
 /* Initialisation function for the renderer process */
 function init(): void {
@@ -23,7 +24,16 @@ function init(): void {
 
   // Add event listener for lobby navigation button on the sidebar
   const lobby_button: HTMLElement = document.querySelector('#' + Settings.LOBBY_ID_NAME);
-  lobby_button.addEventListener('click', () => { setMessageView(Settings.LOBBY_ID_NAME); });
+  lobby_button.addEventListener('click', () => { 
+    setMessageView(Settings.LOBBY_ID_NAME); 
+  });
+
+  // Add event listener for sidebar toggle
+  const toggle_menu: HTMLElement = document.getElementById('toggle');
+  toggle_menu.addEventListener('click', () => {
+    const side_nav: HTMLElement = document.getElementById('side-nav');
+    side_nav.classList.toggle("side-nav--active"); 
+  }, false);
   
   setMessageView(); // Set up message view for the first time.
 }
@@ -59,9 +69,11 @@ function addMessageToView(payload: Payload, fromSelf: boolean) {
   } else {
     newMessage.className += "chat-bubble__left";
   }
-  newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + payload.message + "</span>";
+  let msg: string = linkifyStr(payload.message);
+  newMessage.innerHTML = payload.nickname + "<span class=\"chat-name\">" + msg + "</span>";
   msgCount = msgCount + 1;
   document.getElementsByClassName(MSG_CLASS_NAME)[msgCount].appendChild(newMessage);
+  document.getElementById(BUBBLE_CLASS_NAME).scrollTop = document.getElementById(BUBBLE_CLASS_NAME).scrollHeight;
 }
 
 /* Remove all displayed messages on the screen */
@@ -73,12 +85,30 @@ function clearMessageView(): void {
   msgCount = -1;
 }
 
+
+/* Change the cog when message view is changed */
+function addSettingsCog(uuid: string): void {
+  let blockAction: HTMLElement = document.getElementById("block-action");
+  let muteAction: HTMLElement = document.getElementById("mute-action");
+  blockAction.innerHTML = "Block " + uuid;
+  muteAction.innerHTML = "Mute " + uuid;
+
+  document.querySelector('form').addEventListener('submit', send_message, false);
+
+  blockAction.addEventListener('click', block_users, false);
+}
+
+function block_users (e: any) {
+  // TO DO
+}
+
 /* Show all messages sent and received from a specific user */
 function setMessageView(uuid?: string): void {
   if (!uuid) {
     uuid = currentViewChannel;
   }
   clearMessageView();
+  addSettingsCog(uuid);
   currentViewChannel = uuid;
   ipcRenderer.send('retrieve_messages', uuid);
 }
@@ -93,6 +123,7 @@ ipcRenderer.on('show_messages', function(e: any, messages: Payload[], ownUuid: s
     let message: Payload = messages[i];
     addMessageToView(message, message.uuid === ownUuid);
   }
+  
 });
 
 /* Show online users on sidebar by dynamically creating elements based on list */
@@ -126,7 +157,7 @@ ipcRenderer.on('show_online_users', function(e: any, onlineUsers: User[], uuid: 
     });
 		list.appendChild(link);
 		online.appendChild(list);
-	}
+  }
 });
 
 /* Show offline users on sidebar by dynamically creating elements based on list */

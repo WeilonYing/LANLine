@@ -35,6 +35,7 @@ body {
   font-family: sans-serif;
   font-weight: 400;
   line-height: 1.6;
+  font-size: 1.6rem;
   color: #777;
   background-size: cover;
   background-repeat: no-repeat;
@@ -48,6 +49,9 @@ p {
 
 li {
   list-style: none; }
+
+a {
+  color: #777; }
 
 .header {
   font-size: 1.4rem;
@@ -75,16 +79,26 @@ li {
   justify-content: space-between;
   border-right: 0.5px solid #333;
   height: 90vh; }
+  @media only screen and (max-width: 56.25em) {
+    .sidebar {
+      display: block;
+      height: auto; } }
 
 .chat-window {
   position: relative;
   -webkit-box-flex: 1;
   flex: 1;
   float: left; }
+  @media only screen and (max-width: 56.25em) {
+    .chat-window {
+      position: static; } }
 
 .online-list {
   height: 40vh;
   overflow: scroll; }
+  @media only screen and (max-width: 56.25em) {
+    .online-list {
+      height: auto; } }
 
 .offline-list {
   margin-top: 1rem;
@@ -108,21 +122,22 @@ li {
 
 .side-nav {
   font-size: 1.4rem;
-  list-style: none; }
+  list-style: none;
+  display: block; }
   @media only screen and (max-width: 56.25em) {
     .side-nav {
-      display: flex;
-      margin: 0; } }
+      display: none; } }
   .side-nav__container {
     width: 80%;
     margin: 0 auto; }
-  .side-nav__lobby {
-    background-color: rgba(255, 67, 81, 0.2); }
-    .side-nav__lobby--text {
-      color: #ff4351; }
+    @media only screen and (max-width: 56.25em) {
+      .side-nav__container {
+        width: 100%;
+        padding-left: 2rem; } }
+  .side-nav__lobby--text {
+    color: #ff4351; }
   .side-nav__offline--text {
     color: #777;
-    font-weight: bold;
     cursor: pointer; }
   .side-nav__offline--item {
     color: #999;
@@ -132,23 +147,29 @@ li {
     color: #333; }
     .side-nav__link:hover {
       text-decoration: none;
-      font-weight: 600;
       color: #ff4351;
       cursor: pointer; }
   .side-nav__item {
     position: relative;
     padding: 1rem 0;
     border-bottom: 0.5px solid #777; }
-    .side-nav__item--active {
-      font-weight: 600; }
-    .side-nav__item:not(:last-child) {
-      margin-bottom: .5rem; }
-      @media only screen and (max-width: 56.25em) {
-        .side-nav__item:not(:last-child) {
-          margin: 0; } }
+    @media only screen and (max-width: 56.25em) {
+      .side-nav__item:not(:last-child) {
+        margin: 0; } }
     @media only screen and (max-width: 56.25em) {
       .side-nav__item {
         flex: 1; } }
+
+.side-nav--active {
+  display: block; }
+
+.toggle-menu {
+  display: none; }
+  @media only screen and (max-width: 56.25em) {
+    .toggle-menu {
+      display: block;
+      padding: 1rem 2rem;
+      border-bottom: 0.5px solid #777; } }
 
 .btn-primary {
   color: #faf9f9;
@@ -184,6 +205,9 @@ li {
   margin: 0 auto;
   width: 60%;
   margin-bottom: 2rem; }
+  @media only screen and (max-width: 56.25em) {
+    .logo {
+      display: none; } }
 
 .modal {
   display: none;
@@ -222,13 +246,13 @@ li {
   cursor: pointer; }
 
 .form-group {
-  display: flex; }
+  display: flex;
+  width: 100%; }
 
 .input {
   margin-top: 1rem;
   font-size: 1.6rem;
   padding: 2rem 0;
-  border: none;
   border-bottom: 0.5px solid #333; }
   .input:focus {
     border: none;
@@ -240,7 +264,7 @@ li {
     margin: 1rem;
     padding-left: 2rem;
     display: inline-block;
-    width: 110rem; }
+    width: 100%; }
     .input__chat:focus {
       border: 0.5px solid #777;
       border-radius: .4rem; }
@@ -254,6 +278,12 @@ li {
   width: 100%;
   height: auto;
   overflow: hidden; }
+
+.linkified {
+  color: white;
+  text-decoration: underline; }
+  .linkified:hover {
+    color: white; }
 
 .chat-bubble {
   margin-top: 2rem;
@@ -299,14 +329,21 @@ li {
 .chat-input {
   display: flex;
   position: absolute;
-  bottom: 1rem; }
+  bottom: 1rem;
+  width: 100%; }
+  @media only screen and (max-width: 56.25em) {
+    .chat-input {
+      bottom: 0; } }
 
 .chat-input__submit {
   font-size: 2rem;
   color: #777;
+  background: none;
   border: none;
   padding: 1rem;
   cursor: pointer; }
+  .chat-input__submit:focus {
+    outline: none; }
 
 .chat-name {
   font-size: 1.4rem;
@@ -346,3 +383,20 @@ li {
 
 .fa-cog {
   font-size: 2rem; }
+
+.search {
+  padding: 2rem;
+  margin: 1rem; }
+
+.input-group-text {
+  background-color: #ff4351;
+  font-size: 1.6rem;
+  color: white;
+  border: none; }
+
+.form-control {
+  font-size: 1.4rem;
+  border-radius: .4rem;
+  padding-left: 2rem; }
+  .form-control:focus {
+    box-shadow: none; }

@@ -36,16 +36,8 @@ export class DataService {
   }
 
   public getBlockedUsers(): User[]  {
-    // Begin debug code
-    let user1 :User = {
-      uuid: "teresa",
-      nickname: "teresa",
-      ip: "10.1.1",
-      lastHeard: new Date(),
-      blockedList: []
-    };
-    // End debug code
-    return [user1];
+
+    return [];
   }
 
   public getBroadcasts(from?: number, to?: number): Promise<Payload[]> {
@@ -54,13 +46,11 @@ export class DataService {
       to = 10;
     }
 
-  	let sql: string = `SELECT q.* FROM (
-                        SELECT * FROM messages
-                        WHERE ISBROADCAST = true
-                        ORDER BY timestamp DESC
-                        LIMIT ?
-                        OFFSET ?) q
-                      ORDER BY q.timestamp ASC`;
+  	let sql = 'SELECT * FROM messages\
+                WHERE ISBROADCAST = true\
+                ORDER BY timestamp ASC\
+                LIMIT ?\
+                OFFSET ?';
 
     return new Promise((resolve, reject) => {
       const messages : Payload[] = [];
@@ -69,7 +59,7 @@ export class DataService {
           reject("sql failed: " + sql);
         } else {
           messages.push(PayloadUtils.jsonToPayload(
-            {uuid: row.sender,
+            {uuid: row.UUID,
             type: 'broadcast',
             timestamp: row.timestamp,
             nickname: row.nickname,
@@ -97,13 +87,11 @@ export class DataService {
       to = 10;
     }
 
-  	let sql: string = `SELECT q.* FROM (
-                        SELECT * FROM messages
-                        WHERE (SENDER = ? OR RECEIVER = ?) AND ISBROADCAST = false
-                        ORDER BY timestamp DESC
-                        LIMIT ?
-                        OFFSET ?) q
-                      ORDER BY q.timestamp ASC`;
+  	let sql = 'SELECT * FROM messages\
+                WHERE (SENDER = ? OR RECEIVER = ?) AND ISBROADCAST = false\
+                ORDER BY timestamp ASC\
+                LIMIT ?\
+                OFFSET ?';
 
     return new Promise((resolve, reject) => {
       const messages : Payload[] = [];
