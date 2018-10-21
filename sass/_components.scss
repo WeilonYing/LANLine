@@ -416,7 +416,7 @@
 }
 
 .linkified {
-    color: white;
+    color: $color-grey-light-1;
     text-decoration: underline;
 
     &:hover {
@@ -434,7 +434,7 @@
     background-size: 45% auto;
 
     &__left {
-        background-color: #e5e5e5;
+        background-color:$color-grey-dark-2;
         margin-left: 2rem;
         
         &::after {
@@ -444,7 +444,7 @@
             width: 0;
             height: 0;
             border: 2rem solid transparent;
-            border-right-color: #e5e5e5;
+            border-right-color: $color-grey-dark-2;
             border-left: 0;
             margin-top: -2rem;
             margin-left: -2rem;

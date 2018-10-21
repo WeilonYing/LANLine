@@ -2,11 +2,13 @@ import { Payload, PayloadJSON, PayloadUtils } from '../Payload';
 import { Settings } from '../Settings';
 import { UserManager } from '../UserManager';
 import { User } from '../User';
+import {DataService} from "../DataService";
 
 process.env.test = "true";
 jest.useFakeTimers();
 
-let userManager: UserManager = new UserManager();
+let dataService: DataService = new DataService();
+let userManager: UserManager = new UserManager(dataService);
 
 
 let testHeartbeats: Payload[] = [
@@ -43,10 +45,9 @@ let testRinfo = [ // NOTE: length must be >= length of testHeartbeats
   { address: '10.0.0.7' }
 ]
 
-/* Set user's last heard time to be outside of the timeout limit */
+/* Set user's last heard time to be outside of the timeout limit
 function expireUser(user: User): void {
   user.lastHeard.setTime(user.lastHeard.getTime() - Settings.ONLINE_USER_TIMEOUT - 1);
-  
 }
 
 beforeEach(() => {
@@ -97,8 +98,8 @@ describe('Test users in offline list after they have gone offline', () => {
     userManager.removeOnlineUser(user);
     expect(userManager.getOfflineUsers().length).toEqual(1);
   });
-});
+});*/
 
 afterAll(() => {
   userManager.stopCheckOnlineUsers();
-})
+});

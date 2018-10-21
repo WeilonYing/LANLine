@@ -437,7 +437,7 @@ a {
   overflow: hidden; }
 
 .linkified {
-  color: white;
+  color: #faf9f9;
   text-decoration: underline; }
   .linkified:hover {
     color: white; }
@@ -451,7 +451,7 @@ a {
   padding: 2rem;
   background-size: 45% auto; }
   .chat-bubble__left {
-    background-color: #e5e5e5;
+    background-color: #777;
     margin-left: 2rem; }
     .chat-bubble__left::after {
       position: absolute;
@@ -460,7 +460,7 @@ a {
       width: 0;
       height: 0;
       border: 2rem solid transparent;
-      border-right-color: #e5e5e5;
+      border-right-color: #777;
       border-left: 0;
       margin-top: -2rem;
       margin-left: -2rem; }

@@ -52,26 +52,52 @@
                   </div>
                 </div>
 
-                <div class="user-nav__active-chat" id="user-nav__active-chat">
+                <div class="user-nav__active-chat"></div>
+                <div id="channel-header">
+                    <!-- Button trigger modal -->
+                    <a type="button" id="friend-nickname" class="friend-nickname" data-toggle="modal" data-target="#editFriendNickname"></a>
                 </div>
-
-                <div class="settings--dropdown">
-                    
-                    <div class="input-group search">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                    <!-- Modal -->
+                    <div class="modal" id="editFriendNickname" tabindex="-1" role="dialog" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <font size="5px" color="black">Edit Nickname</font>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="friendNicknameInput">
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="set_friend_nickname" class="btn btn-primary">Save changes</button>
+                          </div>
                         </div>
-                        <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+                      </div>
                     </div>
 
-                    <button class="btn btn-secondary dropdown-toggle settings--button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item settings--item" id="block-action" href="#"></a>
-                        <a class="dropdown-item settings--item" id="mute-action" href="#"></a>
+                    <div class="settings--dropdown">
+                    
+                            <div class="input-group search">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+                            </div>
+        
+                            <button class="btn btn-secondary dropdown-toggle settings--button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item settings--item" id="block-action" href="#"></a>
+                                <a class="dropdown-item settings--item" id="mute-action" href="#"></a>
+                            </div>
+
                     </div>
-                </div>
             </nav>
         </header>
 
