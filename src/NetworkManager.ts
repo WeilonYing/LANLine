@@ -3,10 +3,12 @@ import { dialog } from 'electron';
 import * as ip from 'ip';
 import * as os from 'os';
 import { Settings } from './Settings';
+import { User } from './User';
 import { DataService } from './DataService';
 import { UIManager } from './UIManager';
 import { UserManager } from './UserManager';
 import { Payload, PayloadJSON, PayloadUtils } from './Payload';
+import {AddressInfo} from "dgram";
 
 
 export class NetworkManager {
@@ -47,17 +49,24 @@ export class NetworkManager {
     /*
       Handles incoming receipt of message data
      */
-    this.server.on('message', (msg: string, rinfo: JSON) => {
-      let msgJSON: PayloadJSON = JSON.parse(msg);
-      let msgPayload: Payload = PayloadUtils.jsonToPayload(msgJSON);
-      if (msgPayload.type === 'heartbeat') {
+    this.server.on("message", (msg: string, addressInfo: AddressInfo) => {
+      const msgJSON: PayloadJSON = JSON.parse(msg);
+      const msgPayload: Payload = PayloadUtils.jsonToPayload(msgJSON);
+      if (msgPayload.type === "heartbeat") {
         // received heartbeat
-        this.userManager.registerHeartbeat(msgPayload, rinfo);
+        this.userManager.registerHeartbeat(msgPayload, addressInfo.address);
+
+
+        // display the user's nickname on the screen
+        this.uiManager.displayPersonalNickname(this.dataService.getPersonalNickname());
+
         // update online users list
-        this.uiManager.showOnlineUsers(this.userManager.getOnlineUsers(this.dataService.getBlockedUsers()), this.dataService.getId());
-        this.uiManager.showOfflineUsers(this.userManager.getOfflineUsers());
-        console.log(rinfo); // DEBUG
-        console.log("Received heartbeat " + msgPayload); // DEBUG
+        this.userManager.getNonBlockedOnlineUsers().then((onlineUsers) => {
+          this.uiManager.showOnlineUsers(onlineUsers, this.dataService.getId());
+        });
+        this.userManager.getNonBlockedOfflineUsers().then((offlineUsers) => {
+          this.uiManager.showOfflineUsers(offlineUsers);
+        });
       } else if (msgPayload.type === 'broadcast') {
         // pass broadcast message to the UI
         if (msgPayload.uuid !== this.dataService.getId()) {
@@ -72,7 +81,9 @@ export class NetworkManager {
         console.log("received message from " + msgPayload.nickname + ": " + msgPayload.message); // DEBUG
       }
     });
-
+    if (process.env['test']) {
+      return;
+    }
     this.server.bind(Settings.PORT, () => {
       this.server.setBroadcast(true);
     });
@@ -86,13 +97,13 @@ export class NetworkManager {
       uuid: this.dataService.getId(),
       type: 'heartbeat',
       timestamp: new Date(),
-      nickname: this.dataService.getNickname()
+      nickname: this.dataService.getPersonalNickname()
     };
     let payloadJsonStr: string = JSON.stringify(PayloadUtils.payloadToJson(payload));
     this.server.send(
       payloadJsonStr, 0, payloadJsonStr.length, Settings.PORT, this.broadcastAddr);
 
-    console.log("Sending heartbeat with content: " + payloadJsonStr); // DEBUG
+    //console.log("Sending heartbeat with content: " + payloadJsonStr); // DEBUG
   }
 
   /**
@@ -116,7 +127,7 @@ export class NetworkManager {
       uuid: this.dataService.getId(),
       type: 'broadcast',
       timestamp: new Date(),
-      nickname: this.dataService.getNickname(),
+      nickname: this.dataService.getPersonalNickname(),
       message: message_content
     }
     // Convert to a JSON string and send it to the broadcast address
@@ -141,26 +152,23 @@ export class NetworkManager {
       uuid: this.dataService.getId(),
       type: 'message',
       timestamp: new Date(),
-      nickname: this.dataService.getNickname(),
+      nickname: this.dataService.getPersonalNickname(),
       message: message_content
-    }
-    let user = this.userManager.getOnlineUser(recipient_uuid);
-    if (!user) {
-      // TODO: let user know that recipient is offline
-      return;
-    }
-    let recipientIP = user.ip;
-    let messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
-    let messagePayloadString: string = JSON.stringify(messagePayloadJSON);
+    };
 
-    this.uiManager.displayMessage(
-      messagePayload, messagePayload.uuid === this.dataService.getId(), recipient_uuid);
+    this.userManager.getOnlineUserIP(recipient_uuid).then((recipientIP) => {
+      if (recipientIP === null) {
+        // TODO: let user know that recipient is offline
+      }
+      const messagePayloadJSON: PayloadJSON = PayloadUtils.payloadToJson(messagePayload);
+      const messagePayloadString: string = JSON.stringify(messagePayloadJSON);
 
-    this.server.send(
-      messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
-    //   messagePayloadString, 0, messagePayloadString.length, Settings.PORT, this.ipAddress);
-    this.dataService.storeMessage(messagePayload, this.dataService.getId(), recipient_uuid);
-    console.log("sent message " + messagePayload.message + " to " + recipientIP); // DEBUG
+      this.uiManager.displayMessage(
+          messagePayload, messagePayload.uuid === this.dataService.getId(), recipient_uuid);
+
+      this.server.send(messagePayloadString, 0, messagePayloadString.length, Settings.PORT, recipientIP);
+      this.dataService.storeMessage(messagePayload, this.dataService.getId(), recipient_uuid);
+    });
   }
 
   /**
@@ -168,7 +176,10 @@ export class NetworkManager {
     opens a dialog box to select which interface's IP address to use.
     @return IP address
   */
-  private getIPAddress(): string {
+  public getIPAddress(): string {
+    if (process.env['test']) {
+      return '192.168.1.10';
+    }
     let interfaces: { [index: string]: os.NetworkInterfaceInfo[] } = os.networkInterfaces();
     let interfaceNames: string[] = Object.keys(interfaces);
     if (interfaceNames.length <= 1) {

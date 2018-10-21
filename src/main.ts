@@ -6,16 +6,15 @@ import { DataService } from './DataService';
 import { UIManager } from './UIManager';
 import { UserManager } from './UserManager';
 import { Settings } from './Settings';
+import {User} from "./User";
 
 let mainWindow: Electron.BrowserWindow;
 let networkManager: NetworkManager;
 let dataService: DataService = new DataService();
-let uiManager: UIManager = new UIManager();
-let userManager: UserManager = new UserManager();
+let uiManager: UIManager = new UIManager(dataService);
+let userManager: UserManager = new UserManager(dataService);
 
 function createWindow() {
-  networkManager = new NetworkManager(dataService, uiManager, userManager);
-
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 600,
@@ -38,6 +37,7 @@ function createWindow() {
   });
 
   uiManager.setMainWindow(mainWindow);
+  networkManager = new NetworkManager(dataService, uiManager, userManager);
   networkManager.startHeartbeat();
 }
 
@@ -85,7 +85,7 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
   }
 });
 
-// send private message
+// send notification
 ipcMain.on('send_notification', function(e: any, nickname: string, message: string) {
   notifier.notify({
     icon: path.join('favicon.png'),
@@ -105,4 +105,37 @@ ipcMain.on('retrieve_messages', function(e: any, uuid: string) {
     	uiManager.showMessages(result, dataService.getId());
     });
   }
+});
+
+// display friend's nickname on header
+ipcMain.on('display_friend_nickname', function(e: any, friendNickname: string) {
+  uiManager.displayFriendNickname(friendNickname);
+});
+
+ipcMain.on('display_lobby_header', function (e: any) {
+  uiManager.displayLobbyHeader();
+});
+
+// Change the friend's nickname in the database and change the friend's nickname
+// on the header and sidebar
+
+ipcMain.on('set_friend_nickname', function(e: any, UUID: string, friendNicknameInput: string) {
+
+  console.log("trying to change friend nickname for " + UUID + " to " + friendNicknameInput);
+  dataService.updateUserCustomNickname(UUID, friendNicknameInput);
+  uiManager.displayFriendNickname(friendNicknameInput);
+
+  userManager.getNonBlockedOnlineUsers().then((onlineUsers: User[]) => {
+      uiManager.showOnlineUsers(onlineUsers, dataService.getId());
+  });
+
+  userManager.getNonBlockedOfflineUsers().then((offlineUsers: User[]) => {
+      uiManager.showOfflineUsers(offlineUsers);
+  });
+});
+
+// set new personal nickname
+ipcMain.on('set_my_nickname', function(e: any, userNicknameInput: string) {
+  dataService.setPersonalNickname(userNicknameInput);
+  uiManager.displayPersonalNickname(userNicknameInput);
 });

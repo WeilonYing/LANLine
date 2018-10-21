@@ -9,6 +9,10 @@ export class UIManager {
   mainWindow: Electron.BrowserWindow;
   dataService: DataService;
 
+  constructor(dataService: DataService) {
+    this.dataService = dataService;
+  }
+
   public setMainWindow(mainWindow: Electron.BrowserWindow): void {
     this.mainWindow = mainWindow;
   }
@@ -19,7 +23,9 @@ export class UIManager {
 
   // Send message to screen
   public displayMessage(message: Payload, isSelf: boolean, channel: string): void {
-    this.mainWindow.webContents.send('received_message', message, isSelf, channel, this.mainWindow.isFocused());
+    this.dataService.getUserNickname(message.uuid).then((senderName) => {
+      this.mainWindow.webContents.send('received_message', message, isSelf, channel, this.mainWindow.isFocused(), senderName);
+    });
   }
 
   // Show online users on screen
@@ -33,11 +39,25 @@ export class UIManager {
   }
 
   public getMyNickname(): string {
-    return this.dataService.getNickname();
+    return this.dataService.getPersonalNickname();
   }
 
   // Display messages on the screen
   public showMessages(messages: Payload[], ownUuid: string): void {
     this.mainWindow.webContents.send('show_messages', messages, ownUuid);
   }
+
+  // Display the friend nickname on the header
+  public displayFriendNickname(friendNickname: string): void {
+    this.mainWindow.webContents.send('display_friend_nickname', friendNickname);
+  }
+  // Display the user's personal nickname on the screen
+  public displayPersonalNickname(nickname: string): void {
+    this.mainWindow.webContents.send('display_personal_nickname', nickname);
+  }
+
+  public displayLobbyHeader(): void {
+    this.mainWindow.webContents.send('display_lobby_header');
+  }
+
 }

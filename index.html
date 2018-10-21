@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
     <link rel = "stylesheet" href = "./node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script> -->
 
@@ -17,27 +20,96 @@
   <body>
 
     <!-- Fixes the "Couldn't set selectedTextBackgroundColor from default ()" error -->
-    <style> ::selection { background: white; /* WebKit/Blink Browsers */ } </style>
+    <!-- <style> ::selection { background: white; /* WebKit/Blink Browsers */ } </style> -->
 
     <header class="header">
 
             <nav class="user-nav">
-                <div class="user-nav__you" id="own-nickname"></div>
-
-                <div class="user-nav__active-chat">
-                    Lobby
+                <div class="user-nav__you" id="own-nickname">
+                <!-- Button trigger modal -->
+                <button type="button" id="my-nickname" class="user-nickname" data-toggle="modal" data-target="#editMyNickname"></button>
+                    <!-- Modal -->
+                  <div class="modal" id="editMyNickname" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <font size="5px" color="black">Edit Nickname</font>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="form-group">
+                            <input type="text" class="form-control" id="personalNicknameInput">
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                          <button type="button" data-dismiss="modal" id="set_my_nickname" class="btn btn-secondary save-button">Save changes</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+                <div class="user-nav__active-chat"></div>
+                <div id="channel-header">
+                    <!-- Button trigger modal -->
+                    <a type="button" id="friend-nickname" class="friend-nickname" data-toggle="modal" data-target="#editFriendNickname"></a>
+                </div>
+                    <!-- Modal -->
+                    <div class="modal" id="editFriendNickname" tabindex="-1" role="dialog" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <font size="5px" color="black">Edit Nickname</font>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="form-group">
+                                <input type="text" class="form-control" id="friendNicknameInput">
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="set_friend_nickname" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="settings--dropdown">
+                    
+                            <div class="input-group search">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+                            </div>
+        
+                            <button class="btn btn-secondary dropdown-toggle settings--button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item settings--item" id="block-action" href="#"></a>
+                                <a class="dropdown-item settings--item" id="mute-action" href="#"></a>
+                            </div>
+
+                    </div>
             </nav>
         </header>
 
         <div class="content">
             <nav class="sidebar">
-                <ul class="side-nav">
-                            <li class="side-nav__item side-nav__item--active side-nav__lobby">
-                                <a href="#" class="side-nav__link" id="lobby">
-                                    <div class="side-nav__container side-nav__lobby--text"><span>Lobby <i class="fas fa-users"></i></span></div>
-                                </a>
-                            </li>
+                <a href="#" class="toggle-menu" id= "toggle"><i class="fa fa-bars"></i></a>
+                <ul class="side-nav" id ="side-nav">
+                        <li class="side-nav__item side-nav__lobby" style="display: block;">
+                            <a href="#" class="side-nav__link" id="lobby">
+                                <div class="side-nav__container side-nav__lobby--text"><span>Lobby <i class="fas fa-users"></i></span></div>
+                            </a>
+                        </li>
 
                         <div class="online-list" id="online-list">
                         </div>
