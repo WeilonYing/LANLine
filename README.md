@@ -16,3 +16,14 @@ Jest.js is used for testing. Ensure you have all dependencies installed by using
 Run the testing framework with `npm test`. If this doesn't work, it's most likely because `jest` is not in your PATH environment variable. Run `npm install -g jest` and try again.
 
 Tests should be written in `src/__tests__`.
+=======
+## How to SASS
+
+Add SASS code to the file components.scss
+
+### Compile
+On the command line:
+`npm run compile:sass`
+
+And if you want to see your sass on your web browser, in another terminal tab:
+`live-server`
