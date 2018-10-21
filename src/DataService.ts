@@ -111,9 +111,61 @@ export class DataService {
     });
   }
 
-  // public getSearchResults(searchTerm: string, uuid: string): Promise<Payload[]> {
-  //   TODO(Oliver)
-  // }
+  public getSearchResults(searchTerm: string, uuid: string): Promise<Payload[]> {
+    if (uuid !== Settings.LOBBY_ID_NAME) {
+      let sql: string = `SELECT * FROM messages \
+                      WHERE (SENDER = ? OR RECEIVER = ?) \
+                      AND ISBROADCAST = false \
+                      AND message LIKE ?\
+                      ORDER BY timestamp ASC`;
+      return new Promise((resolve, reject) => {
+        const messages : Payload[] = [];
+        this.db.each(sql, [uuid, uuid, "%" + searchTerm + "%"], (err, row) => {
+          if (err) {
+            reject("sql failed: " + sql);
+          } else {
+            messages.push(PayloadUtils.jsonToPayload(
+              {uuid: row.sender,
+                type: 'message',
+                timestamp: row.timestamp,
+                nickname: row.nickname,
+                message: row.message}));
+          }
+        }, (err, n) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve (messages);
+          }
+        })
+      });
+    } else {
+      let sql: string = `SELECT * FROM messages \
+                    WHERE isBroadcast = true AND message like ?`;
+      return new Promise((resolve, reject) => {
+        const messages: Payload[] = [];
+        this.db.each(sql, ["%" + searchTerm + "%"], (err, row) => {
+          if (err) {
+            reject("sql failed: " + sql + " " + err);
+          } else {
+            messages.push(PayloadUtils.jsonToPayload(
+              {uuid: row.sender,
+                type: 'message',
+                timestamp: row.timestamp,
+                nickname: row.nickname,
+                message: row.message}));
+          }
+        }, (err, n) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve (messages);
+          }
+        })
+      });
+    }
+
+  }
 
   /*
     Get messages from database.
