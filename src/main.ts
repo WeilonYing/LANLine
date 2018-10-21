@@ -85,6 +85,13 @@ ipcMain.on('send_message', function(e: any, uuid: string, message: string) {
   }
 });
 
+// get search results from database
+ipcMain.on('get_search_results', function(e: any, searchTerm: string, uuid: string) {
+  dataService.getSearchResults(searchTerm, uuid).then(function(result) {
+    uiManager.showSearchResults(result);
+  });
+});
+
 // send notification
 ipcMain.on('send_notification', function(e: any, nickname: string, message: string) {
   notifier.notify({
