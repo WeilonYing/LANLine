@@ -3,3 +3,6 @@ dist/
 out/
 npm-debug.log
 *.sqlite3
+src/__tests__/.DS_Store
+css/.DS_Store
+src/.DS_Store
