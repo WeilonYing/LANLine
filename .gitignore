@@ -3,3 +3,6 @@ dist/
 out/
 npm-debug.log
 *.sqlite3
+**/*/.DS_Store
+UUID
+user

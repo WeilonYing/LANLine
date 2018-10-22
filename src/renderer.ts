@@ -13,6 +13,8 @@ const MSG_CLASS_NAME: string = 'message';
 var msgCount: number = -1;
 var isChangingView: boolean = false;
 var currentViewChannel: string = Settings.LOBBY_ID_NAME;
+var currentSearchedTerm: string = null;
+var isOnSearchPage: boolean = false;
 var linkifyStr = require('linkifyjs/string');
 
 /* Initialisation function for the renderer process */
@@ -56,6 +58,10 @@ function send_message(e: any): void {
   if (e) {
     e.preventDefault(); // prevent default action (page reload) taking place if Enter/Return pressed
   }
+  if (isOnSearchPage) {
+    setMessageView(currentViewChannel);
+    isOnSearchPage = false;
+  }
   let messageElement: HTMLInputElement = <HTMLInputElement> document.getElementById('messageInput');
   let message: string = messageElement.value;
   if (message.length > 0) {
@@ -85,7 +91,9 @@ function send_search(e: any): void {
   let searchElement: HTMLInputElement = <HTMLInputElement> document.getElementById('searchInput');
   let searchTerm: string = searchElement.value;
   if (searchTerm.length > 0) {
-      setSearchView(searchTerm);
+    currentSearchedTerm = searchTerm;
+    isOnSearchPage = true;
+    setSearchView(searchTerm);
   }
 }
 
@@ -102,7 +110,7 @@ function setSearchView(searchTerm: string): void {
   // Heading for search results page
   let heading: HTMLElement = document.createElement("div");
   heading.className = 'search-heading';
-  heading.innerHTML = "Search results for <i>" + searchTerm + "</i>";
+  heading.innerHTML = "Search results for <i><font style=\"color: #ff4351\">" + searchTerm + "</font></i>";
   screen.appendChild(heading);
   // Get the search results
   ipcRenderer.send("get_search_results", searchTerm, currentViewChannel);
@@ -117,9 +125,13 @@ function addSearchResultToView(payload: Payload) {
 
   // Result format: Nickname: message    time
   let newMessage: HTMLElement = document.createElement("div");
+  let searchResultMessage: string = payload.message;
+  let searchRegex: RegExp = new RegExp(currentSearchedTerm, 'gi');
+  searchResultMessage = searchResultMessage
+    .replace(searchRegex, "<font style=\"color: #ff4351\">" + '$&' + "</font>");
   newMessage.innerHTML = "<b>" + payload.nickname + ":</b> "
-    + payload.message
-    + "<font style=\"font-size: 8px; color: #BDBDBD\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+    + searchResultMessage
+    + "<font style=\"font-size: 9px; color: #BDBDBD\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
     + payload.timestamp
     + "</font>";
 
