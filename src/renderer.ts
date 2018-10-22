@@ -126,9 +126,9 @@ function addSearchResultToView(payload: Payload) {
   // Result format: Nickname: message    time
   let newMessage: HTMLElement = document.createElement("div");
   let searchResultMessage: string = payload.message;
-  let searchRegex: RegExp = new RegExp(currentSearchedTerm, 'g');
+  let searchRegex: RegExp = new RegExp(currentSearchedTerm, 'gi');
   searchResultMessage = searchResultMessage
-    .replace(searchRegex, "<font style=\"color: #ff4351\">" + currentSearchedTerm + "</font>");
+    .replace(searchRegex, "<font style=\"color: #ff4351\">" + '$&' + "</font>");
   newMessage.innerHTML = "<b>" + payload.nickname + ":</b> "
     + searchResultMessage
     + "<font style=\"font-size: 9px; color: #BDBDBD\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
