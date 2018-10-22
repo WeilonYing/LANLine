@@ -3,10 +3,6 @@ dist/
 out/
 npm-debug.log
 *.sqlite3
-src/__tests__/.DS_Store
-css/.DS_Store
-src/.DS_Store
-<<<<<<< HEAD
-.DS_Store
-=======
->>>>>>> 57f9aef2069956a5784273ab808058b99d69f025
+**/*/.DS_Store
+UUID
+user
