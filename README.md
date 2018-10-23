@@ -1,7 +1,5 @@
 # LANLine
 
-![Travis CI](https://travis-ci.com/WeilonYing/LANLine.svg?token=B72tus6MrZ4qmaCxMimS&branch=master)
-
 ## How to develop
 First, install `nodejs` and `npm` (Node Package Manager).
 Then install Node dependencies with `npm install`.
